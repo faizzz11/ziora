@@ -4,6 +4,7 @@ import Navbar from "@/components/animate-ui/Navbar";
 import WebsiteTour from "@/components/landing/WebsiteTour";
 import Bento from "@/components/landing/Bento";
 import PlatformInAction from "@/components/landing/PlatformInAction";
+import FAQ from "@/components/landing/FAQ";
 
 export default function Home() {
   return (
@@ -13,6 +14,7 @@ export default function Home() {
       <WebsiteTour />
       <Bento />
       <PlatformInAction />
+      <FAQ />
   </div>
   );
 }
