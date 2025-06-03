@@ -152,6 +152,77 @@ Contains previous year question papers data for each subject.
 
 **Used in:** `/subject/[subjectName]/previous-year-questions` - Displays question papers with dropdown selection
 
+### syllabus.json
+Contains structured syllabus data for each subject with modules, topics, and hours.
+
+**Structure:**
+```json
+{
+  "subject-id": {
+    "subjectName": "Subject Display Name",
+    "totalHours": 48,
+    "modules": [
+      {
+        "moduleNo": "1.0",
+        "title": "Module Title",
+        "hours": 8,
+        "topics": [
+          "Topic 1: Description",
+          "Topic 2: Description",
+          "Topic 3: Description"
+        ]
+      }
+    ]
+  }
+}
+```
+
+**Key Fields:**
+- `subjectName`: Full name of the subject
+- `totalHours`: Total course duration in hours
+- `moduleNo`: Module number (e.g., "1.0", "2.0")
+- `title`: Module title/name
+- `hours`: Hours allocated to this module
+- `topics`: Array of topics covered in the module
+
+**Used in:** `/subject/[subjectName]/syllabus-important-questions` - Displays structured syllabus in tabular format
+
+### IMP-Questions.json
+Contains important questions for each subject organized by modules with frequency indicators.
+
+**Structure:**
+```json
+{
+  "subject-id": {
+    "subjectName": "Subject Display Name",
+    "modules": [
+      {
+        "moduleNo": "1.0",
+        "title": "Module Title",
+        "questions": [
+          {
+            "question": "Question text here?",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+**Key Fields:**
+- `question`: The actual question text
+- `frequency`: Numerical frequency ranking (1-4)
+  - `1`: Most repeated (Red color)
+  - `2`: 2nd most repeated (Blue color)
+  - `3`: 3rd most repeated (Yellow color)
+  - `4`: One time repeated (Black color)
+- `repetition`: Human-readable repetition description
+
+**Used in:** `/subject/[subjectName]/syllabus-important-questions` - Displays color-coded important questions
+
 ## Page Functionality
 
 ### Video Lectures Page
@@ -176,11 +247,19 @@ Contains previous year question papers data for each subject.
 - **Download:** Direct download of the PDF question paper
 - **Professional Layout:** Clean design matching website theme
 
+### Syllabus & Important Questions Page
+- **Tabbed Interface:** Switch between Syllabus and Important Questions views
+- **Structured Syllabus Table:** Professional tabular display with modules, topics, and hours
+- **Color-coded Questions:** Important questions with frequency-based color coding
+- **Legend:** Clear indication of question repetition frequency
+- **Module Organization:** Questions organized by course modules
+- **Responsive Design:** Works well on desktop and mobile devices
+
 ## Adding New Content
 
 ### Adding a New Subject
 1. Add subject entry to `subjects.json`
-2. Add corresponding entries to `videos.json` and `pyq.json` with modules/papers
+2. Add corresponding entries to `videos.json`, `pyq.json`, `syllabus.json`, and `IMP-Questions.json`
 3. Ensure the subject ID matches across all files
 
 ### Adding Video Content
@@ -231,6 +310,76 @@ Contains previous year question papers data for each subject.
 }
 ```
 
+### Adding Syllabus Content
+1. **Structure your syllabus data:**
+   - Break down the course into logical modules
+   - List all topics covered in each module
+   - Specify hours allocated to each module
+   
+2. **Update syllabus.json:**
+   - Add entry under the subject ID
+   - Include subject name and total hours
+   - List all modules with their topics and hours
+   
+3. **Example Entry:**
+```json
+{
+  "subject-id": {
+    "subjectName": "Subject Name",
+    "totalHours": 48,
+    "modules": [
+      {
+        "moduleNo": "1.0",
+        "title": "Introduction Module",
+        "hours": 8,
+        "topics": [
+          "Topic 1 description",
+          "Topic 2 description"
+        ]
+      }
+    ]
+  }
+}
+```
+
+### Adding Important Questions
+1. **Organize questions by modules:**
+   - Group questions according to course modules
+   - Assign frequency rankings based on repetition
+   
+2. **Frequency Guidelines:**
+   - `1` (Red): Questions that appear in most exams
+   - `2` (Blue): Questions that appear frequently
+   - `3` (Yellow): Questions that appear occasionally
+   - `4` (Black): Questions that appear rarely
+   
+3. **Update IMP-Questions.json:**
+   - Add entry under the subject ID
+   - Include all modules with their questions
+   - Assign appropriate frequency and repetition labels
+   
+4. **Example Entry:**
+```json
+{
+  "subject-id": {
+    "subjectName": "Subject Name",
+    "modules": [
+      {
+        "moduleNo": "1.0",
+        "title": "Module Title",
+        "questions": [
+          {
+            "question": "What is the main concept? Explain in detail.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
 ### Google Drive PDF Setup (Important!)
 To avoid 403 errors when embedding PDFs:
 
@@ -272,6 +421,10 @@ To avoid 403 errors when embedding PDFs:
 6. **PDF Sharing:** Double-check Google Drive sharing permissions to avoid 403 errors
 7. **PYQ Images:** Use high-quality preview images for better user experience
 8. **File Organization:** Keep consistent naming conventions for easy management
+9. **Syllabus Structure:** Break down complex topics into digestible subtopics
+10. **Question Frequency:** Be consistent with frequency assignments across subjects
+11. **Module Hours:** Ensure module hours add up to total course hours
+12. **Question Quality:** Focus on exam-relevant questions for important questions section
 
 ## File Dependencies
 
@@ -281,5 +434,7 @@ To avoid 403 errors when embedding PDFs:
 - **features.json** → Used by landing page
 - **content.json** → Used by landing page
 - **pyq.json** → Used by previous year questions pages
+- **syllabus.json** → Used by syllabus & important questions page (syllabus tab)
+- **IMP-Questions.json** → Used by syllabus & important questions page (important questions tab)
 
 Make sure to maintain consistency across these files, especially with subject IDs and naming conventions. 
