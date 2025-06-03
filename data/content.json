@@ -1,0 +1,37 @@
+{
+  "subjectsPage": {
+    "hero": {
+      "badge": "📚 Academic Excellence",
+      "title": "Choose Your Subject",
+      "subtitle": "Comprehensive study materials, video lectures, and practice questions designed to help you excel in your academic journey."
+    },
+    "featuresSection": {
+      "title": "Everything You Need to Succeed",
+      "subtitle": "Comprehensive learning resources designed for academic excellence and practical understanding."
+    }
+  },
+  "subjectPage": {
+    "hero": {
+      "badge": "📖 Subject Overview",
+      "category": "Computer Science",
+      "buttons": {
+        "primary": "Start Learning",
+        "secondary": "Preview Content"
+      }
+    },
+    "studyMaterials": {
+      "title": "Study Materials",
+      "subtitle": "Access comprehensive learning resources organized into focused sections for systematic learning."
+    },
+    "quickAccess": {
+      "title": "Quick Access",
+      "subtitle": "Frequently accessed materials and resources"
+    },
+    "courseOverview": {
+      "title": "Course Overview",
+      "estimatedDuration": "75 Hours",
+      "difficultyLevel": "Intermediate",
+      "progress": "0%"
+    }
+  }
+} 

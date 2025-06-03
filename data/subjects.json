@@ -1,0 +1,58 @@
+{
+  "subjects": [
+    {
+      "id": "operating-system",
+      "name": "Operating System",
+      "description": "Learn about OS concepts, processes, memory management, and file systems with comprehensive study materials.",
+      "icon": "💻",
+      "topics": ["Process Management", "Memory Systems", "File Systems", "Synchronization"],
+      "materials": "145 Resources",
+      "color": "blue"
+    },
+    {
+      "id": "computer-network",
+      "name": "Computer Network",
+      "description": "Master networking protocols, TCP/IP, and network security with practical examples and theory.",
+      "icon": "🌐",
+      "topics": ["Network Protocols", "TCP/IP Stack", "Network Security", "Routing"],
+      "materials": "120 Resources",
+      "color": "green"
+    },
+    {
+      "id": "database-management",
+      "name": "Database Management",
+      "description": "Understand SQL, NoSQL, database design, and optimization techniques for modern applications.",
+      "icon": "🗄️",
+      "topics": ["SQL Queries", "Database Design", "Normalization", "Query Optimization"],
+      "materials": "180 Resources",
+      "color": "purple"
+    },
+    {
+      "id": "data-structures",
+      "name": "Data Structures",
+      "description": "Learn arrays, linked lists, trees, graphs, and algorithms with implementation examples.",
+      "icon": "🌳",
+      "topics": ["Linear Structures", "Trees & Graphs", "Sorting Algorithms", "Hash Tables"],
+      "materials": "200 Resources",
+      "color": "orange"
+    },
+    {
+      "id": "software-engineering",
+      "name": "Software Engineering",
+      "description": "Software development lifecycle, design patterns, testing methodologies, and project management.",
+      "icon": "⚙️",
+      "topics": ["SDLC Models", "Design Patterns", "Testing Methods", "Project Management"],
+      "materials": "110 Resources",
+      "color": "gray"
+    },
+    {
+      "id": "machine-learning",
+      "name": "Machine Learning",
+      "description": "AI fundamentals, algorithms, neural networks, and deep learning concepts with practical projects.",
+      "icon": "🤖",
+      "topics": ["ML Algorithms", "Neural Networks", "Deep Learning", "Model Training"],
+      "materials": "165 Resources",
+      "color": "indigo"
+    }
+  ]
+} 

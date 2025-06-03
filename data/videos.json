@@ -1,0 +1,203 @@
+{
+  "operating-system": {
+    "modules": [
+      {
+        "id": "module-1",
+        "name": "Introduction to Operating Systems",
+        "pdfUrl": "https://drive.google.com/file/d/1example1/preview",
+        "relatedVideoLink": "https://www.youtube.com/embed/vBURTt97EkA",
+        "topics": [
+          {
+            "id": "topic-1",
+            "title": "What is an Operating System?",
+            "videoUrl": "https://www.youtube.com/embed/vBURTt97EkA",
+            "duration": "15:30",
+            "notes": "Basic introduction to OS concepts and functionality"
+          },
+          {
+            "id": "topic-2", 
+            "title": "Types of Operating Systems",
+            "videoUrl": "https://www.youtube.com/embed/pVzRTmdd9j0",
+            "duration": "18:45",
+            "notes": "Different types of OS: Batch, Real-time, Distributed"
+          },
+          {
+            "id": "topic-3",
+            "title": "OS Architecture and Components",
+            "videoUrl": "https://www.youtube.com/embed/9GDX-IyZ_C8",
+            "duration": "22:15",
+            "notes": "Kernel, Shell, System calls, and OS structure"
+          }
+        ]
+      },
+      {
+        "id": "module-2",
+        "name": "Process Management",
+        "pdfUrl": "https://drive.google.com/file/d/1example2/preview",
+        "relatedVideoLink": "https://www.youtube.com/embed/4s5GyXGzqTU",
+        "topics": [
+          {
+            "id": "topic-4",
+            "title": "Process Concepts",
+            "videoUrl": "https://www.youtube.com/embed/4s5GyXGzqTU",
+            "duration": "20:30",
+            "notes": "Process definition, PCB, process states"
+          },
+          {
+            "id": "topic-5",
+            "title": "Process Scheduling",
+            "videoUrl": "https://www.youtube.com/embed/7FRW4iGjJjk",
+            "duration": "25:20",
+            "notes": "CPU scheduling algorithms and policies"
+          },
+          {
+            "id": "topic-6",
+            "title": "Inter-Process Communication",
+            "videoUrl": "https://www.youtube.com/embed/dJuYKfR8vec",
+            "duration": "19:45",
+            "notes": "IPC mechanisms: pipes, message queues, shared memory"
+          }
+        ]
+      },
+      {
+        "id": "module-3",
+        "name": "Memory Management",
+        "pdfUrl": "https://drive.google.com/file/d/1example3/preview",
+        "relatedVideoLink": "https://www.youtube.com/embed/p9yZNLeOj4s",
+        "topics": [
+          {
+            "id": "topic-7",
+            "title": "Memory Allocation Techniques",
+            "videoUrl": "https://www.youtube.com/embed/p9yZNLeOj4s",
+            "duration": "24:10",
+            "notes": "Fixed and dynamic partitioning, paging, segmentation"
+          },
+          {
+            "id": "topic-8",
+            "title": "Virtual Memory",
+            "videoUrl": "https://www.youtube.com/embed/2quKyPnUShQ",
+            "duration": "28:35",
+            "notes": "Virtual memory concepts, page replacement algorithms"
+          }
+        ]
+      }
+    ]
+  },
+  "computer-network": {
+    "modules": [
+      {
+        "id": "module-1",
+        "name": "Network Fundamentals",
+        "pdfUrl": "https://drive.google.com/file/d/1example4/preview",
+        "relatedVideoLink": "https://www.youtube.com/embed/3QhU9jd03a0",
+        "topics": [
+          {
+            "id": "topic-1",
+            "title": "Introduction to Computer Networks",
+            "videoUrl": "https://www.youtube.com/embed/3QhU9jd03a0",
+            "duration": "16:20",
+            "notes": "Basic networking concepts and terminology"
+          },
+          {
+            "id": "topic-2",
+            "title": "Network Topologies",
+            "videoUrl": "https://www.youtube.com/embed/zbqrNg4C98U",
+            "duration": "14:45",
+            "notes": "Bus, Ring, Star, Mesh topologies"
+          }
+        ]
+      },
+      {
+        "id": "module-2",
+        "name": "OSI Model",
+        "pdfUrl": "https://drive.google.com/file/d/1example5/preview",
+        "relatedVideoLink": "https://www.youtube.com/embed/vv4y_uOneC0",
+        "topics": [
+          {
+            "id": "topic-3",
+            "title": "7 Layers of OSI Model",
+            "videoUrl": "https://www.youtube.com/embed/vv4y_uOneC0",
+            "duration": "22:30",
+            "notes": "Physical, Data Link, Network, Transport layers"
+          }
+        ]
+      }
+    ]
+  },
+  "database-management": {
+    "modules": [
+      {
+        "id": "module-1",
+        "name": "Database Fundamentals",
+        "pdfUrl": "https://drive.google.com/file/d/1example6/preview",
+        "relatedVideoLink": "https://www.youtube.com/embed/4Z9KEBexzcM",
+        "topics": [
+          {
+            "id": "topic-1",
+            "title": "Introduction to Databases",
+            "videoUrl": "https://www.youtube.com/embed/4Z9KEBexzcM",
+            "duration": "18:15",
+            "notes": "Database concepts, DBMS vs File systems"
+          }
+        ]
+      }
+    ]
+  },
+  "data-structures": {
+    "modules": [
+      {
+        "id": "module-1",
+        "name": "Linear Data Structures",
+        "pdfUrl": "https://drive.google.com/file/d/1example7/preview",
+        "relatedVideoLink": "https://www.youtube.com/embed/DuDz6B4cqVc",
+        "topics": [
+          {
+            "id": "topic-1",
+            "title": "Arrays and Linked Lists",
+            "videoUrl": "https://www.youtube.com/embed/DuDz6B4cqVc",
+            "duration": "25:40",
+            "notes": "Array operations, linked list implementation"
+          }
+        ]
+      }
+    ]
+  },
+  "software-engineering": {
+    "modules": [
+      {
+        "id": "module-1",
+        "name": "Software Development Life Cycle",
+        "pdfUrl": "https://drive.google.com/file/d/1example8/preview",
+        "relatedVideoLink": "https://www.youtube.com/embed/G-6ThNqKqyA",
+        "topics": [
+          {
+            "id": "topic-1",
+            "title": "SDLC Models",
+            "videoUrl": "https://www.youtube.com/embed/G-6ThNqKqyA",
+            "duration": "20:15",
+            "notes": "Waterfall, Agile, Spiral models"
+          }
+        ]
+      }
+    ]
+  },
+  "machine-learning": {
+    "modules": [
+      {
+        "id": "module-1",
+        "name": "ML Fundamentals",
+        "pdfUrl": "https://drive.google.com/file/d/1example9/preview",
+        "relatedVideoLink": "https://www.youtube.com/embed/aircAruvnKk",
+        "topics": [
+          {
+            "id": "topic-1",
+            "title": "Introduction to Machine Learning",
+            "videoUrl": "https://www.youtube.com/embed/aircAruvnKk",
+            "duration": "19:13",
+            "notes": "ML concepts, supervised vs unsupervised learning"
+          }
+        ]
+      }
+    ]
+  }
+} 
