@@ -1,0 +1,59 @@
+{
+  "features": [
+    {
+      "icon": "🎥",
+      "title": "Video Lectures",
+      "description": "Expert-taught video content covering all topics"
+    },
+    {
+      "icon": "📝",
+      "title": "Study Notes",
+      "description": "Comprehensive notes and revision materials"
+    },
+    {
+      "icon": "📚",
+      "title": "Reference Books",
+      "description": "Curated textbooks and learning resources"
+    },
+    {
+      "icon": "❓",
+      "title": "Practice Questions",
+      "description": "Previous year and important exam questions"
+    }
+  ],
+  "stats": [
+    {
+      "number": "6+",
+      "label": "Core Subjects"
+    },
+    {
+      "number": "920+",
+      "label": "Study Materials"
+    },
+    {
+      "number": "270+",
+      "label": "Video Lectures"
+    },
+    {
+      "number": "1500+",
+      "label": "Practice Questions"
+    }
+  ],
+  "quickAccess": [
+    {
+      "icon": "🎯",
+      "title": "Latest Updates",
+      "description": "New content added this week"
+    },
+    {
+      "icon": "📊",
+      "title": "Progress Tracking",
+      "description": "Monitor your learning journey"
+    },
+    {
+      "icon": "💡",
+      "title": "Study Tips",
+      "description": "Expert recommendations"
+    }
+  ]
+} 

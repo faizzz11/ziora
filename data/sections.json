@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "id": "video-lectures",
+      "title": "Video Lectures",
+      "description": "Comprehensive video content with expert explanations and practical examples",
+      "icon": "📹",
+      "count": "45 Videos",
+      "duration": "32 Hours"
+    },
+    {
+      "id": "notes",
+      "title": "Study Notes",
+      "description": "Detailed study materials and comprehensive notes for quick revision",
+      "icon": "📝",
+      "count": "120 Pages",
+      "duration": "8 Hours"
+    },
+    {
+      "id": "reference-books",
+      "title": "Reference Books",
+      "description": "Curated collection of recommended textbooks and reference materials",
+      "icon": "📚",
+      "count": "15 Books",
+      "duration": "∞ Hours"
+    },
+    {
+      "id": "previous-year-questions",
+      "title": "Previous Year Questions",
+      "description": "Past exam questions with detailed solutions and explanations",
+      "icon": "📄",
+      "count": "500+ Questions",
+      "duration": "20 Hours"
+    },
+    {
+      "id": "important-questions",
+      "title": "Important Questions",
+      "description": "High-priority questions and practice problems for exam preparation",
+      "icon": "⭐",
+      "count": "200+ Questions",
+      "duration": "15 Hours"
+    }
+  ]
+} 
