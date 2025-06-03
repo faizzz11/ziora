@@ -1,0 +1,962 @@
+{
+  "operating-system": {
+    "subjectName": "Operating System",
+    "modules": [
+      {
+        "moduleNo": "1.0",
+        "title": "Introduction to Operating Systems",
+        "questions": [
+          {
+            "question": "What is an Operating System? Explain its functions.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "Differentiate between Batch and Real-time Operating Systems.",
+            "frequency": 2,
+            "repetition": "2nd most repeated"
+          },
+          {
+            "question": "Explain the structure of Operating System with diagram.",
+            "frequency": 3,
+            "repetition": "3rd most repeated"
+          },
+          {
+            "question": "What are system calls? Give examples.",
+            "frequency": 4,
+            "repetition": "One time repeated"
+          },
+          {
+            "question": "Compare CLI and GUI interfaces.",
+            "frequency": 4,
+            "repetition": "One time repeated"
+          }
+        ]
+      },
+      {
+        "moduleNo": "2.0",
+        "title": "Process Management",
+        "questions": [
+          {
+            "question": "What is a Process? Explain Process Control Block (PCB).",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "Explain CPU Scheduling algorithms with examples.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "What is Inter-Process Communication? Explain different methods.",
+            "frequency": 2,
+            "repetition": "2nd most repeated"
+          },
+          {
+            "question": "Differentiate between Process and Thread.",
+            "frequency": 2,
+            "repetition": "2nd most repeated"
+          },
+          {
+            "question": "Explain Critical Section Problem and its solutions.",
+            "frequency": 3,
+            "repetition": "3rd most repeated"
+          },
+          {
+            "question": "What are Semaphores? How do they work?",
+            "frequency": 4,
+            "repetition": "One time repeated"
+          }
+        ]
+      },
+      {
+        "moduleNo": "3.0",
+        "title": "Memory Management",
+        "questions": [
+          {
+            "question": "Explain Paging and Segmentation in detail.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "What is Virtual Memory? Explain its benefits.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "Explain Page Replacement algorithms.",
+            "frequency": 2,
+            "repetition": "2nd most repeated"
+          },
+          {
+            "question": "What is Thrashing? How to prevent it?",
+            "frequency": 3,
+            "repetition": "3rd most repeated"
+          },
+          {
+            "question": "Explain Memory Management Unit (MMU).",
+            "frequency": 4,
+            "repetition": "One time repeated"
+          }
+        ]
+      },
+      {
+        "moduleNo": "4.0",
+        "title": "File System and I/O Management",
+        "questions": [
+          {
+            "question": "Explain File System structure and organization.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "What are different File Allocation methods?",
+            "frequency": 2,
+            "repetition": "2nd most repeated"
+          },
+          {
+            "question": "Explain Disk Scheduling algorithms with examples.",
+            "frequency": 2,
+            "repetition": "2nd most repeated"
+          },
+          {
+            "question": "What is Directory structure? Explain different types.",
+            "frequency": 3,
+            "repetition": "3rd most repeated"
+          },
+          {
+            "question": "Explain I/O Hardware and Application Interface.",
+            "frequency": 4,
+            "repetition": "One time repeated"
+          }
+        ]
+      },
+      {
+        "moduleNo": "5.0",
+        "title": "Deadlocks and Protection",
+        "questions": [
+          {
+            "question": "What is Deadlock? Explain conditions for deadlock.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "Explain Banker's Algorithm for deadlock avoidance.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "What are different methods of deadlock prevention?",
+            "frequency": 2,
+            "repetition": "2nd most repeated"
+          },
+          {
+            "question": "Explain Access Matrix model for protection.",
+            "frequency": 3,
+            "repetition": "3rd most repeated"
+          },
+          {
+            "question": "What are different types of security threats?",
+            "frequency": 4,
+            "repetition": "One time repeated"
+          }
+        ]
+      }
+    ]
+  },
+  "computer-network": {
+    "subjectName": "Computer Network",
+    "modules": [
+      {
+        "moduleNo": "1.0",
+        "title": "Network Fundamentals",
+        "questions": [
+          {
+            "question": "What is Computer Network? Explain different types.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "Compare different Network Topologies.",
+            "frequency": 2,
+            "repetition": "2nd most repeated"
+          },
+          {
+            "question": "Explain functions of Hub, Switch, and Router.",
+            "frequency": 2,
+            "repetition": "2nd most repeated"
+          },
+          {
+            "question": "What is transmission media? Classify them.",
+            "frequency": 3,
+            "repetition": "3rd most repeated"
+          },
+          {
+            "question": "Explain network performance metrics.",
+            "frequency": 4,
+            "repetition": "One time repeated"
+          }
+        ]
+      },
+      {
+        "moduleNo": "2.0",
+        "title": "OSI Reference Model",
+        "questions": [
+          {
+            "question": "Explain OSI Reference Model with all layers.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "Compare OSI and TCP/IP models.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "Explain functions of Transport Layer.",
+            "frequency": 2,
+            "repetition": "2nd most repeated"
+          },
+          {
+            "question": "What is error detection and correction at Data Link Layer?",
+            "frequency": 3,
+            "repetition": "3rd most repeated"
+          },
+          {
+            "question": "Explain routing algorithms in Network Layer.",
+            "frequency": 4,
+            "repetition": "One time repeated"
+          }
+        ]
+      },
+      {
+        "moduleNo": "3.0",
+        "title": "TCP/IP Protocol Suite",
+        "questions": [
+          {
+            "question": "Explain TCP protocol in detail.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "What is IP addressing? Explain subnetting.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "Differentiate between TCP and UDP.",
+            "frequency": 2,
+            "repetition": "2nd most repeated"
+          },
+          {
+            "question": "Explain HTTP protocol with request-response cycle.",
+            "frequency": 3,
+            "repetition": "3rd most repeated"
+          },
+          {
+            "question": "What is ICMP? Explain its functions.",
+            "frequency": 4,
+            "repetition": "One time repeated"
+          }
+        ]
+      },
+      {
+        "moduleNo": "4.0",
+        "title": "Network Security",
+        "questions": [
+          {
+            "question": "What is Cryptography? Explain symmetric and asymmetric encryption.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "Explain different types of network attacks.",
+            "frequency": 2,
+            "repetition": "2nd most repeated"
+          },
+          {
+            "question": "What is Firewall? Explain its types.",
+            "frequency": 2,
+            "repetition": "2nd most repeated"
+          },
+          {
+            "question": "Explain Digital Signatures and Certificates.",
+            "frequency": 3,
+            "repetition": "3rd most repeated"
+          },
+          {
+            "question": "What is VPN? How does it work?",
+            "frequency": 4,
+            "repetition": "One time repeated"
+          }
+        ]
+      },
+      {
+        "moduleNo": "5.0",
+        "title": "Wireless and Mobile Networks",
+        "questions": [
+          {
+            "question": "Explain IEEE 802.11 wireless standards.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "What is Mobile IP? Explain its working.",
+            "frequency": 2,
+            "repetition": "2nd most repeated"
+          },
+          {
+            "question": "Explain Bluetooth technology and its applications.",
+            "frequency": 3,
+            "repetition": "3rd most repeated"
+          },
+          {
+            "question": "What are wireless security issues?",
+            "frequency": 3,
+            "repetition": "3rd most repeated"
+          },
+          {
+            "question": "Explain SNMP for network management.",
+            "frequency": 4,
+            "repetition": "One time repeated"
+          }
+        ]
+      }
+    ]
+  },
+  "database-management": {
+    "subjectName": "Database Management",
+    "modules": [
+      {
+        "moduleNo": "1.0",
+        "title": "Database Fundamentals",
+        "questions": [
+          {
+            "question": "What is Database? Compare Database vs File System.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "Explain Database System Architecture.",
+            "frequency": 2,
+            "repetition": "2nd most repeated"
+          },
+          {
+            "question": "What are different Data Models? Explain each.",
+            "frequency": 2,
+            "repetition": "2nd most repeated"
+          },
+          {
+            "question": "Explain roles of Database Administrator.",
+            "frequency": 3,
+            "repetition": "3rd most repeated"
+          },
+          {
+            "question": "What is Database System Environment?",
+            "frequency": 4,
+            "repetition": "One time repeated"
+          }
+        ]
+      },
+      {
+        "moduleNo": "2.0",
+        "title": "Relational Model and SQL",
+        "questions": [
+          {
+            "question": "Explain Relational Model concepts with examples.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "Write SQL queries for complex operations.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "Explain different types of JOINS with examples.",
+            "frequency": 2,
+            "repetition": "2nd most repeated"
+          },
+          {
+            "question": "What are Views? Explain their advantages.",
+            "frequency": 3,
+            "repetition": "3rd most repeated"
+          },
+          {
+            "question": "Explain Relational Algebra operations.",
+            "frequency": 4,
+            "repetition": "One time repeated"
+          }
+        ]
+      },
+      {
+        "moduleNo": "3.0",
+        "title": "Database Design",
+        "questions": [
+          {
+            "question": "Explain ER Model with diagram and examples.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "What is Normalization? Explain 1NF, 2NF, 3NF.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "Explain Functional Dependencies with examples.",
+            "frequency": 2,
+            "repetition": "2nd most repeated"
+          },
+          {
+            "question": "What is BCNF? When is it needed?",
+            "frequency": 3,
+            "repetition": "3rd most repeated"
+          },
+          {
+            "question": "Explain Enhanced ER Model features.",
+            "frequency": 4,
+            "repetition": "One time repeated"
+          }
+        ]
+      },
+      {
+        "moduleNo": "4.0",
+        "title": "Transaction Management",
+        "questions": [
+          {
+            "question": "What is Transaction? Explain ACID properties.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "Explain Concurrency Control and Locking mechanisms.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "What is Two-Phase Locking Protocol?",
+            "frequency": 2,
+            "repetition": "2nd most repeated"
+          },
+          {
+            "question": "Explain Database Recovery techniques.",
+            "frequency": 3,
+            "repetition": "3rd most repeated"
+          },
+          {
+            "question": "What is Deadlock in databases? How to handle it?",
+            "frequency": 4,
+            "repetition": "One time repeated"
+          }
+        ]
+      },
+      {
+        "moduleNo": "5.0",
+        "title": "Advanced Database Topics",
+        "questions": [
+          {
+            "question": "What is Distributed Database? Explain its advantages.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "Compare SQL and NoSQL databases.",
+            "frequency": 2,
+            "repetition": "2nd most repeated"
+          },
+          {
+            "question": "What is Data Warehousing? Explain its components.",
+            "frequency": 3,
+            "repetition": "3rd most repeated"
+          },
+          {
+            "question": "Explain Database Security and Privacy measures.",
+            "frequency": 4,
+            "repetition": "One time repeated"
+          }
+        ]
+      }
+    ]
+  },
+  "data-structures": {
+    "subjectName": "Data Structures",
+    "modules": [
+      {
+        "moduleNo": "1.0",
+        "title": "Linear Data Structures",
+        "questions": [
+          {
+            "question": "Explain different operations on Arrays with time complexity.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "Compare Singly, Doubly, and Circular Linked Lists.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "Implement Stack using Array and Linked List.",
+            "frequency": 2,
+            "repetition": "2nd most repeated"
+          },
+          {
+            "question": "Explain Queue operations and different types of queues.",
+            "frequency": 2,
+            "repetition": "2nd most repeated"
+          },
+          {
+            "question": "What is Priority Queue? Explain its implementation.",
+            "frequency": 3,
+            "repetition": "3rd most repeated"
+          },
+          {
+            "question": "Explain string matching algorithms.",
+            "frequency": 4,
+            "repetition": "One time repeated"
+          }
+        ]
+      },
+      {
+        "moduleNo": "2.0",
+        "title": "Trees",
+        "questions": [
+          {
+            "question": "Explain Binary Tree traversals with examples.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "What is Binary Search Tree? Explain its operations.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "Explain AVL Trees and rotation operations.",
+            "frequency": 2,
+            "repetition": "2nd most repeated"
+          },
+          {
+            "question": "What are B-Trees? Explain their properties.",
+            "frequency": 3,
+            "repetition": "3rd most repeated"
+          },
+          {
+            "question": "Explain Huffman Coding algorithm.",
+            "frequency": 4,
+            "repetition": "One time repeated"
+          }
+        ]
+      },
+      {
+        "moduleNo": "3.0",
+        "title": "Graphs",
+        "questions": [
+          {
+            "question": "Explain Graph representations and traversal algorithms.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "Explain Dijkstra's shortest path algorithm.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "What is Minimum Spanning Tree? Explain Prim's and Kruskal's algorithms.",
+            "frequency": 2,
+            "repetition": "2nd most repeated"
+          },
+          {
+            "question": "Explain Topological Sorting with examples.",
+            "frequency": 3,
+            "repetition": "3rd most repeated"
+          },
+          {
+            "question": "What is Floyd-Warshall algorithm?",
+            "frequency": 4,
+            "repetition": "One time repeated"
+          }
+        ]
+      },
+      {
+        "moduleNo": "4.0",
+        "title": "Searching and Sorting",
+        "questions": [
+          {
+            "question": "Compare Linear Search and Binary Search algorithms.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "Explain different sorting algorithms with time complexity.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "What is Hashing? Explain collision resolution techniques.",
+            "frequency": 2,
+            "repetition": "2nd most repeated"
+          },
+          {
+            "question": "Compare Merge Sort and Quick Sort algorithms.",
+            "frequency": 3,
+            "repetition": "3rd most repeated"
+          },
+          {
+            "question": "Explain Heap Sort algorithm.",
+            "frequency": 4,
+            "repetition": "One time repeated"
+          }
+        ]
+      },
+      {
+        "moduleNo": "5.0",
+        "title": "Advanced Data Structures",
+        "questions": [
+          {
+            "question": "Explain Heap data structure and its operations.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "What is Disjoint Set? Explain Union-Find operations.",
+            "frequency": 2,
+            "repetition": "2nd most repeated"
+          },
+          {
+            "question": "Explain Trie data structure with applications.",
+            "frequency": 3,
+            "repetition": "3rd most repeated"
+          },
+          {
+            "question": "What are Segment Trees? Explain their usage.",
+            "frequency": 4,
+            "repetition": "One time repeated"
+          }
+        ]
+      }
+    ]
+  },
+  "software-engineering": {
+    "subjectName": "Software Engineering",
+    "modules": [
+      {
+        "moduleNo": "1.0",
+        "title": "Software Development Life Cycle",
+        "questions": [
+          {
+            "question": "Explain different SDLC models with advantages and disadvantages.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "Compare Waterfall and Agile methodologies.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "What is Scrum? Explain its components.",
+            "frequency": 2,
+            "repetition": "2nd most repeated"
+          },
+          {
+            "question": "Explain DevOps and Continuous Integration.",
+            "frequency": 3,
+            "repetition": "3rd most repeated"
+          },
+          {
+            "question": "What is Extreme Programming (XP)?",
+            "frequency": 4,
+            "repetition": "One time repeated"
+          }
+        ]
+      },
+      {
+        "moduleNo": "2.0",
+        "title": "Requirements Engineering",
+        "questions": [
+          {
+            "question": "Explain Requirements Engineering process.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "Differentiate between Functional and Non-functional requirements.",
+            "frequency": 2,
+            "repetition": "2nd most repeated"
+          },
+          {
+            "question": "What are different requirements elicitation techniques?",
+            "frequency": 2,
+            "repetition": "2nd most repeated"
+          },
+          {
+            "question": "Explain requirements validation and verification.",
+            "frequency": 3,
+            "repetition": "3rd most repeated"
+          },
+          {
+            "question": "What is requirements traceability?",
+            "frequency": 4,
+            "repetition": "One time repeated"
+          }
+        ]
+      },
+      {
+        "moduleNo": "3.0",
+        "title": "System Design",
+        "questions": [
+          {
+            "question": "Explain Object-Oriented Design principles.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "What are UML diagrams? Explain different types.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "Explain different Design Patterns with examples.",
+            "frequency": 2,
+            "repetition": "2nd most repeated"
+          },
+          {
+            "question": "What is Architectural Design? Explain design patterns.",
+            "frequency": 3,
+            "repetition": "3rd most repeated"
+          },
+          {
+            "question": "Explain User Interface Design principles.",
+            "frequency": 4,
+            "repetition": "One time repeated"
+          }
+        ]
+      },
+      {
+        "moduleNo": "4.0",
+        "title": "Testing and Quality Assurance",
+        "questions": [
+          {
+            "question": "Explain different levels of software testing.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "Compare Black Box and White Box testing.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "What are test case design techniques?",
+            "frequency": 2,
+            "repetition": "2nd most repeated"
+          },
+          {
+            "question": "Explain Software Quality Models.",
+            "frequency": 3,
+            "repetition": "3rd most repeated"
+          },
+          {
+            "question": "What are quality metrics and reviews?",
+            "frequency": 4,
+            "repetition": "One time repeated"
+          }
+        ]
+      },
+      {
+        "moduleNo": "5.0",
+        "title": "Project Management",
+        "questions": [
+          {
+            "question": "Explain software project planning and estimation techniques.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "What is Risk Management in software projects?",
+            "frequency": 2,
+            "repetition": "2nd most repeated"
+          },
+          {
+            "question": "Explain project scheduling and resource allocation.",
+            "frequency": 3,
+            "repetition": "3rd most repeated"
+          },
+          {
+            "question": "What is Configuration Management?",
+            "frequency": 3,
+            "repetition": "3rd most repeated"
+          },
+          {
+            "question": "Explain software maintenance types.",
+            "frequency": 4,
+            "repetition": "One time repeated"
+          }
+        ]
+      }
+    ]
+  },
+  "machine-learning": {
+    "subjectName": "Machine Learning",
+    "modules": [
+      {
+        "moduleNo": "1.0",
+        "title": "Introduction to Machine Learning",
+        "questions": [
+          {
+            "question": "What is Machine Learning? Explain different types.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "Explain the difference between AI, ML, and Deep Learning.",
+            "frequency": 2,
+            "repetition": "2nd most repeated"
+          },
+          {
+            "question": "What is Data Preprocessing? Explain its importance.",
+            "frequency": 2,
+            "repetition": "2nd most repeated"
+          },
+          {
+            "question": "Explain Overfitting and Underfitting with solutions.",
+            "frequency": 3,
+            "repetition": "3rd most repeated"
+          },
+          {
+            "question": "What are performance evaluation metrics in ML?",
+            "frequency": 4,
+            "repetition": "One time repeated"
+          }
+        ]
+      },
+      {
+        "moduleNo": "2.0",
+        "title": "Supervised Learning",
+        "questions": [
+          {
+            "question": "Explain Linear Regression with mathematical formulation.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "What is Support Vector Machine? Explain kernel trick.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "Explain Decision Trees and Random Forest algorithms.",
+            "frequency": 2,
+            "repetition": "2nd most repeated"
+          },
+          {
+            "question": "What is k-NN algorithm? Explain its working.",
+            "frequency": 3,
+            "repetition": "3rd most repeated"
+          },
+          {
+            "question": "Explain Naive Bayes classifier with examples.",
+            "frequency": 4,
+            "repetition": "One time repeated"
+          }
+        ]
+      },
+      {
+        "moduleNo": "3.0",
+        "title": "Unsupervised Learning",
+        "questions": [
+          {
+            "question": "Explain K-means clustering algorithm with examples.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "What is Principal Component Analysis (PCA)?",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "Compare Hierarchical and K-means clustering.",
+            "frequency": 2,
+            "repetition": "2nd most repeated"
+          },
+          {
+            "question": "Explain DBSCAN clustering algorithm.",
+            "frequency": 3,
+            "repetition": "3rd most repeated"
+          },
+          {
+            "question": "What is Association Rule Mining? Explain Apriori algorithm.",
+            "frequency": 4,
+            "repetition": "One time repeated"
+          }
+        ]
+      },
+      {
+        "moduleNo": "4.0",
+        "title": "Neural Networks and Deep Learning",
+        "questions": [
+          {
+            "question": "Explain Artificial Neural Networks and Backpropagation.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "What are Convolutional Neural Networks (CNN)?",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "Explain Recurrent Neural Networks (RNN) and LSTM.",
+            "frequency": 2,
+            "repetition": "2nd most repeated"
+          },
+          {
+            "question": "What is activation function? Explain different types.",
+            "frequency": 3,
+            "repetition": "3rd most repeated"
+          },
+          {
+            "question": "Explain different Deep Learning frameworks.",
+            "frequency": 4,
+            "repetition": "One time repeated"
+          }
+        ]
+      },
+      {
+        "moduleNo": "5.0",
+        "title": "Advanced Topics",
+        "questions": [
+          {
+            "question": "What is Reinforcement Learning? Explain Q-learning.",
+            "frequency": 1,
+            "repetition": "Most repeated"
+          },
+          {
+            "question": "Explain Natural Language Processing techniques.",
+            "frequency": 2,
+            "repetition": "2nd most repeated"
+          },
+          {
+            "question": "What is Computer Vision? Explain its applications.",
+            "frequency": 3,
+            "repetition": "3rd most repeated"
+          },
+          {
+            "question": "Explain Hyperparameter Tuning techniques.",
+            "frequency": 3,
+            "repetition": "3rd most repeated"
+          },
+          {
+            "question": "What are the ethical considerations in AI and ML?",
+            "frequency": 4,
+            "repetition": "One time repeated"
+          }
+        ]
+      }
+    ]
+  }
+} 

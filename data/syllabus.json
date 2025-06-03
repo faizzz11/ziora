@@ -1,0 +1,431 @@
+{
+  "operating-system": {
+    "subjectName": "Operating System",
+    "totalHours": 48,
+    "modules": [
+      {
+        "moduleNo": "1.0",
+        "title": "Introduction to Operating Systems",
+        "hours": 8,
+        "topics": [
+          "What is an Operating System?",
+          "Types of Operating Systems: Batch, Interactive, Real-time",
+          "Operating System Structure and Components",
+          "System Calls and System Programs",
+          "Operating System Services",
+          "User Interface: CLI vs GUI"
+        ]
+      },
+      {
+        "moduleNo": "2.0", 
+        "title": "Process Management",
+        "hours": 12,
+        "topics": [
+          "Process Concept and Process Control Block (PCB)",
+          "Process States and Process Scheduling",
+          "Context Switching and Process Creation",
+          "Inter-Process Communication (IPC)",
+          "Threads: Single vs Multi-threading",
+          "CPU Scheduling Algorithms: FCFS, SJF, Priority, Round Robin",
+          "Synchronization: Critical Section Problem",
+          "Semaphores and Monitors"
+        ]
+      },
+      {
+        "moduleNo": "3.0",
+        "title": "Memory Management", 
+        "hours": 10,
+        "topics": [
+          "Memory Management Strategies",
+          "Contiguous Memory Allocation",
+          "Paging and Page Tables",
+          "Segmentation and Segmentation with Paging",
+          "Virtual Memory Concepts",
+          "Demand Paging and Page Replacement",
+          "Thrashing and Working Set Model"
+        ]
+      },
+      {
+        "moduleNo": "4.0",
+        "title": "File System and I/O Management",
+        "hours": 10,
+        "topics": [
+          "File System Interface and Implementation",
+          "Directory Structure and File Allocation Methods",
+          "Free Space Management",
+          "File System Performance and Recovery",
+          "I/O Hardware and Application Interface",
+          "Kernel I/O Subsystem",
+          "Disk Scheduling Algorithms"
+        ]
+      },
+      {
+        "moduleNo": "5.0",
+        "title": "Deadlocks and Protection",
+        "hours": 8,
+        "topics": [
+          "Deadlock Characterization and Prevention",
+          "Deadlock Avoidance: Banker's Algorithm",
+          "Deadlock Detection and Recovery",
+          "Protection Goals and Principles",
+          "Access Matrix and Access Control",
+          "Security Threats and Program Threats"
+        ]
+      }
+    ]
+  },
+  "computer-network": {
+    "subjectName": "Computer Network",
+    "totalHours": 45,
+    "modules": [
+      {
+        "moduleNo": "1.0",
+        "title": "Network Fundamentals",
+        "hours": 9,
+        "topics": [
+          "Introduction to Computer Networks",
+          "Network Types: LAN, MAN, WAN",
+          "Network Topologies: Bus, Ring, Star, Mesh",
+          "Network Components: Hubs, Switches, Routers",
+          "Transmission Media: Guided and Unguided",
+          "Network Performance Metrics"
+        ]
+      },
+      {
+        "moduleNo": "2.0",
+        "title": "OSI Reference Model",
+        "hours": 8,
+        "topics": [
+          "Seven Layers of OSI Model",
+          "Physical Layer: Functions and Standards",
+          "Data Link Layer: Error Detection and Correction",
+          "Network Layer: Routing Algorithms",
+          "Transport Layer: TCP and UDP",
+          "Session, Presentation, and Application Layers"
+        ]
+      },
+      {
+        "moduleNo": "3.0",
+        "title": "TCP/IP Protocol Suite",
+        "hours": 10,
+        "topics": [
+          "Internet Protocol (IP) and IP Addressing",
+          "Subnetting and CIDR",
+          "Address Resolution Protocol (ARP)",
+          "Internet Control Message Protocol (ICMP)",
+          "Transmission Control Protocol (TCP)",
+          "User Datagram Protocol (UDP)",
+          "Application Layer Protocols: HTTP, FTP, SMTP"
+        ]
+      },
+      {
+        "moduleNo": "4.0",
+        "title": "Network Security",
+        "hours": 9,
+        "topics": [
+          "Security Threats and Attacks",
+          "Cryptography: Symmetric and Asymmetric",
+          "Digital Signatures and Certificates",
+          "Firewalls and Intrusion Detection",
+          "Virtual Private Networks (VPN)",
+          "Network Security Protocols"
+        ]
+      },
+      {
+        "moduleNo": "5.0",
+        "title": "Wireless and Mobile Networks",
+        "hours": 9,
+        "topics": [
+          "Wireless Network Standards: 802.11",
+          "Mobile IP and Cellular Networks",
+          "Bluetooth and Ad-hoc Networks",
+          "Wireless Security Issues",
+          "Network Management and SNMP"
+        ]
+      }
+    ]
+  },
+  "database-management": {
+    "subjectName": "Database Management",
+    "totalHours": 42,
+    "modules": [
+      {
+        "moduleNo": "1.0",
+        "title": "Database Fundamentals",
+        "hours": 8,
+        "topics": [
+          "Introduction to Database Systems",
+          "Database vs File System",
+          "Database System Architecture",
+          "Data Models: Hierarchical, Network, Relational",
+          "Database Users and Database Administrator",
+          "Database System Environment"
+        ]
+      },
+      {
+        "moduleNo": "2.0",
+        "title": "Relational Model and SQL",
+        "hours": 12,
+        "topics": [
+          "Relational Model Concepts",
+          "Relational Algebra Operations",
+          "SQL: Data Definition Language (DDL)",
+          "SQL: Data Manipulation Language (DML)",
+          "Complex Queries and Subqueries",
+          "Joins: Inner, Outer, Cross Joins",
+          "Views and Indexes"
+        ]
+      },
+      {
+        "moduleNo": "3.0",
+        "title": "Database Design",
+        "hours": 10,
+        "topics": [
+          "Entity-Relationship (ER) Model",
+          "ER Diagrams and Enhanced ER Model",
+          "Functional Dependencies",
+          "Normalization: 1NF, 2NF, 3NF, BCNF",
+          "Denormalization and Design Guidelines",
+          "Physical Database Design"
+        ]
+      },
+      {
+        "moduleNo": "4.0",
+        "title": "Transaction Management",
+        "hours": 8,
+        "topics": [
+          "Transaction Concepts and ACID Properties",
+          "Concurrency Control Techniques",
+          "Locking Protocols: 2PL, Strict 2PL",
+          "Deadlock Detection and Prevention",
+          "Recovery Techniques",
+          "Log-based Recovery"
+        ]
+      },
+      {
+        "moduleNo": "5.0",
+        "title": "Advanced Database Topics",
+        "hours": 4,
+        "topics": [
+          "Distributed Database Systems",
+          "NoSQL Databases",
+          "Data Warehousing and Data Mining",
+          "Database Security and Privacy"
+        ]
+      }
+    ]
+  },
+  "data-structures": {
+    "subjectName": "Data Structures",
+    "totalHours": 45,
+    "modules": [
+      {
+        "moduleNo": "1.0",
+        "title": "Linear Data Structures",
+        "hours": 12,
+        "topics": [
+          "Arrays: Operations and Applications",
+          "Linked Lists: Singly, Doubly, Circular",
+          "Stacks: Implementation and Applications",
+          "Queues: Simple, Circular, Priority Queues",
+          "Deque and Multiple Stacks",
+          "String Processing Algorithms"
+        ]
+      },
+      {
+        "moduleNo": "2.0",
+        "title": "Trees",
+        "hours": 10,
+        "topics": [
+          "Tree Terminology and Representations",
+          "Binary Trees and Binary Tree Traversals",
+          "Binary Search Trees (BST)",
+          "AVL Trees and Rotations",
+          "B-Trees and B+ Trees",
+          "Huffman Coding Trees"
+        ]
+      },
+      {
+        "moduleNo": "3.0",
+        "title": "Graphs",
+        "hours": 8,
+        "topics": [
+          "Graph Terminology and Representations",
+          "Graph Traversals: DFS and BFS",
+          "Shortest Path Algorithms: Dijkstra, Floyd-Warshall",
+          "Minimum Spanning Tree: Kruskal, Prim",
+          "Topological Sorting",
+          "Graph Applications"
+        ]
+      },
+      {
+        "moduleNo": "4.0",
+        "title": "Searching and Sorting",
+        "hours": 8,
+        "topics": [
+          "Linear Search and Binary Search",
+          "Hashing: Hash Functions and Collision Resolution",
+          "Sorting Algorithms: Bubble, Selection, Insertion",
+          "Advanced Sorting: Merge Sort, Quick Sort, Heap Sort",
+          "Radix Sort and Bucket Sort",
+          "Sorting Algorithm Analysis"
+        ]
+      },
+      {
+        "moduleNo": "5.0",
+        "title": "Advanced Data Structures",
+        "hours": 7,
+        "topics": [
+          "Heaps and Priority Queues",
+          "Disjoint Sets and Union-Find",
+          "Trie Data Structure",
+          "Segment Trees and Fenwick Trees",
+          "Dynamic Programming with Data Structures"
+        ]
+      }
+    ]
+  },
+  "software-engineering": {
+    "subjectName": "Software Engineering",
+    "totalHours": 45,
+    "modules": [
+      {
+        "moduleNo": "1.0",
+        "title": "Software Development Life Cycle",
+        "hours": 9,
+        "topics": [
+          "Introduction to Software Engineering",
+          "Software Development Life Cycle Models",
+          "Waterfall Model and its Variants",
+          "Iterative and Incremental Models",
+          "Agile Methodologies: Scrum, XP",
+          "DevOps and Continuous Integration"
+        ]
+      },
+      {
+        "moduleNo": "2.0",
+        "title": "Requirements Engineering",
+        "hours": 8,
+        "topics": [
+          "Requirements Elicitation Techniques",
+          "Functional and Non-functional Requirements",
+          "Requirements Analysis and Validation",
+          "Requirements Documentation",
+          "Requirements Traceability",
+          "Change Management"
+        ]
+      },
+      {
+        "moduleNo": "3.0",
+        "title": "System Design",
+        "hours": 10,
+        "topics": [
+          "System Design Principles",
+          "Architectural Design Patterns",
+          "Object-Oriented Design",
+          "UML Diagrams: Class, Sequence, Use Case",
+          "Design Patterns: Creational, Structural, Behavioral",
+          "User Interface Design"
+        ]
+      },
+      {
+        "moduleNo": "4.0",
+        "title": "Testing and Quality Assurance",
+        "hours": 9,
+        "topics": [
+          "Software Testing Fundamentals",
+          "Testing Levels: Unit, Integration, System",
+          "Black Box and White Box Testing",
+          "Test Case Design Techniques",
+          "Software Quality Models",
+          "Quality Metrics and Reviews"
+        ]
+      },
+      {
+        "moduleNo": "5.0",
+        "title": "Project Management",
+        "hours": 9,
+        "topics": [
+          "Software Project Planning",
+          "Effort Estimation Techniques",
+          "Project Scheduling and Resource Allocation",
+          "Risk Management",
+          "Configuration Management",
+          "Software Maintenance"
+        ]
+      }
+    ]
+  },
+  "machine-learning": {
+    "subjectName": "Machine Learning", 
+    "totalHours": 48,
+    "modules": [
+      {
+        "moduleNo": "1.0",
+        "title": "Introduction to Machine Learning",
+        "hours": 8,
+        "topics": [
+          "Introduction to AI and Machine Learning",
+          "Types of Machine Learning: Supervised, Unsupervised, Reinforcement",
+          "Machine Learning Applications",
+          "Data Preprocessing and Feature Engineering",
+          "Performance Evaluation Metrics",
+          "Overfitting and Underfitting"
+        ]
+      },
+      {
+        "moduleNo": "2.0",
+        "title": "Supervised Learning",
+        "hours": 12,
+        "topics": [
+          "Linear Regression and Polynomial Regression",
+          "Logistic Regression and Classification",
+          "Decision Trees and Random Forest",
+          "Support Vector Machines (SVM)",
+          "k-Nearest Neighbors (k-NN)",
+          "Naive Bayes Classifier",
+          "Ensemble Methods: Bagging, Boosting"
+        ]
+      },
+      {
+        "moduleNo": "3.0",
+        "title": "Unsupervised Learning",
+        "hours": 10,
+        "topics": [
+          "Clustering Algorithms: K-means, Hierarchical",
+          "DBSCAN and Gaussian Mixture Models",
+          "Principal Component Analysis (PCA)",
+          "Association Rule Mining",
+          "Anomaly Detection",
+          "Dimensionality Reduction Techniques"
+        ]
+      },
+      {
+        "moduleNo": "4.0",
+        "title": "Neural Networks and Deep Learning",
+        "hours": 10,
+        "topics": [
+          "Artificial Neural Networks (ANN)",
+          "Backpropagation Algorithm",
+          "Convolutional Neural Networks (CNN)",
+          "Recurrent Neural Networks (RNN)",
+          "Long Short-Term Memory (LSTM)",
+          "Deep Learning Frameworks"
+        ]
+      },
+      {
+        "moduleNo": "5.0",
+        "title": "Advanced Topics",
+        "hours": 8,
+        "topics": [
+          "Reinforcement Learning Basics",
+          "Natural Language Processing (NLP)",
+          "Computer Vision Applications",
+          "Model Selection and Hyperparameter Tuning",
+          "Ethics in AI and Machine Learning",
+          "Future Trends in ML"
+        ]
+      }
+    ]
+  }
+} 

@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import Navbar from "@/components/animate-ui/Navbar";
 import Footer from "@/components/landing/Footer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -47,7 +48,7 @@ const sectionData: { [key: string]: { title: string; icon: string; description: 
     color: 'bg-purple-50 border-purple-200'
   },
   'important-questions': {
-    title: 'Important Questions',
+    title: 'Syllabus & Important Questions',
     icon: '⭐',
     description: 'Carefully selected important questions for exam preparation.',
     color: 'bg-yellow-50 border-yellow-200'
@@ -56,6 +57,12 @@ const sectionData: { [key: string]: { title: string; icon: string; description: 
 
 export default async function SectionPage({ params }: SectionPageProps) {
   const { subjectName, section } = await params;
+  
+  // Redirect important-questions to syllabus-important-questions
+  if (section === 'important-questions') {
+    redirect(`/subject/${subjectName}/syllabus-important-questions`);
+  }
+  
   const subject = subjectData[subjectName];
   const sectionInfo = sectionData[section];
 
@@ -203,9 +210,9 @@ export default async function SectionPage({ params }: SectionPageProps) {
                         className={`block p-3 rounded-lg transition-colors ${section === 'previous-year-questions' ? 'bg-purple-50 text-purple-700' : 'hover:bg-gray-50'}`}>
                     📄 Previous Year Questions
                   </Link>
-                  <Link href={`/subject/${subjectName}/important-questions`} 
+                  <Link href={`/subject/${subjectName}/syllabus-important-questions`} 
                         className={`block p-3 rounded-lg transition-colors ${section === 'important-questions' ? 'bg-yellow-50 text-yellow-700' : 'hover:bg-gray-50'}`}>
-                    ⭐ Important Questions
+                    ⭐ Syllabus & Important Questions
                   </Link>
                 </CardContent>
               </Card>
