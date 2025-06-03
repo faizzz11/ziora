@@ -156,7 +156,7 @@ function FAQ() {
 
     return (
         
-            <div className="container px-4 mx-auto max-w-4xl">
+            <div className="container px-4 mx-auto mb-16 max-w-4xl">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}

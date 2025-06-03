@@ -5,6 +5,7 @@ import WebsiteTour from "@/components/landing/WebsiteTour";
 import Bento from "@/components/landing/Bento";
 import PlatformInAction from "@/components/landing/PlatformInAction";
 import FAQ from "@/components/landing/FAQ";
+import Footer from "@/components/landing/Footer";
 
 export default function Home() {
   return (
@@ -15,6 +16,7 @@ export default function Home() {
       <Bento />
       <PlatformInAction />
       <FAQ />
+      <Footer />
   </div>
   );
 }
