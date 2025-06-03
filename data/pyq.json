@@ -1,0 +1,136 @@
+{
+  "operating-system": {
+    "subjectName": "Operating System",
+    "papers": [
+      {
+        "id": "may-2024",
+        "title": "May 2024",
+        "year": "2024",
+        "month": "May",
+        "fileName": "operating-system-may-2024.pdf",
+        "imagePreview": "/PYQ-img/operating-system-may-2024.jpg"
+      },
+      {
+        "id": "dec-2023",
+        "title": "December 2023",
+        "year": "2023",
+        "month": "December",
+        "fileName": "operating-system-dec-2023.pdf",
+        "imagePreview": "/PYQ-img/operating-system-dec-2023.jpg"
+      },
+      {
+        "id": "may-2023",
+        "title": "May 2023",
+        "year": "2023",
+        "month": "May",
+        "fileName": "operating-system-may-2023.pdf",
+        "imagePreview": "/PYQ-img/operating-system-may-2023.jpg"
+      },
+      {
+        "id": "dec-2022",
+        "title": "December 2022",
+        "year": "2022",
+        "month": "December",
+        "fileName": "operating-system-dec-2022.pdf",
+        "imagePreview": "/PYQ-img/operating-system-dec-2022.jpg"
+      }
+    ]
+  },
+  "computer-network": {
+    "subjectName": "Computer Network",
+    "papers": [
+      {
+        "id": "may-2024",
+        "title": "May 2024",
+        "year": "2024",
+        "month": "May",
+        "fileName": "computer-network-may-2024.pdf",
+        "imagePreview": "/PYQ-img/computer-network-may-2024.jpg"
+      },
+      {
+        "id": "dec-2023",
+        "title": "December 2023",
+        "year": "2023",
+        "month": "December",
+        "fileName": "computer-network-dec-2023.pdf",
+        "imagePreview": "/PYQ-img/computer-network-dec-2023.jpg"
+      },
+      {
+        "id": "may-2023",
+        "title": "May 2023",
+        "year": "2023",
+        "month": "May",
+        "fileName": "computer-network-may-2023.pdf",
+        "imagePreview": "/PYQ-img/computer-network-may-2023.jpg"
+      }
+    ]
+  },
+  "database-management": {
+    "subjectName": "Database Management",
+    "papers": [
+      {
+        "id": "may-2024",
+        "title": "May 2024",
+        "year": "2024",
+        "month": "May",
+        "fileName": "database-management-may-2024.pdf",
+        "imagePreview": "/PYQ-img/database-management-may-2024.jpg"
+      },
+      {
+        "id": "dec-2023",
+        "title": "December 2023",
+        "year": "2023",
+        "month": "December",
+        "fileName": "database-management-dec-2023.pdf",
+        "imagePreview": "/PYQ-img/database-management-dec-2023.jpg"
+      }
+    ]
+  },
+  "data-structures": {
+    "subjectName": "Data Structures",
+    "papers": [
+      {
+        "id": "may-2024",
+        "title": "May 2024",
+        "year": "2024",
+        "month": "May",
+        "fileName": "data-structures-may-2024.pdf",
+        "imagePreview": "/PYQ-img/data-structures-may-2024.jpg"
+      },
+      {
+        "id": "dec-2023",
+        "title": "December 2023",
+        "year": "2023",
+        "month": "December",
+        "fileName": "data-structures-dec-2023.pdf",
+        "imagePreview": "/PYQ-img/data-structures-dec-2023.jpg"
+      }
+    ]
+  },
+  "software-engineering": {
+    "subjectName": "Software Engineering",
+    "papers": [
+      {
+        "id": "may-2024",
+        "title": "May 2024",
+        "year": "2024",
+        "month": "May",
+        "fileName": "software-engineering-may-2024.pdf",
+        "imagePreview": "/PYQ-img/software-engineering-may-2024.jpg"
+      }
+    ]
+  },
+  "machine-learning": {
+    "subjectName": "Machine Learning",
+    "papers": [
+      {
+        "id": "may-2024",
+        "title": "May 2024",
+        "year": "2024",
+        "month": "May",
+        "fileName": "machine-learning-may-2024.pdf",
+        "imagePreview": "/PYQ-img/machine-learning-may-2024.jpg"
+      }
+    ]
+  }
+} 
