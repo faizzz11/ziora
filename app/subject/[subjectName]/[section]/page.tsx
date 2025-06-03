@@ -35,9 +35,9 @@ const sectionData: { [key: string]: { title: string; icon: string; description: 
     color: 'bg-blue-50 border-blue-200'
   },
   'reference-books': {
-    title: 'Reference Books',
+    title: 'Practicals Code & Lab Manual',
     icon: '📚',
-    description: 'Curated collection of the best textbooks and reference materials.',
+    description: 'Detailed study materials and comprehensive code & lab manuals for easy understanding and learning',
     color: 'bg-green-50 border-green-200'
   },
   'previous-year-questions': {
@@ -197,7 +197,7 @@ export default async function SectionPage({ params }: SectionPageProps) {
                   </Link>
                   <Link href={`/subject/${subjectName}/reference-books`} 
                         className={`block p-3 rounded-lg transition-colors ${section === 'reference-books' ? 'bg-green-50 text-green-700' : 'hover:bg-gray-50'}`}>
-                    📚 Reference Books
+                    📚 oks
                   </Link>
                   <Link href={`/subject/${subjectName}/previous-year-questions`} 
                         className={`block p-3 rounded-lg transition-colors ${section === 'previous-year-questions' ? 'bg-purple-50 text-purple-700' : 'hover:bg-gray-50'}`}>

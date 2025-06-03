@@ -120,6 +120,38 @@ Contains video lectures and notes data for each subject, organized by modules an
 - `/subject/[subjectName]/video-lectures` - Uses topics for individual video playback
 - `/subject/[subjectName]/notes` - Uses modules for PDF notes display
 
+### pyq.json
+Contains previous year question papers data for each subject.
+
+**Structure:**
+```json
+{
+  "subject-id": {
+    "subjectName": "Subject Display Name",
+    "papers": [
+      {
+        "id": "unique-paper-id",
+        "title": "Display Title (e.g., May 2024)",
+        "year": "YYYY",
+        "month": "Month Name",
+        "fileName": "filename.pdf",
+        "imagePreview": "/PYQ-img/preview-image.jpg"
+      }
+    ]
+  }
+}
+```
+
+**Key Fields:**
+- `id`: Unique identifier for the paper (e.g., "may-2024")
+- `title`: Display title shown in dropdown
+- `year`: Year of the question paper
+- `month`: Month when the exam was conducted
+- `fileName`: PDF filename stored in `/public/PYQ-img/` folder
+- `imagePreview`: Preview image path for the question paper
+
+**Used in:** `/subject/[subjectName]/previous-year-questions` - Displays question papers with dropdown selection
+
 ## Page Functionality
 
 ### Video Lectures Page
@@ -136,12 +168,20 @@ Contains video lectures and notes data for each subject, organized by modules an
 - **Sidebar:** Module selection with topic count and availability indicators
 - **Comments:** Discussion section specific to module notes
 
+### Previous Year Questions Page
+- **Dropdown Selection:** Choose from available question papers by year/month
+- **Paper Preview:** Image preview of the selected question paper
+- **Zoom Functionality:** Click on paper to zoom in/out for better readability
+- **Full Screen:** Button to open complete PDF in new tab
+- **Download:** Direct download of the PDF question paper
+- **Professional Layout:** Clean design matching website theme
+
 ## Adding New Content
 
 ### Adding a New Subject
 1. Add subject entry to `subjects.json`
-2. Add corresponding entry to `videos.json` with modules and topics
-3. Ensure the subject ID matches between both files
+2. Add corresponding entries to `videos.json` and `pyq.json` with modules/papers
+3. Ensure the subject ID matches across all files
 
 ### Adding Video Content
 1. Upload video to YouTube
@@ -151,9 +191,68 @@ Contains video lectures and notes data for each subject, organized by modules an
 
 ### Adding PDF Notes
 1. Upload PDF to Google Drive
-2. Set sharing to "Anyone with the link can view"
-3. Get the preview URL (format: `https://drive.google.com/file/d/FILE_ID/preview`)
-4. Add `pdfUrl` field to the module in `videos.json`
+2. **Important:** Set sharing permissions correctly:
+   - Right-click the PDF file in Google Drive
+   - Click "Share"
+   - Click "Change to anyone with the link"
+   - Select "Viewer" permissions
+   - Click "Copy link"
+3. Convert the sharing URL to preview format:
+   - **Sharing URL:** `https://drive.google.com/file/d/FILE_ID/view?usp=sharing`
+   - **Preview URL for embedding:** `https://drive.google.com/file/d/FILE_ID/preview`
+4. Add the preview URL to the `pdfUrl` field in the module in `videos.json`
+
+### Adding Previous Year Question Papers
+1. **Prepare Files:**
+   - PDF file of the question paper
+   - Preview image (JPG/PNG) of the first page or cover
+   
+2. **File Naming Convention:**
+   - PDF: `subject-month-year.pdf` (e.g., `operating-system-may-2024.pdf`)
+   - Image: `subject-month-year.jpg` (e.g., `operating-system-may-2024.jpg`)
+   
+3. **Upload Files:**
+   - Place both files in `/public/PYQ-img/` folder
+   - Ensure file names match exactly
+   
+4. **Update JSON:**
+   - Add entry to `pyq.json` under the appropriate subject
+   - Use correct file paths: `/PYQ-img/filename`
+   
+5. **Example Entry:**
+```json
+{
+  "id": "may-2024",
+  "title": "May 2024",
+  "year": "2024", 
+  "month": "May",
+  "fileName": "operating-system-may-2024.pdf",
+  "imagePreview": "/PYQ-img/operating-system-may-2024.jpg"
+}
+```
+
+### Google Drive PDF Setup (Important!)
+To avoid 403 errors when embedding PDFs:
+
+1. **File Permissions:**
+   - File must be shared with "Anyone with the link can view"
+   - Must NOT be restricted to specific people or organizations
+   - Must NOT require sign-in to view
+
+2. **URL Format:**
+   - ✅ **Correct:** `https://drive.google.com/file/d/FILE_ID/preview`
+   - ❌ **Wrong:** `https://drive.google.com/file/d/FILE_ID/view`
+   - ❌ **Wrong:** `https://drive.google.com/file/d/FILE_ID/edit`
+
+3. **Troubleshooting 403 Errors:**
+   - Check if the file sharing is set to "Anyone with the link"
+   - Ensure you're using `/preview` not `/view` in the URL
+   - Try opening the preview URL directly in a browser to test
+   - The PDF should be accessible without requiring Google sign-in
+
+4. **File Size Limitations:**
+   - Very large PDFs (>25MB) might not preview properly
+   - Consider compressing large PDF files before uploading
 
 ### YouTube URL Formats
 - **For individual topics:** `https://www.youtube.com/embed/VIDEO_ID`
@@ -170,6 +269,9 @@ Contains video lectures and notes data for each subject, organized by modules an
 3. **Descriptions:** Keep topic notes concise but informative
 4. **PDF Quality:** Ensure PDFs are high quality and readable when embedded
 5. **Testing:** Always test new URLs before adding to production data
+6. **PDF Sharing:** Double-check Google Drive sharing permissions to avoid 403 errors
+7. **PYQ Images:** Use high-quality preview images for better user experience
+8. **File Organization:** Keep consistent naming conventions for easy management
 
 ## File Dependencies
 
@@ -178,5 +280,6 @@ Contains video lectures and notes data for each subject, organized by modules an
 - **sections.json** → Used by individual subject pages
 - **features.json** → Used by landing page
 - **content.json** → Used by landing page
+- **pyq.json** → Used by previous year questions pages
 
 Make sure to maintain consistency across these files, especially with subject IDs and naming conventions. 
