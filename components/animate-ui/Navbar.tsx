@@ -3,6 +3,7 @@
 import React from 'react';
 import { Moon, Sun, User, Menu, X } from 'lucide-react';
 import { useTheme } from 'next-themes';
+import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -23,10 +24,10 @@ const Navbar = () => {
   }, []);
 
   const navLinks = [
-    { name: 'Home', href: '#home' },
-    { name: 'About', href: '#about' },
-    { name: 'Courses', href: '#courses' },
-    { name: 'Contact', href: '#contact' },
+    { name: 'Home', href: '/' },
+    { name: 'Browse Subjects', href: '/select' },
+    { name: 'Resources', href: '/select' },
+    { name: 'About', href: '/about' },
   ];
 
   const toggleMobileMenu = () => {
@@ -66,9 +67,11 @@ const Navbar = () => {
           {/* Right Side - Login & Theme Toggle */}
           <div className="hidden md:flex items-center space-x-4">
             {/* Login Button */}
-            <Button variant="ghost" size="lg" className="flex items-center space-x-2">
-              <User className="h-4 w-4" />
-              <span>Login</span>
+            <Button variant="ghost" size="lg" asChild className="flex items-center space-x-2">
+              <Link href="/login">
+                <User className="h-4 w-4" />
+                <span>Login</span>
+              </Link>
             </Button>
 
             {/* Theme Toggle */}
@@ -97,8 +100,10 @@ const Navbar = () => {
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center space-x-2">
             {/* Mobile Login Button */}
-            <Button variant="ghost" size="sm" className="p-2">
-              <User className="h-4 w-4" />
+            <Button variant="ghost" size="sm" asChild className="p-2">
+              <Link href="/login">
+                <User className="h-4 w-4" />
+              </Link>
             </Button>
 
             {/* Mobile Theme Toggle */}
@@ -154,9 +159,11 @@ const Navbar = () => {
                 </a>
               ))}
               <div className="px-3 py-2">
-                <Button variant="outline" size="sm" className="w-full flex items-center justify-center space-x-2">
-                  <User className="h-4 w-4" />
-                  <span>Login</span>
+                <Button variant="outline" size="sm" asChild className="w-full flex items-center justify-center space-x-2">
+                  <Link href="/login">
+                    <User className="h-4 w-4" />
+                    <span>Login</span>
+                  </Link>
                 </Button>
               </div>
             </div>

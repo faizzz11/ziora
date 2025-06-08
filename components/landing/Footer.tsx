@@ -8,41 +8,41 @@ const Footer = () => {
     {
       title: "Platform",
       links: [
-        { name: "Video Lectures", href: "#" },
-        { name: "Notes & Materials", href: "#" },
-        { name: "Practice Tests", href: "#" },
-        { name: "PYQs", href: "#" },
-        { name: "Live Classes", href: "#" },
+        { name: "Video Lectures", href: "/select" },
+        { name: "Notes & Materials", href: "/select" },
+        { name: "Practicals & Lab Manual", href: "/select" },
+        { name: "Previous Year Questions", href: "/select" },
+        { name: "Important Questions", href: "/select" },
       ]
     },
     {
-      title: "Subjects",
+      title: "Engineering Subjects",
       links: [
-        { name: "Mathematics", href: "#" },
-        { name: "Physics", href: "#" },
-        { name: "Chemistry", href: "#" },
-        { name: "Biology", href: "#" },
-        { name: "Computer Science", href: "#" },
+        { name: "Computer Engineering", href: "/select" },
+        { name: "Electrical Engineering", href: "/select" },
+        { name: "Mechanical Engineering", href: "/select" },
+        { name: "Civil Engineering", href: "/select" },
+        { name: "Electronics & Telecom", href: "/select" },
       ]
     },
     {
-      title: "Resources",
+      title: "Popular Subjects",
       links: [
-        { name: "Study Guides", href: "#" },
-        { name: "Exam Calendar", href: "#" },
-        { name: "Discussion Forum", href: "#" },
-        { name: "Mobile App", href: "#" },
+        { name: "Operating System", href: "/select" },
+        { name: "Database Management", href: "/select" },
+        { name: "Computer Networks", href: "/select" },
+        { name: "Data Structures", href: "/select" },
+        { name: "Software Engineering", href: "/select" },
+      ]
+    },
+    {
+      title: "Support",
+      links: [
         { name: "Help Center", href: "#" },
-      ]
-    },
-    {
-      title: "Company",
-      links: [
-        { name: "About Us", href: "#" },
-        { name: "Careers", href: "#" },
-        { name: "Contact", href: "#" },
-        { name: "Blog", href: "#" },
-        { name: "Press", href: "#" },
+        { name: "Contact Us", href: "#" },
+        { name: "Student Forum", href: "#" },
+        { name: "Technical Support", href: "#" },
+        { name: "Feedback", href: "#" },
       ]
     }
   ];

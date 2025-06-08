@@ -1,0 +1,1410 @@
+{
+  "branches": {
+    "first-year": {
+      "name": "First Year (All Branches)",
+      "semesters": {
+        "1": [
+          {
+            "id": "eng-maths-1",
+            "name": "Engineering Mathematics 1",
+            "code": "EM1",
+            "credits": 4,
+            "description": "Differential calculus, integral calculus, and matrices"
+          },
+          {
+            "id": "eng-physics-1",
+            "name": "Engineering Physics 1",
+            "code": "EP1",
+            "credits": 4,
+            "description": "Mechanics, wave motion, and thermodynamics"
+          },
+          {
+            "id": "eng-mechanics",
+            "name": "Engineering Mechanics",
+            "code": "EME",
+            "credits": 4,
+            "description": "Statics, dynamics, and strength of materials"
+          },
+          {
+            "id": "bee",
+            "name": "Basic Electrical Engineering",
+            "code": "BEE",
+            "credits": 4,
+            "description": "DC circuits, AC circuits, and electrical machines"
+          },
+          {
+            "id": "eng-chemistry-1",
+            "name": "Engineering Chemistry 1",
+            "code": "EC1",
+            "credits": 4,
+            "description": "Atomic structure, chemical bonding, and thermochemistry"
+          }
+        ],
+        "2": [
+          {
+            "id": "eng-maths-2",
+            "name": "Engineering Mathematics 2",
+            "code": "EM2",
+            "credits": 4,
+            "description": "Differential equations, Laplace transforms, and vector calculus"
+          },
+          {
+            "id": "eng-physics-2",
+            "name": "Engineering Physics 2",
+            "code": "EP2",
+            "credits": 4,
+            "description": "Electromagnetism, optics, and modern physics"
+          },
+          {
+            "id": "eng-chemistry-2",
+            "name": "Engineering Chemistry 2",
+            "code": "EC2",
+            "credits": 4,
+            "description": "Electrochemistry, corrosion, and polymer chemistry"
+          },
+          {
+            "id": "engineering-graphics",
+            "name": "Engineering Graphics",
+            "code": "EG",
+            "credits": 3,
+            "description": "Technical drawing, projections, and CAD fundamentals"
+          },
+          {
+            "id": "c-programming",
+            "name": "C Programming",
+            "code": "CP",
+            "credits": 4,
+            "description": "Programming fundamentals, data structures in C"
+          },
+          {
+            "id": "pce",
+            "name": "Professional Communication and Ethics",
+            "code": "PCE",
+            "credits": 2,
+            "description": "Communication skills and professional ethics"
+          }
+        ]
+      }
+    },
+    "computer-engineering": {
+      "name": "Computer Engineering",
+      "semesters": {
+        "3": [
+          {
+            "id": "eng-maths-3",
+            "name": "Engineering Mathematics 3",
+            "code": "EM3",
+            "credits": 4,
+            "description": "Complex analysis, Fourier series, and partial differential equations"
+          },
+          {
+            "id": "discrete-structure",
+            "name": "Discrete Structure and Graph Theory",
+            "code": "DSGT",
+            "credits": 4,
+            "description": "Set theory, graph theory, and combinatorics"
+          },
+          {
+            "id": "data-structure",
+            "name": "Data Structure",
+            "code": "DS",
+            "credits": 4,
+            "description": "Linear and non-linear data structures, algorithms"
+          },
+          {
+            "id": "dlcoa",
+            "name": "Digital Logic and Computer Organization",
+            "code": "DLCOA",
+            "credits": 4,
+            "description": "Digital circuits, computer architecture, and assembly language"
+          },
+          {
+            "id": "computer-graphics",
+            "name": "Computer Graphics",
+            "code": "CG",
+            "credits": 4,
+            "description": "2D/3D graphics, rendering techniques, and OpenGL"
+          }
+        ],
+        "4": [
+          {
+            "id": "eng-maths-4",
+            "name": "Engineering Mathematics 4",
+            "code": "EM4",
+            "credits": 4,
+            "description": "Probability, statistics, and numerical methods"
+          },
+          {
+            "id": "analysis-algorithm",
+            "name": "Analysis of Algorithm",
+            "code": "AOA",
+            "credits": 4,
+            "description": "Algorithm design, complexity analysis, and optimization"
+          },
+          {
+            "id": "database-management",
+            "name": "Database Management System",
+            "code": "DBMS",
+            "credits": 4,
+            "description": "Database design, SQL, and transaction management"
+          },
+          {
+            "id": "operating-system",
+            "name": "Operating System",
+            "code": "OS",
+            "credits": 4,
+            "description": "Process management, memory management, and file systems"
+          },
+          {
+            "id": "microprocessor",
+            "name": "Microprocessor",
+            "code": "MP",
+            "credits": 4,
+            "description": "8086/8051 microprocessors and interfacing"
+          }
+        ],
+        "5": [
+          {
+            "id": "theoretical-cs",
+            "name": "Theoretical Computer Science",
+            "code": "TCS",
+            "credits": 4,
+            "description": "Automata theory, formal languages, and computability"
+          },
+          {
+            "id": "software-engineering",
+            "name": "Software Engineering",
+            "code": "SE",
+            "credits": 4,
+            "description": "SDLC, design patterns, and project management"
+          },
+          {
+            "id": "computer-network",
+            "name": "Computer Network",
+            "code": "CN",
+            "credits": 4,
+            "description": "Network protocols, TCP/IP, and network security"
+          },
+          {
+            "id": "data-warehouse",
+            "name": "Data Warehouse and Mining",
+            "code": "DWM",
+            "credits": 4,
+            "description": "Data warehousing concepts and data mining techniques"
+          },
+          {
+            "id": "internet-programming",
+            "name": "Internet Programming",
+            "code": "IP",
+            "credits": 4,
+            "description": "Web technologies, HTML, CSS, JavaScript, and server-side programming"
+          }
+        ],
+        "6": [
+          {
+            "id": "spcc",
+            "name": "System Programming and Compiler Construction",
+            "code": "SPCC",
+            "credits": 4,
+            "description": "Compilers, interpreters, and system programming"
+          },
+          {
+            "id": "css",
+            "name": "Cryptography and System Security",
+            "code": "CSS",
+            "credits": 4,
+            "description": "Encryption algorithms, security protocols, and system security"
+          },
+          {
+            "id": "mobile-computing",
+            "name": "Mobile Computing",
+            "code": "MC",
+            "credits": 4,
+            "description": "Mobile app development, Android/iOS platforms"
+          },
+          {
+            "id": "artificial-intelligence",
+            "name": "Artificial Intelligence",
+            "code": "AI",
+            "credits": 4,
+            "description": "AI algorithms, expert systems, and knowledge representation"
+          },
+          {
+            "id": "iot",
+            "name": "Internet of Things",
+            "code": "IoT",
+            "credits": 4,
+            "description": "IoT architecture, sensors, and embedded systems"
+          }
+        ],
+        "7": [
+          {
+            "id": "machine-learning",
+            "name": "Machine Learning",
+            "code": "ML",
+            "credits": 4,
+            "description": "ML algorithms, neural networks, and deep learning"
+          },
+          {
+            "id": "big-data",
+            "name": "Big Data Analytics",
+            "code": "BDA",
+            "credits": 4,
+            "description": "Hadoop, Spark, and big data processing techniques"
+          },
+          {
+            "id": "nlp",
+            "name": "Natural Language Processing",
+            "code": "NLP",
+            "credits": 4,
+            "description": "Text processing, language models, and NLP applications"
+          },
+          {
+            "id": "quantum-computing",
+            "name": "Quantum Computing",
+            "code": "QC",
+            "credits": 4,
+            "description": "Quantum algorithms, qubits, and quantum programming"
+          },
+          {
+            "id": "cyber-security",
+            "name": "Cyber Security and Laws",
+            "code": "CSL",
+            "credits": 4,
+            "description": "Cybersecurity frameworks, ethical hacking, and cyber laws"
+          }
+        ],
+        "8": [
+          {
+            "id": "hmi",
+            "name": "Human Machine Interaction",
+            "code": "HMI",
+            "credits": 4,
+            "description": "UI/UX design, usability testing, and interaction design"
+          },
+          {
+            "id": "distributed-computing",
+            "name": "Distributed Computing",
+            "code": "DC",
+            "credits": 4,
+            "description": "Distributed systems, cloud computing, and parallel processing"
+          },
+          {
+            "id": "advanced-algorithm",
+            "name": "Advanced Algorithm",
+            "code": "AA",
+            "credits": 4,
+            "description": "Advanced algorithmic techniques and optimization"
+          },
+          {
+            "id": "advanced-database",
+            "name": "Advanced Database System",
+            "code": "ADB",
+            "credits": 4,
+            "description": "NoSQL databases, distributed databases, and data analytics"
+          }
+        ]
+      }
+    },
+    "electrical-engineering": {
+      "name": "Electrical Engineering",
+      "semesters": {
+        "3": [
+          {
+            "id": "eng-maths-3-ee",
+            "name": "Engineering Mathematics 3",
+            "code": "EM3",
+            "credits": 4,
+            "description": "Complex analysis, Fourier series, and partial differential equations"
+          },
+          {
+            "id": "circuit-analysis",
+            "name": "Circuit Analysis",
+            "code": "CA",
+            "credits": 4,
+            "description": "AC/DC circuit analysis, network theorems, and resonance"
+          },
+          {
+            "id": "electrical-machines-1",
+            "name": "Electrical Machines 1",
+            "code": "EM1",
+            "credits": 4,
+            "description": "DC machines, transformers, and three-phase systems"
+          },
+          {
+            "id": "electronic-devices",
+            "name": "Electronic Devices and Circuits",
+            "code": "EDC",
+            "credits": 4,
+            "description": "Semiconductor devices, amplifiers, and oscillators"
+          },
+          {
+            "id": "digital-electronics",
+            "name": "Digital Electronics",
+            "code": "DE",
+            "credits": 4,
+            "description": "Logic gates, flip-flops, and digital systems"
+          }
+        ],
+        "4": [
+          {
+            "id": "eng-maths-4-ee",
+            "name": "Engineering Mathematics 4",
+            "code": "EM4",
+            "credits": 4,
+            "description": "Probability, statistics, and numerical methods"
+          },
+          {
+            "id": "electrical-machines-2",
+            "name": "Electrical Machines 2",
+            "code": "EM2",
+            "credits": 4,
+            "description": "Induction motors, synchronous machines, and motor control"
+          },
+          {
+            "id": "power-electronics",
+            "name": "Power Electronics",
+            "code": "PE",
+            "credits": 4,
+            "description": "Power semiconductor devices and converter circuits"
+          },
+          {
+            "id": "control-systems",
+            "name": "Control Systems",
+            "code": "CS",
+            "credits": 4,
+            "description": "Feedback control, stability analysis, and controller design"
+          },
+          {
+            "id": "signals-systems",
+            "name": "Signals and Systems",
+            "code": "SS",
+            "credits": 4,
+            "description": "Signal analysis, Fourier transforms, and system analysis"
+          }
+        ],
+        "5": [
+          {
+            "id": "power-systems-1",
+            "name": "Power Systems 1",
+            "code": "PS1",
+            "credits": 4,
+            "description": "Power generation, transmission lines, and load flow analysis"
+          },
+          {
+            "id": "microprocessors-ee",
+            "name": "Microprocessors and Microcontrollers",
+            "code": "MM",
+            "credits": 4,
+            "description": "8085/8051 microprocessors and embedded systems"
+          },
+          {
+            "id": "electrical-measurements",
+            "name": "Electrical Measurements",
+            "code": "EM",
+            "credits": 4,
+            "description": "Measurement techniques, instruments, and data acquisition"
+          },
+          {
+            "id": "power-system-protection",
+            "name": "Power System Protection",
+            "code": "PSP",
+            "credits": 4,
+            "description": "Protective relays, fault analysis, and system protection"
+          },
+          {
+            "id": "renewable-energy",
+            "name": "Renewable Energy Systems",
+            "code": "RES",
+            "credits": 4,
+            "description": "Solar, wind, and other renewable energy technologies"
+          }
+        ],
+        "6": [
+          {
+            "id": "power-systems-2",
+            "name": "Power Systems 2",
+            "code": "PS2",
+            "credits": 4,
+            "description": "Power system stability, economic operation, and FACTS"
+          },
+          {
+            "id": "electric-drives",
+            "name": "Electric Drives",
+            "code": "ED",
+            "credits": 4,
+            "description": "Motor drives, speed control, and drive applications"
+          },
+          {
+            "id": "high-voltage",
+            "name": "High Voltage Engineering",
+            "code": "HVE",
+            "credits": 4,
+            "description": "High voltage phenomena, insulation, and testing"
+          },
+          {
+            "id": "power-quality",
+            "name": "Power Quality",
+            "code": "PQ",
+            "credits": 4,
+            "description": "Power quality issues, harmonics, and mitigation techniques"
+          },
+          {
+            "id": "industrial-automation",
+            "name": "Industrial Automation",
+            "code": "IA",
+            "credits": 4,
+            "description": "PLC, SCADA, and industrial control systems"
+          }
+        ],
+        "7": [
+          {
+            "id": "smart-grid",
+            "name": "Smart Grid Technology",
+            "code": "SGT",
+            "credits": 4,
+            "description": "Smart grid concepts, AMI, and grid modernization"
+          },
+          {
+            "id": "energy-management",
+            "name": "Energy Management",
+            "code": "EM",
+            "credits": 4,
+            "description": "Energy auditing, conservation, and management systems"
+          },
+          {
+            "id": "power-system-economics",
+            "name": "Power System Economics",
+            "code": "PSE",
+            "credits": 4,
+            "description": "Electricity markets, pricing, and economic analysis"
+          },
+          {
+            "id": "electric-vehicles",
+            "name": "Electric Vehicles",
+            "code": "EV",
+            "credits": 4,
+            "description": "EV technology, charging systems, and grid integration"
+          },
+          {
+            "id": "power-system-dynamics",
+            "name": "Power System Dynamics",
+            "code": "PSD",
+            "credits": 4,
+            "description": "Transient analysis, stability studies, and dynamic modeling"
+          }
+        ],
+        "8": [
+          {
+            "id": "advanced-power-electronics",
+            "name": "Advanced Power Electronics",
+            "code": "APE",
+            "credits": 4,
+            "description": "Advanced converter topologies and applications"
+          },
+          {
+            "id": "power-system-planning",
+            "name": "Power System Planning",
+            "code": "PSP",
+            "credits": 4,
+            "description": "Generation and transmission planning methodologies"
+          },
+          {
+            "id": "electrical-safety",
+            "name": "Electrical Safety",
+            "code": "ES",
+            "credits": 4,
+            "description": "Electrical hazards, safety standards, and protection"
+          },
+          {
+            "id": "distributed-generation",
+            "name": "Distributed Generation",
+            "code": "DG",
+            "credits": 4,
+            "description": "DG technologies, grid integration, and microgrids"
+          }
+        ]
+      }
+    },
+    "mechanical-engineering": {
+      "name": "Mechanical Engineering",
+      "semesters": {
+        "3": [
+          {
+            "id": "eng-maths-3-me",
+            "name": "Engineering Mathematics 3",
+            "code": "EM3",
+            "credits": 4,
+            "description": "Complex analysis, Fourier series, and partial differential equations"
+          },
+          {
+            "id": "strength-materials",
+            "name": "Strength of Materials",
+            "code": "SOM",
+            "credits": 4,
+            "description": "Stress, strain, bending, and torsion analysis"
+          },
+          {
+            "id": "thermodynamics",
+            "name": "Thermodynamics",
+            "code": "TD",
+            "credits": 4,
+            "description": "Laws of thermodynamics, cycles, and energy systems"
+          },
+          {
+            "id": "fluid-mechanics",
+            "name": "Fluid Mechanics",
+            "code": "FM",
+            "credits": 4,
+            "description": "Fluid statics, dynamics, and flow analysis"
+          },
+          {
+            "id": "manufacturing-processes",
+            "name": "Manufacturing Processes",
+            "code": "MP",
+            "credits": 4,
+            "description": "Casting, forming, machining, and joining processes"
+          }
+        ],
+        "4": [
+          {
+            "id": "eng-maths-4-me",
+            "name": "Engineering Mathematics 4",
+            "code": "EM4",
+            "credits": 4,
+            "description": "Probability, statistics, and numerical methods"
+          },
+          {
+            "id": "theory-machines",
+            "name": "Theory of Machines",
+            "code": "TOM",
+            "credits": 4,
+            "description": "Kinematics, dynamics of machines, and mechanisms"
+          },
+          {
+            "id": "heat-transfer",
+            "name": "Heat Transfer",
+            "code": "HT",
+            "credits": 4,
+            "description": "Conduction, convection, and radiation heat transfer"
+          },
+          {
+            "id": "machine-design",
+            "name": "Machine Design",
+            "code": "MD",
+            "credits": 4,
+            "description": "Design of machine elements and mechanical systems"
+          },
+          {
+            "id": "material-science",
+            "name": "Material Science and Metallurgy",
+            "code": "MSM",
+            "credits": 4,
+            "description": "Material properties, phase diagrams, and heat treatment"
+          }
+        ],
+        "5": [
+          {
+            "id": "ic-engines",
+            "name": "Internal Combustion Engines",
+            "code": "ICE",
+            "credits": 4,
+            "description": "Engine cycles, combustion, and performance analysis"
+          },
+          {
+            "id": "refrigeration",
+            "name": "Refrigeration and Air Conditioning",
+            "code": "RAC",
+            "credits": 4,
+            "description": "Refrigeration cycles, psychrometrics, and HVAC systems"
+          },
+          {
+            "id": "production-management",
+            "name": "Production Management",
+            "code": "PM",
+            "credits": 4,
+            "description": "Production planning, inventory control, and quality management"
+          },
+          {
+            "id": "turbomachinery",
+            "name": "Turbomachinery",
+            "code": "TM",
+            "credits": 4,
+            "description": "Pumps, compressors, turbines, and their applications"
+          },
+          {
+            "id": "automobile-engineering",
+            "name": "Automobile Engineering",
+            "code": "AE",
+            "credits": 4,
+            "description": "Vehicle systems, chassis, and automotive technology"
+          }
+        ],
+        "6": [
+          {
+            "id": "power-plant",
+            "name": "Power Plant Engineering",
+            "code": "PPE",
+            "credits": 4,
+            "description": "Steam, gas, nuclear, and renewable power plants"
+          },
+          {
+            "id": "cad-cam",
+            "name": "CAD/CAM",
+            "code": "CAD",
+            "credits": 4,
+            "description": "Computer-aided design and manufacturing systems"
+          },
+          {
+            "id": "mechatronics",
+            "name": "Mechatronics",
+            "code": "MEC",
+            "credits": 4,
+            "description": "Integration of mechanical, electrical, and computer systems"
+          },
+          {
+            "id": "industrial-engineering",
+            "name": "Industrial Engineering",
+            "code": "IE",
+            "credits": 4,
+            "description": "Work study, facility layout, and industrial management"
+          },
+          {
+            "id": "finite-element",
+            "name": "Finite Element Method",
+            "code": "FEM",
+            "credits": 4,
+            "description": "Numerical analysis and simulation techniques"
+          }
+        ],
+        "7": [
+          {
+            "id": "advanced-manufacturing",
+            "name": "Advanced Manufacturing Technology",
+            "code": "AMT",
+            "credits": 4,
+            "description": "CNC, robotics, and flexible manufacturing systems"
+          },
+          {
+            "id": "renewable-energy-me",
+            "name": "Renewable Energy Systems",
+            "code": "RES",
+            "credits": 4,
+            "description": "Solar, wind, and alternative energy technologies"
+          },
+          {
+            "id": "optimization",
+            "name": "Optimization Techniques",
+            "code": "OT",
+            "credits": 4,
+            "description": "Linear programming, optimization algorithms, and applications"
+          },
+          {
+            "id": "project-management",
+            "name": "Project Management",
+            "code": "PM",
+            "credits": 4,
+            "description": "Project planning, scheduling, and cost control"
+          },
+          {
+            "id": "vibrations",
+            "name": "Mechanical Vibrations",
+            "code": "MV",
+            "credits": 4,
+            "description": "Free and forced vibrations, modal analysis"
+          }
+        ],
+        "8": [
+          {
+            "id": "robotics",
+            "name": "Robotics and Automation",
+            "code": "RA",
+            "credits": 4,
+            "description": "Robot kinematics, dynamics, and control systems"
+          },
+          {
+            "id": "advanced-materials",
+            "name": "Advanced Materials",
+            "code": "AM",
+            "credits": 4,
+            "description": "Composites, nanomaterials, and smart materials"
+          },
+          {
+            "id": "maintenance-engineering",
+            "name": "Maintenance Engineering",
+            "code": "ME",
+            "credits": 4,
+            "description": "Preventive maintenance, reliability, and condition monitoring"
+          },
+          {
+            "id": "energy-systems",
+            "name": "Energy Systems Engineering",
+            "code": "ESE",
+            "credits": 4,
+            "description": "Energy conversion, storage, and management systems"
+          }
+        ]
+      }
+    },
+    "civil-engineering": {
+      "name": "Civil Engineering",
+      "semesters": {
+        "3": [
+          {
+            "id": "eng-maths-3-ce",
+            "name": "Engineering Mathematics 3",
+            "code": "EM3",
+            "credits": 4,
+            "description": "Complex analysis, Fourier series, and partial differential equations"
+          },
+          {
+            "id": "building-materials",
+            "name": "Building Materials and Construction",
+            "code": "BMC",
+            "credits": 4,
+            "description": "Construction materials, properties, and building techniques"
+          },
+          {
+            "id": "structural-analysis-1",
+            "name": "Structural Analysis 1",
+            "code": "SA1",
+            "credits": 4,
+            "description": "Analysis of determinate structures and influence lines"
+          },
+          {
+            "id": "fluid-mechanics-ce",
+            "name": "Fluid Mechanics",
+            "code": "FM",
+            "credits": 4,
+            "description": "Fluid properties, hydrostatics, and flow analysis"
+          },
+          {
+            "id": "surveying",
+            "name": "Surveying",
+            "code": "SUR",
+            "credits": 4,
+            "description": "Land surveying, leveling, and mapping techniques"
+          }
+        ],
+        "4": [
+          {
+            "id": "eng-maths-4-ce",
+            "name": "Engineering Mathematics 4",
+            "code": "EM4",
+            "credits": 4,
+            "description": "Probability, statistics, and numerical methods"
+          },
+          {
+            "id": "structural-analysis-2",
+            "name": "Structural Analysis 2",
+            "code": "SA2",
+            "credits": 4,
+            "description": "Analysis of indeterminate structures and matrix methods"
+          },
+          {
+            "id": "geotechnical-engineering",
+            "name": "Geotechnical Engineering",
+            "code": "GTE",
+            "credits": 4,
+            "description": "Soil mechanics, foundation design, and earth structures"
+          },
+          {
+            "id": "concrete-technology",
+            "name": "Concrete Technology",
+            "code": "CT",
+            "credits": 4,
+            "description": "Concrete mix design, testing, and quality control"
+          },
+          {
+            "id": "engineering-geology",
+            "name": "Engineering Geology",
+            "code": "EG",
+            "credits": 4,
+            "description": "Rock and soil formation, geological mapping"
+          }
+        ],
+        "5": [
+          {
+            "id": "design-concrete-structures",
+            "name": "Design of Concrete Structures",
+            "code": "DCS",
+            "credits": 4,
+            "description": "RCC design, beams, columns, and slabs"
+          },
+          {
+            "id": "water-resources",
+            "name": "Water Resources Engineering",
+            "code": "WRE",
+            "credits": 4,
+            "description": "Hydrology, irrigation, and water management"
+          },
+          {
+            "id": "highway-engineering",
+            "name": "Highway Engineering",
+            "code": "HE",
+            "credits": 4,
+            "description": "Road design, pavement, and traffic engineering"
+          },
+          {
+            "id": "environmental-engineering-1",
+            "name": "Environmental Engineering 1",
+            "code": "EE1",
+            "credits": 4,
+            "description": "Water supply, treatment, and distribution systems"
+          },
+          {
+            "id": "construction-management",
+            "name": "Construction Management",
+            "code": "CM",
+            "credits": 4,
+            "description": "Project planning, scheduling, and cost estimation"
+          }
+        ],
+        "6": [
+          {
+            "id": "design-steel-structures",
+            "name": "Design of Steel Structures",
+            "code": "DSS",
+            "credits": 4,
+            "description": "Steel design, connections, and structural systems"
+          },
+          {
+            "id": "environmental-engineering-2",
+            "name": "Environmental Engineering 2",
+            "code": "EE2",
+            "credits": 4,
+            "description": "Wastewater treatment and solid waste management"
+          },
+          {
+            "id": "advanced-surveying",
+            "name": "Advanced Surveying",
+            "code": "AS",
+            "credits": 4,
+            "description": "GPS, GIS, and remote sensing applications"
+          },
+          {
+            "id": "earthquake-engineering",
+            "name": "Earthquake Engineering",
+            "code": "EE",
+            "credits": 4,
+            "description": "Seismic analysis and earthquake-resistant design"
+          },
+          {
+            "id": "quantity-surveying",
+            "name": "Quantity Surveying",
+            "code": "QS",
+            "credits": 4,
+            "description": "Cost estimation, contracts, and project economics"
+          }
+        ],
+        "7": [
+          {
+            "id": "advanced-concrete-design",
+            "name": "Advanced Concrete Design",
+            "code": "ACD",
+            "credits": 4,
+            "description": "Prestressed concrete and advanced design concepts"
+          },
+          {
+            "id": "infrastructure-engineering",
+            "name": "Infrastructure Engineering",
+            "code": "IE",
+            "credits": 4,
+            "description": "Urban infrastructure and smart city planning"
+          },
+          {
+            "id": "structural-dynamics",
+            "name": "Structural Dynamics",
+            "code": "SD",
+            "credits": 4,
+            "description": "Dynamic analysis of structures and vibrations"
+          },
+          {
+            "id": "pavement-design",
+            "name": "Pavement Design",
+            "code": "PD",
+            "credits": 4,
+            "description": "Flexible and rigid pavement design methods"
+          },
+          {
+            "id": "water-treatment",
+            "name": "Advanced Water Treatment",
+            "code": "AWT",
+            "credits": 4,
+            "description": "Advanced treatment technologies and processes"
+          }
+        ],
+        "8": [
+          {
+            "id": "structural-rehabilitation",
+            "name": "Structural Rehabilitation",
+            "code": "SR",
+            "credits": 4,
+            "description": "Repair, strengthening, and retrofitting of structures"
+          },
+          {
+            "id": "bridge-engineering",
+            "name": "Bridge Engineering",
+            "code": "BE",
+            "credits": 4,
+            "description": "Bridge design, construction, and maintenance"
+          },
+          {
+            "id": "green-building",
+            "name": "Green Building Technology",
+            "code": "GBT",
+            "credits": 4,
+            "description": "Sustainable construction and green building systems"
+          },
+          {
+            "id": "disaster-management",
+            "name": "Disaster Management",
+            "code": "DM",
+            "credits": 4,
+            "description": "Natural disaster mitigation and emergency planning"
+          }
+        ]
+      }
+    },
+    "electronics-telecommunications": {
+      "name": "Electronics and Telecommunications",
+      "semesters": {
+        "3": [
+          {
+            "id": "eng-maths-3-extc",
+            "name": "Engineering Mathematics 3",
+            "code": "EM3",
+            "credits": 4,
+            "description": "Complex analysis, Fourier series, and partial differential equations"
+          },
+          {
+            "id": "electronic-devices-extc",
+            "name": "Electronic Devices and Circuits",
+            "code": "EDC",
+            "credits": 4,
+            "description": "Semiconductor devices, amplifiers, and oscillators"
+          },
+          {
+            "id": "digital-circuits",
+            "name": "Digital Circuits and Design",
+            "code": "DCD",
+            "credits": 4,
+            "description": "Logic design, combinational and sequential circuits"
+          },
+          {
+            "id": "network-analysis",
+            "name": "Network Analysis and Synthesis",
+            "code": "NAS",
+            "credits": 4,
+            "description": "Circuit analysis, network theorems, and filter design"
+          },
+          {
+            "id": "electromagnetic-theory",
+            "name": "Electromagnetic Engineering",
+            "code": "EME",
+            "credits": 4,
+            "description": "Maxwell's equations, wave propagation, and antennas"
+          }
+        ],
+        "4": [
+          {
+            "id": "eng-maths-4-extc",
+            "name": "Engineering Mathematics 4",
+            "code": "EM4",
+            "credits": 4,
+            "description": "Probability, statistics, and numerical methods"
+          },
+          {
+            "id": "linear-integrated-circuits",
+            "name": "Linear Integrated Circuits",
+            "code": "LIC",
+            "credits": 4,
+            "description": "Op-amps, analog circuits, and IC applications"
+          },
+          {
+            "id": "signals-systems-extc",
+            "name": "Signals and Systems",
+            "code": "SS",
+            "credits": 4,
+            "description": "Signal analysis, Fourier transforms, and system analysis"
+          },
+          {
+            "id": "microprocessors-extc",
+            "name": "Microprocessors and Microcontrollers",
+            "code": "MM",
+            "credits": 4,
+            "description": "8085/8051 architecture and embedded programming"
+          },
+          {
+            "id": "communication-principles",
+            "name": "Principles of Communication",
+            "code": "POC",
+            "credits": 4,
+            "description": "Analog and digital modulation techniques"
+          }
+        ],
+        "5": [
+          {
+            "id": "digital-signal-processing",
+            "name": "Digital Signal Processing",
+            "code": "DSP",
+            "credits": 4,
+            "description": "Digital filters, FFT, and DSP applications"
+          },
+          {
+            "id": "communication-networks",
+            "name": "Communication Networks",
+            "code": "CN",
+            "credits": 4,
+            "description": "Network protocols, switching, and routing"
+          },
+          {
+            "id": "antenna-wave-propagation",
+            "name": "Antenna and Wave Propagation",
+            "code": "AWP",
+            "credits": 4,
+            "description": "Antenna theory, radiation patterns, and propagation"
+          },
+          {
+            "id": "control-systems-extc",
+            "name": "Control Systems",
+            "code": "CS",
+            "credits": 4,
+            "description": "Feedback control, stability analysis, and design"
+          },
+          {
+            "id": "information-theory",
+            "name": "Information Theory and Coding",
+            "code": "ITC",
+            "credits": 4,
+            "description": "Information theory, error control coding, and cryptography"
+          }
+        ],
+        "6": [
+          {
+            "id": "digital-communication",
+            "name": "Digital Communication",
+            "code": "DC",
+            "credits": 4,
+            "description": "Digital modulation, error correction, and channel coding"
+          },
+          {
+            "id": "microwave-engineering",
+            "name": "Microwave Engineering",
+            "code": "ME",
+            "credits": 4,
+            "description": "Microwave components, systems, and measurements"
+          },
+          {
+            "id": "vlsi-design",
+            "name": "VLSI Design",
+            "code": "VLSI",
+            "credits": 4,
+            "description": "Digital IC design, layout, and fabrication"
+          },
+          {
+            "id": "embedded-systems",
+            "name": "Embedded Systems",
+            "code": "ES",
+            "credits": 4,
+            "description": "Embedded programming, RTOS, and IoT applications"
+          },
+          {
+            "id": "optical-communication",
+            "name": "Optical Communication",
+            "code": "OC",
+            "credits": 4,
+            "description": "Fiber optics, optical devices, and communication systems"
+          }
+        ],
+        "7": [
+          {
+            "id": "wireless-communication",
+            "name": "Wireless Communication",
+            "code": "WC",
+            "credits": 4,
+            "description": "Cellular systems, wireless standards, and mobile communication"
+          },
+          {
+            "id": "rf-microwave",
+            "name": "RF and Microwave Circuit Design",
+            "code": "RFMW",
+            "credits": 4,
+            "description": "RF circuit design, matching networks, and amplifiers"
+          },
+          {
+            "id": "satellite-communication",
+            "name": "Satellite Communication",
+            "code": "SC",
+            "credits": 4,
+            "description": "Satellite systems, link design, and applications"
+          },
+          {
+            "id": "image-processing",
+            "name": "Digital Image Processing",
+            "code": "DIP",
+            "credits": 4,
+            "description": "Image enhancement, filtering, and computer vision"
+          },
+          {
+            "id": "biomedical-electronics",
+            "name": "Biomedical Electronics",
+            "code": "BME",
+            "credits": 4,
+            "description": "Medical instruments, biosensors, and healthcare systems"
+          }
+        ],
+        "8": [
+          {
+            "id": "advanced-communication",
+            "name": "Advanced Communication Systems",
+            "code": "ACS",
+            "credits": 4,
+            "description": "5G/6G networks, MIMO systems, and future technologies"
+          },
+          {
+            "id": "radar-systems",
+            "name": "Radar and Navigation Systems",
+            "code": "RNS",
+            "credits": 4,
+            "description": "Radar principles, GPS, and navigation technologies"
+          },
+          {
+            "id": "speech-processing",
+            "name": "Speech and Audio Processing",
+            "code": "SAP",
+            "credits": 4,
+            "description": "Speech recognition, audio coding, and multimedia systems"
+          },
+          {
+            "id": "network-security",
+            "name": "Network Security",
+            "code": "NS",
+            "credits": 4,
+            "description": "Cryptography, network security protocols, and cybersecurity"
+          }
+        ]
+      }
+    },
+    "information-technology": {
+      "name": "Information Technology",
+      "semesters": {
+        "3": [
+          {
+            "id": "eng-maths-3-it",
+            "name": "Engineering Mathematics 3",
+            "code": "EM3",
+            "credits": 4,
+            "description": "Complex analysis, Fourier series, and partial differential equations"
+          },
+          {
+            "id": "discrete-mathematics-it",
+            "name": "Discrete Mathematics",
+            "code": "DM",
+            "credits": 4,
+            "description": "Set theory, graph theory, and mathematical logic"
+          },
+          {
+            "id": "data-structures-it",
+            "name": "Data Structures",
+            "code": "DS",
+            "credits": 4,
+            "description": "Linear and non-linear data structures, algorithms"
+          },
+          {
+            "id": "digital-logic-it",
+            "name": "Digital Logic Design",
+            "code": "DLD",
+            "credits": 4,
+            "description": "Logic gates, combinational and sequential circuits"
+          },
+          {
+            "id": "object-oriented-programming",
+            "name": "Object Oriented Programming",
+            "code": "OOP",
+            "credits": 4,
+            "description": "OOP concepts, Java/C++ programming, and design patterns"
+          }
+        ],
+        "4": [
+          {
+            "id": "eng-maths-4-it",
+            "name": "Engineering Mathematics 4",
+            "code": "EM4",
+            "credits": 4,
+            "description": "Probability, statistics, and numerical methods"
+          },
+          {
+            "id": "algorithm-analysis-it",
+            "name": "Analysis of Algorithms",
+            "code": "AOA",
+            "credits": 4,
+            "description": "Algorithm design, complexity analysis, and optimization"
+          },
+          {
+            "id": "database-systems-it",
+            "name": "Database Management Systems",
+            "code": "DBMS",
+            "credits": 4,
+            "description": "Database design, SQL, and transaction management"
+          },
+          {
+            "id": "computer-organization-it",
+            "name": "Computer Organization and Architecture",
+            "code": "COA",
+            "credits": 4,
+            "description": "Computer architecture, instruction sets, and performance"
+          },
+          {
+            "id": "operating-systems-it",
+            "name": "Operating Systems",
+            "code": "OS",
+            "credits": 4,
+            "description": "Process management, memory management, and file systems"
+          }
+        ],
+        "5": [
+          {
+            "id": "software-engineering-it",
+            "name": "Software Engineering",
+            "code": "SE",
+            "credits": 4,
+            "description": "SDLC, design patterns, and project management"
+          },
+          {
+            "id": "computer-networks-it",
+            "name": "Computer Networks",
+            "code": "CN",
+            "credits": 4,
+            "description": "Network protocols, TCP/IP, and network security"
+          },
+          {
+            "id": "web-programming",
+            "name": "Web Programming",
+            "code": "WP",
+            "credits": 4,
+            "description": "HTML, CSS, JavaScript, and server-side programming"
+          },
+          {
+            "id": "information-systems",
+            "name": "Management Information Systems",
+            "code": "MIS",
+            "credits": 4,
+            "description": "Business systems, ERP, and information management"
+          },
+          {
+            "id": "data-mining-it",
+            "name": "Data Mining and Warehousing",
+            "code": "DMW",
+            "credits": 4,
+            "description": "Data warehousing concepts and mining techniques"
+          }
+        ],
+        "6": [
+          {
+            "id": "system-security",
+            "name": "System and Web Security",
+            "code": "SWS",
+            "credits": 4,
+            "description": "Security protocols, web security, and cryptography"
+          },
+          {
+            "id": "mobile-application",
+            "name": "Mobile Application Development",
+            "code": "MAD",
+            "credits": 4,
+            "description": "Android/iOS development and mobile technologies"
+          },
+          {
+            "id": "enterprise-java",
+            "name": "Enterprise Java Programming",
+            "code": "EJP",
+            "credits": 4,
+            "description": "J2EE, servlets, JSP, and enterprise applications"
+          },
+          {
+            "id": "software-testing",
+            "name": "Software Testing",
+            "code": "ST",
+            "credits": 4,
+            "description": "Testing methodologies, automation, and quality assurance"
+          },
+          {
+            "id": "artificial-intelligence-it",
+            "name": "Artificial Intelligence",
+            "code": "AI",
+            "credits": 4,
+            "description": "AI algorithms, expert systems, and machine learning basics"
+          }
+        ],
+        "7": [
+          {
+            "id": "cloud-computing",
+            "name": "Cloud Computing",
+            "code": "CC",
+            "credits": 4,
+            "description": "Cloud platforms, virtualization, and distributed systems"
+          },
+          {
+            "id": "big-data-analytics-it",
+            "name": "Big Data Analytics",
+            "code": "BDA",
+            "credits": 4,
+            "description": "Hadoop, Spark, and big data processing frameworks"
+          },
+          {
+            "id": "blockchain-technology",
+            "name": "Blockchain Technology",
+            "code": "BT",
+            "credits": 4,
+            "description": "Blockchain concepts, cryptocurrencies, and applications"
+          },
+          {
+            "id": "it-service-management",
+            "name": "IT Service Management",
+            "code": "ITSM",
+            "credits": 4,
+            "description": "ITIL framework, service delivery, and IT governance"
+          },
+          {
+            "id": "business-intelligence",
+            "name": "Business Intelligence",
+            "code": "BI",
+            "credits": 4,
+            "description": "Data analytics, reporting, and decision support systems"
+          }
+        ],
+        "8": [
+          {
+            "id": "advanced-web-technologies",
+            "name": "Advanced Web Technologies",
+            "code": "AWT",
+            "credits": 4,
+            "description": "Modern web frameworks, APIs, and microservices"
+          },
+          {
+            "id": "digital-transformation",
+            "name": "Digital Transformation",
+            "code": "DT",
+            "credits": 4,
+            "description": "Digital business models, automation, and innovation"
+          },
+          {
+            "id": "data-science",
+            "name": "Data Science and Analytics",
+            "code": "DSA",
+            "credits": 4,
+            "description": "Statistical analysis, machine learning, and data visualization"
+          },
+          {
+            "id": "emerging-technologies",
+            "name": "Emerging Technologies",
+            "code": "ET",
+            "credits": 4,
+            "description": "IoT, AR/VR, and next-generation computing technologies"
+          }
+        ]
+      }
+    }
+  }
+} 

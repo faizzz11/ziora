@@ -1,0 +1,92 @@
+{
+  "academicYears": [
+    {
+      "id": "FE",
+      "name": "F.E.",
+      "fullName": "First Year Engineering",
+      "description": "Foundation year covering basic engineering concepts and mathematics",
+      "icon": "🎯",
+      "semesters": [
+        {
+          "id": "sem1",
+          "name": "Semester 1",
+          "number": 1,
+          "description": "Introduction to engineering fundamentals"
+        },
+        {
+          "id": "sem2", 
+          "name": "Semester 2",
+          "number": 2,
+          "description": "Advanced fundamentals and practical applications"
+        }
+      ],
+      "color": "blue"
+    },
+    {
+      "id": "SE",
+      "name": "S.E.",
+      "fullName": "Second Year Engineering", 
+      "description": "Core engineering subjects with specialization introduction",
+      "icon": "🔧",
+      "semesters": [
+        {
+          "id": "sem3",
+          "name": "Semester 3", 
+          "number": 3,
+          "description": "Core engineering concepts and programming"
+        },
+        {
+          "id": "sem4",
+          "name": "Semester 4",
+          "number": 4, 
+          "description": "Advanced core subjects and project work"
+        }
+      ],
+      "color": "green"
+    },
+    {
+      "id": "TE",
+      "name": "T.E.", 
+      "fullName": "Third Year Engineering",
+      "description": "Specialized subjects and advanced engineering concepts",
+      "icon": "⚡",
+      "semesters": [
+        {
+          "id": "sem5",
+          "name": "Semester 5",
+          "number": 5,
+          "description": "Specialization subjects and advanced theory"
+        },
+        {
+          "id": "sem6", 
+          "name": "Semester 6",
+          "number": 6,
+          "description": "Advanced specialization and industry projects"
+        }
+      ],
+      "color": "purple"
+    },
+    {
+      "id": "BE",
+      "name": "B.E.",
+      "fullName": "Fourth Year Engineering",
+      "description": "Final year with major projects and industry preparation", 
+      "icon": "🎓",
+      "semesters": [
+        {
+          "id": "sem7",
+          "name": "Semester 7",
+          "number": 7,
+          "description": "Major project and advanced electives"
+        },
+        {
+          "id": "sem8",
+          "name": "Semester 8", 
+          "number": 8,
+          "description": "Final project, internship and career preparation"
+        }
+      ],
+      "color": "orange"
+    }
+  ]
+} 

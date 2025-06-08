@@ -55,7 +55,7 @@ const Hero = () => {
         </p>
         
         {/* CTA Button */}
-        <Link href="/subjects">
+        <Link href="/select">
         <button className="inline-flex items-center justify-center px-8 py-4 sm:px-10 sm:py-5 text-lg sm:text-xl font-semibold text-white bg-black rounded-full hover:from-blue-700 hover:to-indigo-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl mb-8">
           Start with your journey
           <svg 
