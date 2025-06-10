@@ -91,7 +91,6 @@ export default async function NotesPage({ params }: NotesPageProps) {
         subject={subject}
         subjectVideos={subjectVideos}
         subjectName={subjectName}
-        backUrl={backUrl}
       />
     </div>
   );
