@@ -9,7 +9,6 @@ interface Topic {
   id: string;
   title: string;
   videoUrl: string;
-  duration: string;
   notes: string;
 }
 
@@ -64,22 +63,60 @@ const mockComments = [
   }
 ];
 
+// Function to convert youtu.be URL to embed format
+const convertToEmbedUrl = (url: string): string => {
+  if (url.includes('youtu.be/')) {
+    const videoId = url.split('youtu.be/')[1].split('?')[0];
+    return `https://www.youtube.com/embed/${videoId}`;
+  }
+  if (url.includes('youtube.com/watch?v=')) {
+    const videoId = url.split('v=')[1].split('&')[0];
+    return `https://www.youtube.com/embed/${videoId}`;
+  }
+  if (url.includes('youtube.com/embed/')) {
+    return url;
+  }
+  return url;
+};
+
 export default function VideoLecturesClient({ subject, subjectVideos, subjectName }: VideoLecturesClientProps) {
   const [currentTopic, setCurrentTopic] = useState<Topic | null>(null);
   const [selectedModule, setSelectedModule] = useState<string>('');
   const [newComment, setNewComment] = useState('');
+  const [modules, setModules] = useState<Module[]>(subjectVideos.modules);
+  const [editingModule, setEditingModule] = useState<string | null>(null);
+  const [editModuleName, setEditModuleName] = useState('');
+  const [editingVideo, setEditingVideo] = useState<string | null>(null);
+  const [editVideoData, setEditVideoData] = useState({
+    title: '',
+    videoUrl: '',
+    notes: ''
+  });
+  const [deleteModal, setDeleteModal] = useState<{
+    isOpen: boolean;
+    type: 'module' | 'video' | null;
+    id: string;
+    moduleId?: string;
+    title: string;
+  }>({
+    isOpen: false,
+    type: null,
+    id: '',
+    moduleId: '',
+    title: ''
+  });
 
   useEffect(() => {
-    if (subjectVideos?.modules?.length > 0) {
-      const firstModule = subjectVideos.modules[0];
+    if (modules?.length > 0) {
+      const firstModule = modules[0];
       setSelectedModule(firstModule.id);
       if (firstModule.topics?.length > 0) {
         setCurrentTopic(firstModule.topics[0]);
       }
     }
-  }, [subjectVideos]);
+  }, [modules]);
 
-  const allTopics = subjectVideos.modules.flatMap(module => module.topics);
+  const allTopics = modules.flatMap(module => module.topics);
   const currentIndex = allTopics.findIndex(topic => topic.id === currentTopic?.id);
   const previousTopic = currentIndex > 0 ? allTopics[currentIndex - 1] : null;
   const nextTopic = currentIndex < allTopics.length - 1 ? allTopics[currentIndex + 1] : null;
@@ -107,6 +144,151 @@ export default function VideoLecturesClient({ subject, subjectVideos, subjectNam
       console.log('New comment:', newComment);
       setNewComment('');
     }
+  };
+
+  const handleAddModule = () => {
+    const newModuleId = `module-${Date.now()}`;
+    const newModule: Module = {
+      id: newModuleId,
+      name: `New Module ${modules.length + 1}`,
+      topics: []
+    };
+    setModules(prev => [...prev, newModule]);
+  };
+
+  const handleAddVideo = (moduleId: string) => {
+    const newTopicId = `topic-${Date.now()}`;
+    const moduleIndex = modules.findIndex(m => m.id === moduleId);
+    const newTopic: Topic = {
+      id: newTopicId,
+      title: `New Video ${modules[moduleIndex].topics.length + 1}`,
+      videoUrl: "https://youtu.be/hthP__DQ58g?si=VnO40HMrP23nolGw",
+      notes: "New video content"
+    };
+    
+    setModules(prev => prev.map(module => 
+      module.id === moduleId 
+        ? { ...module, topics: [...module.topics, newTopic] }
+        : module
+    ));
+  };
+
+  const handleEditModule = (moduleId: string, currentName: string) => {
+    setEditingModule(moduleId);
+    setEditModuleName(currentName);
+  };
+
+  const handleSaveModuleName = (moduleId: string) => {
+    if (editModuleName.trim()) {
+      setModules(prev => prev.map(module => 
+        module.id === moduleId 
+          ? { ...module, name: editModuleName.trim() }
+          : module
+      ));
+    }
+    setEditingModule(null);
+    setEditModuleName('');
+  };
+
+  const handleCancelEdit = () => {
+    setEditingModule(null);
+    setEditModuleName('');
+  };
+
+  const handleDeleteModule = (moduleId: string) => {
+    const module = modules.find(m => m.id === moduleId);
+    setDeleteModal({
+      isOpen: true,
+      type: 'module',
+      id: moduleId,
+      title: module?.name || 'Module'
+    });
+  };
+
+  const confirmDeleteModule = (moduleId: string) => {
+    setModules(prev => prev.filter(module => module.id !== moduleId));
+    
+    // If we're deleting the currently selected module, clear selection
+    if (selectedModule === moduleId) {
+      setSelectedModule('');
+      setCurrentTopic(null);
+    }
+    
+    // If the current topic belongs to the deleted module, clear it
+    if (currentTopic && modules.find(m => m.id === moduleId)?.topics.some(t => t.id === currentTopic.id)) {
+      setCurrentTopic(null);
+    }
+    
+    setDeleteModal({ isOpen: false, type: null, id: '', title: '' });
+  };
+
+  const handleEditVideo = (video: Topic) => {
+    setEditingVideo(video.id);
+    setEditVideoData({
+      title: video.title,
+      videoUrl: video.videoUrl,
+      notes: video.notes
+    });
+  };
+
+  const handleSaveVideo = (moduleId: string, videoId: string) => {
+    if (editVideoData.title.trim()) {
+      setModules(prev => prev.map(module => 
+        module.id === moduleId 
+          ? {
+              ...module,
+              topics: module.topics.map(topic =>
+                topic.id === videoId
+                  ? {
+                      ...topic,
+                      title: editVideoData.title.trim(),
+                      videoUrl: editVideoData.videoUrl.trim(),
+                      notes: editVideoData.notes.trim()
+                    }
+                  : topic
+              )
+            }
+          : module
+      ));
+    }
+    setEditingVideo(null);
+    setEditVideoData({ title: '', videoUrl: '', notes: '' });
+  };
+
+  const handleCancelVideoEdit = () => {
+    setEditingVideo(null);
+    setEditVideoData({ title: '', videoUrl: '', notes: '' });
+  };
+
+  const handleDeleteVideo = (moduleId: string, videoId: string) => {
+    const module = modules.find(m => m.id === moduleId);
+    const video = module?.topics.find(t => t.id === videoId);
+    setDeleteModal({
+      isOpen: true,
+      type: 'video',
+      id: videoId,
+      moduleId: moduleId,
+      title: video?.title || 'Video'
+    });
+  };
+
+  const confirmDeleteVideo = (moduleId: string, videoId: string) => {
+    setModules(prev => prev.map(module => 
+      module.id === moduleId 
+        ? { ...module, topics: module.topics.filter(topic => topic.id !== videoId) }
+        : module
+    ));
+    
+    // If we're deleting the currently playing video, clear it
+    if (currentTopic?.id === videoId) {
+      setCurrentTopic(null);
+    }
+    
+    setDeleteModal({ isOpen: false, type: null, id: '', title: '' });
+  };
+
+  const handleCloseDeleteModal = () => {
+    setDeleteModal({ isOpen: false, type: null, id: '', title: '' });
   };
 
   return (
@@ -157,10 +339,10 @@ export default function VideoLecturesClient({ subject, subjectVideos, subjectNam
 
       {/* Main Content Area */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
           
           {/* Video and Discussion Section */}
-          <div className="lg:col-span-3 space-y-6">
+          <div className="xl:col-span-2 space-y-6">
             
             {/* Video Tab */}
             <Card className="bg-white border border-gray-200">
@@ -169,7 +351,7 @@ export default function VideoLecturesClient({ subject, subjectVideos, subjectNam
                   <div>
                     <div className="aspect-video bg-black rounded-t-lg overflow-hidden">
                       <iframe
-                        src={currentTopic.videoUrl}
+                        src={convertToEmbedUrl(currentTopic.videoUrl)}
                         className="w-full h-full"
                         allowFullScreen
                         title={currentTopic.title}
@@ -182,9 +364,9 @@ export default function VideoLecturesClient({ subject, subjectVideos, subjectNam
                       <div className="flex items-center space-x-4 text-sm text-gray-600">
                         <span className="flex items-center">
                           <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.586a1 1 0 00.707-.293l2.414-2.414a1 1 0 01.707-.293H15" />
                           </svg>
-                          {currentTopic.duration}
+                          Video
                         </span>
                         <Badge variant="secondary" className="bg-gray-100 text-gray-700">
                           {subject.name}
@@ -260,14 +442,14 @@ export default function VideoLecturesClient({ subject, subjectVideos, subjectNam
             </Card>
           </div>
 
-          {/* Right Sidebar - Modules */}
-          <div className="lg:col-span-1">
+          {/* Right Sidebar - Modules (Increased Size) */}
+          <div className="xl:col-span-1">
             <Card className="bg-white border border-gray-200 sticky top-6">
               <CardContent className="p-4">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Course Content</h3>
                 
                 <div className="space-y-3">
-                  {subjectVideos.modules.map((module) => (
+                  {modules.map((module) => (
                     <div key={module.id}>
                       <button
                         onClick={() => setSelectedModule(selectedModule === module.id ? '' : module.id)}
@@ -288,37 +470,257 @@ export default function VideoLecturesClient({ subject, subjectVideos, subjectNam
                       
                       {selectedModule === module.id && (
                         <div className="mt-2 space-y-2">
-                          {module.topics.map((topic) => (
-                            <button
-                              key={topic.id}
-                              onClick={() => handleTopicChange(topic)}
-                              className={`w-full text-left p-3 rounded-lg transition-colors ${
-                                currentTopic?.id === topic.id 
-                                  ? 'bg-gray-900 text-white' 
-                                  : 'bg-white border border-gray-200 hover:bg-gray-50'
-                              }`}
-                            >
-                              <div className="flex items-center space-x-3">
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.586a1 1 0 00.707-.293l2.414-2.414a1 1 0 01.707-.293H15" />
-                                </svg>
-                                <div className="flex-1 min-w-0">
-                                  <p className="text-sm font-medium truncate">{topic.title}</p>
-                                  <p className="text-xs opacity-75">{topic.duration}</p>
+                          {/* Module Edit Section */}
+                          <div className="p-3 bg-gray-100 rounded-lg border">
+                            {editingModule === module.id ? (
+                              <div className="space-y-2">
+                                <input
+                                  type="text"
+                                  value={editModuleName}
+                                  onChange={(e) => setEditModuleName(e.target.value)}
+                                  className="w-full p-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                  placeholder="Module name"
+                                  autoFocus
+                                />
+                                <div className="flex space-x-2">
+                                  <Button
+                                    onClick={() => handleSaveModuleName(module.id)}
+                                    size="sm"
+                                    className="bg-green-600 text-white hover:bg-green-700"
+                                  >
+                                    <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    Save
+                                  </Button>
+                                  <Button
+                                    onClick={handleCancelEdit}
+                                    size="sm"
+                                    variant="outline"
+                                  >
+                                    Cancel
+                                  </Button>
                                 </div>
                               </div>
-                            </button>
+                            ) : (
+                              <div className="flex items-center justify-between">
+                                <span className="text-sm font-medium text-gray-700">Module Actions</span>
+                                <div className="flex space-x-1">
+                                  <Button
+                                    onClick={() => handleEditModule(module.id, module.name)}
+                                    size="sm"
+                                    variant="outline"
+                                    className="h-8 w-8 p-0"
+                                  >
+                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                    </svg>
+                                  </Button>
+                                  <Button
+                                    onClick={() => handleDeleteModule(module.id)}
+                                    size="sm"
+                                    variant="outline"
+                                    className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                                  >
+                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                  </Button>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Topics List */}
+                          {module.topics.map((topic) => (
+                            <div key={topic.id} className="space-y-2">
+                              {editingVideo === topic.id ? (
+                                <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+                                  <div className="space-y-3">
+                                    <div>
+                                      <label className="block text-xs font-medium text-gray-700 mb-1">Video Title</label>
+                                      <input
+                                        type="text"
+                                        value={editVideoData.title}
+                                        onChange={(e) => setEditVideoData(prev => ({ ...prev, title: e.target.value }))}
+                                        className="w-full p-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        placeholder="Video title"
+                                      />
+                                    </div>
+                                    <div>
+                                      <label className="block text-xs font-medium text-gray-700 mb-1">YouTube URL</label>
+                                      <input
+                                        type="text"
+                                        value={editVideoData.videoUrl}
+                                        onChange={(e) => setEditVideoData(prev => ({ ...prev, videoUrl: e.target.value }))}
+                                        className="w-full p-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        placeholder="https://www.youtube.com/embed/..."
+                                      />
+                                    </div>
+
+                                    <div>
+                                      <label className="block text-xs font-medium text-gray-700 mb-1">Notes</label>
+                                      <textarea
+                                        value={editVideoData.notes}
+                                        onChange={(e) => setEditVideoData(prev => ({ ...prev, notes: e.target.value }))}
+                                        className="w-full p-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                                        placeholder="Video description..."
+                                        rows={2}
+                                      />
+                                    </div>
+                                    <div className="flex space-x-2">
+                                      <Button
+                                        onClick={() => handleSaveVideo(module.id, topic.id)}
+                                        size="sm"
+                                        className="bg-green-600 text-white hover:bg-green-700"
+                                      >
+                                        <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                        </svg>
+                                        Save
+                                      </Button>
+                                      <Button
+                                        onClick={handleCancelVideoEdit}
+                                        size="sm"
+                                        variant="outline"
+                                      >
+                                        Cancel
+                                      </Button>
+                                    </div>
+                                  </div>
+                                </div>
+                              ) : (
+                                <div className="relative group">
+                                  <button
+                                    onClick={() => handleTopicChange(topic)}
+                                    className={`w-full text-left p-3 rounded-lg transition-colors ${
+                                      currentTopic?.id === topic.id 
+                                        ? 'bg-gray-900 text-white' 
+                                        : 'bg-white border border-gray-200 hover:bg-gray-50'
+                                    }`}
+                                  >
+                                    <div className="flex items-center space-x-3">
+                                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.586a1 1 0 00.707-.293l2.414-2.414a1 1 0 01.707-.293H15" />
+                                      </svg>
+                                      <div className="flex-1 min-w-0">
+                                        <p className="text-sm font-medium truncate">{topic.title}</p>
+                                      </div>
+                                    </div>
+                                  </button>
+                                  
+                                  {/* Video Action Buttons */}
+                                  <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <div className="flex space-x-1">
+                                      <Button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleEditVideo(topic);
+                                        }}
+                                        size="sm"
+                                        variant="outline"
+                                        className="h-6 w-6 p-0 bg-white border-gray-300"
+                                      >
+                                        <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                        </svg>
+                                      </Button>
+                                      <Button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleDeleteVideo(module.id, topic.id);
+                                        }}
+                                        size="sm"
+                                        variant="outline"
+                                        className="h-6 w-6 p-0 bg-white border-gray-300 text-red-600 hover:text-red-700 hover:bg-red-50"
+                                      >
+                                        <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                      </Button>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
                           ))}
+                          
+                          {/* Add Video Button */}
+                          <Button
+                            onClick={() => handleAddVideo(module.id)}
+                            variant="outline"
+                            size="sm"
+                            className="w-full mt-2 border-dashed border-gray-300 text-gray-600 hover:text-gray-900 hover:border-gray-400"
+                          >
+                            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                            </svg>
+                            Add Video
+                          </Button>
                         </div>
                       )}
                     </div>
                   ))}
+                  
+                  {/* Add Module Button */}
+                  <Button
+                    onClick={handleAddModule}
+                    variant="outline"
+                    className="w-full mt-4 border-dashed border-gray-300 text-gray-600 hover:text-gray-900 hover:border-gray-400"
+                  >
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                    Add Module
+                  </Button>
                 </div>
               </CardContent>
             </Card>
           </div>
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {deleteModal.isOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <div className="flex items-center mb-4">
+              <svg className="w-6 h-6 text-red-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16c-.77.833.192 2.5 1.732 2.5z" />
+              </svg>
+              <h3 className="text-lg font-semibold text-gray-900">
+                Delete {deleteModal.type === 'module' ? 'Module' : 'Video'}
+              </h3>
+            </div>
+            
+            <p className="text-gray-600 mb-6">
+              Are you sure you want to delete "{deleteModal.title}"? This action cannot be undone.
+            </p>
+            
+            <div className="flex justify-end space-x-3">
+              <Button
+                onClick={handleCloseDeleteModal}
+                variant="outline"
+                className="px-4 py-2"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={() => {
+                  if (deleteModal.type === 'module') {
+                    confirmDeleteModule(deleteModal.id);
+                  } else if (deleteModal.type === 'video' && deleteModal.moduleId) {
+                    confirmDeleteVideo(deleteModal.moduleId, deleteModal.id);
+                  }
+                }}
+                className="px-4 py-2 bg-red-600 text-white hover:bg-red-700"
+              >
+                Delete
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 } 

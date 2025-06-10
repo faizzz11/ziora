@@ -101,7 +101,6 @@ export default async function VideoLecturesPage({ params }: VideoLecturesPagePro
         subject={subject}
         subjectVideos={subjectVideos}
         subjectName={subjectName}
-        backUrl={backUrl}
       />
     </div>
   );
