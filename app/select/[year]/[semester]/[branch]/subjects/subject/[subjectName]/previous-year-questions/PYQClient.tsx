@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import Image from 'next/image';
 import { Pencil, Trash2, Plus } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -17,7 +16,7 @@ interface Paper {
   year: string;
   month: string;
   fileName: string;
-  imagePreview: string;
+  pdfUrl: string;
 }
 
 interface SubjectPYQ {
@@ -120,17 +119,18 @@ const deletePaperFromAPI = async (subjectName: string, paperId: string) => {
 
 export default function PYQClient({ subject, subjectPYQ, subjectName }: PYQClientProps) {
   const [selectedPaper, setSelectedPaper] = useState<Paper | null>(null);
-  const [isZoomed, setIsZoomed] = useState(false);
   const [papers, setPapers] = useState<Paper[]>(subjectPYQ.papers);
   const [editingPaper, setEditingPaper] = useState<string | null>(null);
   const [isAddingPaper, setIsAddingPaper] = useState(false);
   const [shouldSave, setShouldSave] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
   const [editPaperData, setEditPaperData] = useState({
     title: '',
     year: '',
     month: '',
     fileName: '',
-    imagePreview: ''
+    pdfUrl: ''
   });
   const [deleteModal, setDeleteModal] = useState<{
     isOpen: boolean;
@@ -141,6 +141,22 @@ export default function PYQClient({ subject, subjectPYQ, subjectName }: PYQClien
     id: '',
     title: ''
   });
+
+  // Helper function to convert Google Drive URLs to embeddable format
+  const getEmbeddablePdfUrl = (url: string) => {
+    if (!url) return '';
+    
+    // Check if it's a Google Drive URL
+    const driveMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+    if (driveMatch) {
+      const fileId = driveMatch[1];
+      // Convert to embeddable format
+      return `https://drive.google.com/file/d/${fileId}/preview?usp=embed_facebook`;
+    }
+    
+    // For regular PDF URLs, return as is
+    return url;
+  };
 
   // Add useEffect to save papers when they change
   useEffect(() => {
@@ -167,35 +183,60 @@ export default function PYQClient({ subject, subjectPYQ, subjectName }: PYQClien
     }
   }, [shouldSave, papers, subjectName]);
 
+  // Add useEffect to refresh iframe when selected paper changes
+  useEffect(() => {
+    if (selectedPaper) {
+      setIsLoading(true);
+      setRefreshKey(prev => prev + 1);
+      
+      // Set a timeout to hide loading after iframe should have loaded
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+      }, 2000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [selectedPaper]);
+
   const handlePaperSelect = (paperId: string) => {
     const paper = papers.find(p => p.id === paperId);
     if (paper) {
       setSelectedPaper(paper);
-      setIsZoomed(false); // Reset zoom when changing papers
     }
   };
 
   const handleFullView = () => {
     if (selectedPaper) {
-      // Open the full PDF in a new tab
-      window.open(`/PYQ-img/${selectedPaper.fileName}`, '_blank');
+      // Check if it's a Google Drive URL
+      const driveMatch = selectedPaper.pdfUrl.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+      if (driveMatch) {
+        // For Google Drive, open the original sharing URL
+        window.open(selectedPaper.pdfUrl, '_blank');
+      } else {
+        // For local files, use the fileName
+        window.open(`/PYQ-pdf/${selectedPaper.fileName}`, '_blank');
+      }
     }
   };
 
   const handleDownload = () => {
     if (selectedPaper) {
-      // Create a download link
-      const link = document.createElement('a');
-      link.href = `/PYQ-img/${selectedPaper.fileName}`;
-      link.download = selectedPaper.fileName;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      // Check if it's a Google Drive URL
+      const driveMatch = selectedPaper.pdfUrl.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+      if (driveMatch) {
+        const fileId = driveMatch[1];
+        // For Google Drive, use the direct download URL
+        window.open(`https://drive.google.com/uc?export=download&id=${fileId}`, '_blank');
+      } else {
+        // For local files, create a download link
+        const link = document.createElement('a');
+        link.href = `/PYQ-pdf/${selectedPaper.fileName}`;
+        link.download = selectedPaper.fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
     }
-  };
-
-  const toggleZoom = () => {
-    setIsZoomed(!isZoomed);
   };
 
   const handleAddPaper = () => {
@@ -205,7 +246,7 @@ export default function PYQClient({ subject, subjectPYQ, subjectName }: PYQClien
       year: '',
       month: '',
       fileName: '',
-      imagePreview: ''
+      pdfUrl: ''
     });
   };
 
@@ -218,7 +259,7 @@ export default function PYQClient({ subject, subjectPYQ, subjectName }: PYQClien
         year: paper.year,
         month: paper.month,
         fileName: paper.fileName,
-        imagePreview: paper.imagePreview
+        pdfUrl: paper.pdfUrl
       });
     }
   };
@@ -351,7 +392,7 @@ export default function PYQClient({ subject, subjectPYQ, subjectName }: PYQClien
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <p className="text-blue-800 text-sm">
             📝 Select a question paper from the dropdown above to view and download previous year questions. 
-            You can zoom in for better readability or download the paper for offline study.
+            You can view the PDF directly in the browser or download it for offline study.
           </p>
         </div>
       </div>
@@ -383,32 +424,38 @@ export default function PYQClient({ subject, subjectPYQ, subjectName }: PYQClien
               </Button>
             </div>
 
-            {/* Paper Preview */}
+            {/* PDF Preview */}
             <div className="p-6">
-              <div 
-                className={`relative bg-gray-50 rounded-lg overflow-hidden transition-all duration-300 ${
-                  isZoomed ? 'transform scale-110' : ''
-                }`}
-                style={{ 
-                  height: isZoomed ? '80vh' : '60vh',
-                  cursor: isZoomed ? 'zoom-out' : 'zoom-in'
-                }}
-                onClick={toggleZoom}
-              >
-                <div className="w-full h-full flex items-center justify-center">
-                  {selectedPaper.imagePreview ? (
-                    <Image
-                      src={selectedPaper.imagePreview}
-                      alt={`${selectedPaper.title} Question Paper`}
-                      fill
-                      className="object-contain"
+              <div className="relative bg-gray-50 rounded-lg overflow-hidden" style={{ height: '70vh' }}>
+                {selectedPaper.pdfUrl ? (
+                  <>
+                    {isLoading && (
+                      <div className="absolute inset-0 bg-gray-100 flex items-center justify-center z-10">
+                        <div className="text-center">
+                          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
+                          <p className="text-gray-600">Loading PDF...</p>
+                        </div>
+                      </div>
+                    )}
+                    <iframe
+                      key={refreshKey}
+                      src={getEmbeddablePdfUrl(selectedPaper.pdfUrl)}
+                      className="w-full h-full border-0"
+                      title={`${selectedPaper.title} Question Paper`}
+                      loading="lazy"
+                      allow="autoplay"
+                      sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+                      onLoad={() => setIsLoading(false)}
                       onError={() => {
-                        // Fallback if image doesn't exist
-                        console.log('Image not found, showing placeholder');
+                        setIsLoading(false);
+                        console.log('PDF failed to load, attempting refresh...');
+                        setTimeout(() => setRefreshKey(prev => prev + 1), 1000);
                       }}
                     />
-                  ) : (
-                    <div className="text-center">
+                  </>
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-center">
+                    <div>
                       <svg className="w-24 h-24 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                       </svg>
@@ -419,13 +466,6 @@ export default function PYQClient({ subject, subjectPYQ, subjectName }: PYQClien
                         Click "Full Screen" to view the complete paper
                       </p>
                     </div>
-                  )}
-                </div>
-                
-                {/* Zoom indicator */}
-                {selectedPaper.imagePreview && (
-                  <div className="absolute top-4 right-4 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-xs">
-                    {isZoomed ? 'Click to zoom out' : 'Click to zoom in'}
                   </div>
                 )}
               </div>
@@ -434,14 +474,14 @@ export default function PYQClient({ subject, subjectPYQ, subjectName }: PYQClien
             {/* Action Buttons */}
             <div className="flex items-center justify-center space-x-4 p-6 border-t border-gray-200 bg-gray-50">
               <Button 
-                onClick={toggleZoom}
+                onClick={handleFullView}
                 variant="outline"
                 className="flex items-center space-x-2"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
                 </svg>
-                <span>{isZoomed ? 'Zoom Out' : 'Zoom In'}</span>
+                <span>View Full PDF</span>
               </Button>
               
               <Button 
@@ -451,7 +491,7 @@ export default function PYQClient({ subject, subjectPYQ, subjectName }: PYQClien
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a4 4 0 01-4-4V5a4 4 0 014-4h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a4 4 0 01-4 4z" />
                 </svg>
-                <span>Download</span>
+                <span>Download PDF</span>
               </Button>
             </div>
           </CardContent>
@@ -518,14 +558,16 @@ export default function PYQClient({ subject, subjectPYQ, subjectName }: PYQClien
                 id="fileName"
                 value={editPaperData.fileName}
                 onChange={(e) => setEditPaperData({ ...editPaperData, fileName: e.target.value })}
+                placeholder="e.g., math-2023-may.pdf"
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="imagePreview">Image Preview URL</Label>
+              <Label htmlFor="pdfUrl">PDF URL</Label>
               <Input
-                id="imagePreview"
-                value={editPaperData.imagePreview}
-                onChange={(e) => setEditPaperData({ ...editPaperData, imagePreview: e.target.value })}
+                id="pdfUrl"
+                value={editPaperData.pdfUrl}
+                onChange={(e) => setEditPaperData({ ...editPaperData, pdfUrl: e.target.value })}
+                placeholder="e.g., /PYQ-pdf/math-2023-may.pdf"
               />
             </div>
           </div>

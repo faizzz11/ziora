@@ -18,7 +18,7 @@ export default function Bento() {
                 </p>
               </div>
               <div className="@container relative min-h-120 w-full grow max-lg:mx-auto max-lg:max-w-sm">
-                <div className="absolute inset-x-10 top-10 bottom-0 overflow-hidden rounded-t-[10cqw] border-x-[3cqw] border-t-[3cqw] border-gray-700 shadow-2xl">
+                <div className="absolute inset-x-10 top-10 bottom-0 overflow-hidden rounded-t-[10cqw] border-x-[3cqw] border-t-[3cqw] border-gray-950 shadow-2xl">
                   <img
                     className=" object-cover object-top"
                     src="mobile.png"
