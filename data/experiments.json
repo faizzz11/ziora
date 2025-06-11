@@ -19,6 +19,26 @@
       "output": "PID\tAT\tBT\tWT\tTAT\n1\t0\t5\t0\t5\n2\t1\t3\t4\t7\n3\t2\t8\t6\t14",
       "conclusion": "The FCFS scheduling algorithm has been successfully implemented. The average waiting time and turnaround time can be calculated from the results. FCFS is simple but may lead to convoy effect.",
       "videoUrl": "https://www.youtube.com/embed/Jkyu2WzHgNg"
+    },
+    {
+      "experimentNo": 3,
+      "title": "New Experiment 3",
+      "aim": "New experiment aim",
+      "theory": "New experiment theory",
+      "code": "// New experiment code",
+      "output": "New experiment output",
+      "conclusion": "New experiment conclusion",
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ"
+    },
+    {
+      "experimentNo": 4,
+      "title": "New Experiment 4",
+      "aim": "New experiment aim",
+      "theory": "New experiment theory",
+      "code": "// New experiment code",
+      "output": "New experiment output",
+      "conclusion": "New experiment conclusion",
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ"
     }
   ],
   "computer-network": [

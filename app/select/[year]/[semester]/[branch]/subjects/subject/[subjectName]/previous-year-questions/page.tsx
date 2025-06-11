@@ -1,8 +1,9 @@
-import React from 'react';
+'use client';
+
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 import PYQClient from './PYQClient';
-import pyqData from '@/data/pyq.json';
 import branchSubjectsData from '@/data/branch-subjects.json';
 
 interface PYQPageProps {
@@ -14,62 +15,66 @@ interface PYQPageProps {
   }>;
 }
 
-export default async function PreviousYearQuestionsPage({ params }: PYQPageProps) {
-  const { year, semester, branch, subjectName } = await params;
-  
+export default function PreviousYearQuestionsPage({ params }: PYQPageProps) {
+  const [resolvedParams, setResolvedParams] = useState<{
+    year: string;
+    semester: string;
+    branch: string;
+    subjectName: string;
+  } | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [subjectPYQ, setSubjectPYQ] = useState<any>(null);
+
+  useEffect(() => {
+    const resolveParams = async () => {
+      try {
+        const resolved = await params;
+        setResolvedParams(resolved);
+        
+        // Fetch papers data
+        const response = await fetch(`/api/papers?subject=${resolved.subjectName}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch papers');
+        }
+        const data = await response.json();
+        setSubjectPYQ(data);
+        
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error:', error);
+        setIsLoading(false);
+      }
+    };
+
+    resolveParams();
+  }, [params]);
+
+  if (isLoading || !resolvedParams || !subjectPYQ) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-white to-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   // Get subject info from branch subjects data
   const { branches } = branchSubjectsData;
-  const branchKey = year === 'first-year' ? 'first-year' : branch;
+  const branchKey = resolvedParams.year === 'first-year' ? 'first-year' : resolvedParams.branch;
   const selectedBranchData = (branches as any)[branchKey];
-  const semesterSubjects = selectedBranchData?.semesters[semester] || [];
-  const subject = semesterSubjects.find((s: any) => s.id === subjectName) || {
-    id: subjectName,
-    name: subjectName.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
-    description: `Study materials for ${subjectName}`,
+  const semesterSubjects = selectedBranchData?.semesters[resolvedParams.semester] || [];
+  const subject = semesterSubjects.find((s: any) => s.id === resolvedParams.subjectName) || {
+    id: resolvedParams.subjectName,
+    name: resolvedParams.subjectName.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+    description: `Study materials for ${resolvedParams.subjectName}`,
     icon: '📚',
     code: 'N/A',
     credits: 3
   };
 
-  const subjectPYQ = pyqData[subjectName as keyof typeof pyqData] || { 
-    subjectName: subject.name, 
-    papers: [
-      {
-        id: "paper-1",
-        title: "Mid Semester Examination",
-        year: "2023",
-        month: "October",
-        fileName: "sample-midterm-2023.pdf",
-        imagePreview: "/api/placeholder/600/800"
-      },
-      {
-        id: "paper-2", 
-        title: "End Semester Examination",
-        year: "2023",
-        month: "December", 
-        fileName: "sample-endterm-2023.pdf",
-        imagePreview: "/api/placeholder/600/800"
-      },
-      {
-        id: "paper-3",
-        title: "Mid Semester Examination", 
-        year: "2022",
-        month: "October",
-        fileName: "sample-midterm-2022.pdf",
-        imagePreview: "/api/placeholder/600/800"
-      },
-      {
-        id: "paper-4",
-        title: "End Semester Examination",
-        year: "2022", 
-        month: "December",
-        fileName: "sample-endterm-2022.pdf",
-        imagePreview: "/api/placeholder/600/800"
-      }
-    ]
-  };
-
-  const backUrl = `/select/${year}/${semester}/${branch}/subjects/subject/${subjectName}`;
+  const backUrl = `/select/${resolvedParams.year}/${resolvedParams.semester}/${resolvedParams.branch}/subjects/subject/${resolvedParams.subjectName}`;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-white to-gray-50">
@@ -79,7 +84,7 @@ export default async function PreviousYearQuestionsPage({ params }: PYQPageProps
           <nav className="flex items-center space-x-2 text-sm text-gray-600">
             <Link href="/select" className="hover:text-gray-900 transition-colors font-medium">Academic Years</Link>
             <ChevronRight className="w-4 h-4 text-gray-400" />
-            <Link href={`/select/${year}/${semester}/${branch}/subjects`} className="hover:text-gray-900 transition-colors font-medium">Subjects</Link>
+            <Link href={`/select/${resolvedParams.year}/${resolvedParams.semester}/${resolvedParams.branch}/subjects`} className="hover:text-gray-900 transition-colors font-medium">Subjects</Link>
             <ChevronRight className="w-4 h-4 text-gray-400" />
             <Link href={backUrl} className="hover:text-gray-900 transition-colors font-medium">
               {subject.name}
@@ -93,8 +98,7 @@ export default async function PreviousYearQuestionsPage({ params }: PYQPageProps
       <PYQClient 
         subject={subject}
         subjectPYQ={subjectPYQ}
-        subjectName={subjectName}
-        backUrl={backUrl}
+        subjectName={resolvedParams.subjectName}
       />
     </div>
   );
