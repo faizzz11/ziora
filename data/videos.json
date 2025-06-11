@@ -8,14 +8,7 @@
         "relatedVideoLink": "https://www.youtube.com/embed/vBURTt97EkA",
         "topics": [
           {
-            "id": "topic-1",
-            "title": "What is an Operating System?",
-            "videoUrl": "https://www.youtube.com/embed/vBURTt97EkA",
-            "duration": "15:30",
-            "notes": "Basic introduction to OS concepts and functionality"
-          },
-          {
-            "id": "topic-2", 
+            "id": "topic-2",
             "title": "Types of Operating Systems",
             "videoUrl": "https://www.youtube.com/embed/pVzRTmdd9j0",
             "duration": "18:45",
@@ -23,7 +16,7 @@
           },
           {
             "id": "topic-3",
-            "title": "OS Architecture and Components",
+            "title": "OS Architecture and Componentsss",
             "videoUrl": "https://www.youtube.com/embed/9GDX-IyZ_C8",
             "duration": "22:15",
             "notes": "Kernel, Shell, System calls, and OS structure"
@@ -32,7 +25,7 @@
       },
       {
         "id": "module-2",
-        "name": "Process Management",
+        "name": "Process Managementtt",
         "pdfUrl": "https://drive.google.com/file/d/1example2/preview",
         "relatedVideoLink": "https://www.youtube.com/embed/4s5GyXGzqTU",
         "topics": [
@@ -200,4 +193,4 @@
       }
     ]
   }
-} 
+}

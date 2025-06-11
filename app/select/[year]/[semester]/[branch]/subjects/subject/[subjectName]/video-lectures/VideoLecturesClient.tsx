@@ -79,6 +79,82 @@ const convertToEmbedUrl = (url: string): string => {
   return url;
 };
 
+// API helper functions
+const saveVideosToAPI = async (subjectName: string, videos: SubjectVideos) => {
+  try {
+    const response = await fetch('/api/videos', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        subject: subjectName,
+        videos: videos,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to save videos');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error saving videos:', error);
+    throw error;
+  }
+};
+
+const updateVideoInAPI = async (subjectName: string, moduleId: string, topicId: string, topicData: Partial<Topic>) => {
+  try {
+    const response = await fetch('/api/videos', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        subject: subjectName,
+        moduleId,
+        topicId,
+        topicData,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to update video');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error updating video:', error);
+    throw error;
+  }
+};
+
+const deleteVideoFromAPI = async (subjectName: string, moduleId: string, topicId: string) => {
+  try {
+    const response = await fetch('/api/videos', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        subject: subjectName,
+        moduleId,
+        topicId,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to delete video');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error deleting video:', error);
+    throw error;
+  }
+};
+
 export default function VideoLecturesClient({ subject, subjectVideos, subjectName }: VideoLecturesClientProps) {
   const [currentTopic, setCurrentTopic] = useState<Topic | null>(null);
   const [selectedModule, setSelectedModule] = useState<string>('');
@@ -156,21 +232,63 @@ export default function VideoLecturesClient({ subject, subjectVideos, subjectNam
     setModules(prev => [...prev, newModule]);
   };
 
-  const handleAddVideo = (moduleId: string) => {
-    const newTopicId = `topic-${Date.now()}`;
-    const moduleIndex = modules.findIndex(m => m.id === moduleId);
-    const newTopic: Topic = {
-      id: newTopicId,
-      title: `New Video ${modules[moduleIndex].topics.length + 1}`,
-      videoUrl: "https://youtu.be/hthP__DQ58g?si=VnO40HMrP23nolGw",
-      notes: "New video content"
+  const handleAddVideo = async (moduleId: string) => {
+    const newVideoId = `topic-${Date.now()}`;
+    const newVideo: Topic = {
+      id: newVideoId,
+      title: 'New Video Topic',
+      videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+      notes: 'Add description for this video topic'
     };
-    
-    setModules(prev => prev.map(module => 
-      module.id === moduleId 
-        ? { ...module, topics: [...module.topics, newTopic] }
-        : module
-    ));
+
+    try {
+      // Update local state first
+      const updatedModules = modules.map(module => 
+        module.id === moduleId 
+          ? { ...module, topics: [...module.topics, newVideo] }
+          : module
+      );
+      setModules(updatedModules);
+
+      // Save to API
+      await updateVideoInAPI(subjectName, moduleId, newVideoId, newVideo);
+      
+      // Start editing the new video
+      setEditingVideo(newVideoId);
+      setEditVideoData({
+        title: newVideo.title,
+        videoUrl: newVideo.videoUrl,
+        notes: newVideo.notes
+      });
+      
+      // Show success toast
+      const toast = document.createElement('div');
+      toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300';
+      toast.textContent = '✅ Video added successfully!';
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => {
+          document.body.removeChild(toast);
+        }, 300);
+      }, 3000);
+
+    } catch (error) {
+      console.error('Failed to add video:', error);
+      // Show error toast
+      const toast = document.createElement('div');
+      toast.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300';
+      toast.textContent = '❌ Failed to add video!';
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => {
+          document.body.removeChild(toast);
+        }, 300);
+      }, 3000);
+    }
   };
 
   const handleEditModule = (moduleId: string, currentName: string) => {
@@ -231,25 +349,64 @@ export default function VideoLecturesClient({ subject, subjectVideos, subjectNam
     });
   };
 
-  const handleSaveVideo = (moduleId: string, videoId: string) => {
+  const handleSaveVideo = async (moduleId: string, videoId: string) => {
     if (editVideoData.title.trim()) {
-      setModules(prev => prev.map(module => 
-        module.id === moduleId 
-          ? {
-              ...module,
-              topics: module.topics.map(topic =>
-                topic.id === videoId
-                  ? {
-                      ...topic,
-                      title: editVideoData.title.trim(),
-                      videoUrl: editVideoData.videoUrl.trim(),
-                      notes: editVideoData.notes.trim()
-                    }
-                  : topic
-              )
-            }
-          : module
-      ));
+      try {
+        // Update local state first
+        const updatedModules = modules.map(module => 
+          module.id === moduleId 
+            ? {
+                ...module,
+                topics: module.topics.map(topic =>
+                  topic.id === videoId
+                    ? {
+                        ...topic,
+                        title: editVideoData.title.trim(),
+                        videoUrl: editVideoData.videoUrl.trim(),
+                        notes: editVideoData.notes.trim()
+                      }
+                    : topic
+                )
+              }
+            : module
+        );
+        setModules(updatedModules);
+
+        // Save to API
+        await updateVideoInAPI(subjectName, moduleId, videoId, {
+          title: editVideoData.title.trim(),
+          videoUrl: editVideoData.videoUrl.trim(),
+          notes: editVideoData.notes.trim()
+        });
+        
+        // Show success toast
+        const toast = document.createElement('div');
+        toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300';
+        toast.textContent = '✅ Video saved successfully!';
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+          toast.style.opacity = '0';
+          setTimeout(() => {
+            document.body.removeChild(toast);
+          }, 300);
+        }, 3000);
+
+      } catch (error) {
+        console.error('Failed to save video:', error);
+        // Show error toast
+        const toast = document.createElement('div');
+        toast.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300';
+        toast.textContent = '❌ Failed to save video!';
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+          toast.style.opacity = '0';
+          setTimeout(() => {
+            document.body.removeChild(toast);
+          }, 300);
+        }, 3000);
+      }
     }
     setEditingVideo(null);
     setEditVideoData({ title: '', videoUrl: '', notes: '' });
@@ -272,16 +429,51 @@ export default function VideoLecturesClient({ subject, subjectVideos, subjectNam
     });
   };
 
-  const confirmDeleteVideo = (moduleId: string, videoId: string) => {
-    setModules(prev => prev.map(module => 
-      module.id === moduleId 
-        ? { ...module, topics: module.topics.filter(topic => topic.id !== videoId) }
-        : module
-    ));
-    
-    // If we're deleting the currently playing video, clear it
-    if (currentTopic?.id === videoId) {
-      setCurrentTopic(null);
+  const confirmDeleteVideo = async (moduleId: string, videoId: string) => {
+    try {
+      // Update local state first
+      const updatedModules = modules.map(module => 
+        module.id === moduleId 
+          ? { ...module, topics: module.topics.filter(topic => topic.id !== videoId) }
+          : module
+      );
+      setModules(updatedModules);
+      
+      // If we're deleting the currently playing video, clear it
+      if (currentTopic?.id === videoId) {
+        setCurrentTopic(null);
+      }
+
+      // Delete from API
+      await deleteVideoFromAPI(subjectName, moduleId, videoId);
+      
+      // Show success toast
+      const toast = document.createElement('div');
+      toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300';
+      toast.textContent = '✅ Video deleted successfully!';
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => {
+          document.body.removeChild(toast);
+        }, 300);
+      }, 3000);
+
+    } catch (error) {
+      console.error('Failed to delete video:', error);
+      // Show error toast
+      const toast = document.createElement('div');
+      toast.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300';
+      toast.textContent = '❌ Failed to delete video!';
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => {
+          document.body.removeChild(toast);
+        }, 300);
+      }, 3000);
     }
     
     setDeleteModal({ isOpen: false, type: null, id: '', title: '' });

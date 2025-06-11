@@ -24,11 +24,11 @@ import academicData from '@/data/academic-years.json';
 import branchSubjectsData from '@/data/branch-subjects.json';
 
 interface SubjectsPageProps {
-  params: {
+  params: Promise<{
     year: string;
     semester: string;
     branch: string;
-  };
+  }>;
 }
 
 interface Subject {

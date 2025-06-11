@@ -2,12 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ChevronRight, Copy, Play, ArrowLeft, Home } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { ChevronRight, ArrowLeft, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import experimentsData from '@/data/experiments.json';
 import branchSubjectsData from '@/data/branch-subjects.json';
+import PracticalsClient from './PracticalsClient';
 
 interface PracticalsPageProps {
   params: Promise<{
@@ -29,175 +28,6 @@ interface Experiment {
   videoUrl: string;
 }
 
-// Copy to clipboard function
-const copyToClipboard = (text: string) => {
-  navigator.clipboard.writeText(text).then(() => {
-    // Create a temporary toast notification
-    const toast = document.createElement('div');
-    toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300';
-    toast.textContent = '✅ Code copied to clipboard!';
-    document.body.appendChild(toast);
-    
-    // Remove toast after 3 seconds
-    setTimeout(() => {
-      toast.style.opacity = '0';
-      setTimeout(() => {
-        document.body.removeChild(toast);
-      }, 300);
-    }, 3000);
-  }).catch(() => {
-    // Fallback for older browsers
-    const textArea = document.createElement('textarea');
-    textArea.value = text;
-    document.body.appendChild(textArea);
-    textArea.select();
-    document.execCommand('copy');
-    document.body.removeChild(textArea);
-    
-    // Show toast for fallback too
-    const toast = document.createElement('div');
-    toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300';
-    toast.textContent = '✅ Code copied to clipboard!';
-    document.body.appendChild(toast);
-    
-    setTimeout(() => {
-      toast.style.opacity = '0';
-      setTimeout(() => {
-        document.body.removeChild(toast);
-      }, 300);
-    }, 3000);
-  });
-};
-
-// Component for Experiments tab
-const ExperimentsTab = ({ experiments }: { experiments: Experiment[] }) => {
-  return (
-    <div className="space-y-8">
-      {experiments.map((experiment) => (
-        <Card key={experiment.experimentNo} className="border-2 border-gray-200 shadow-lg">
-          <CardHeader className="bg-gray-50 border-b">
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="text-xl font-bold text-gray-900">
-                  Experiment No: {experiment.experimentNo}
-                </CardTitle>
-                <CardDescription className="text-lg font-semibold text-gray-700 mt-2">
-                  {experiment.title}
-                </CardDescription>
-              </div>
-              <Badge className="bg-gray-100 text-gray-800 px-3 py-1">
-                Lab Manual
-              </Badge>
-            </div>
-          </CardHeader>
-          
-          <CardContent className="p-6 space-y-6">
-            {/* Aim Section */}
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-3 border-b pb-2">
-                📋 Aim:
-              </h3>
-              <p className="text-gray-700 leading-relaxed">{experiment.aim}</p>
-            </div>
-
-            {/* Theory Section */}
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-3 border-b pb-2">
-                📖 Theory:
-              </h3>
-              <p className="text-gray-700 leading-relaxed">{experiment.theory}</p>
-            </div>
-
-            {/* Code Section */}
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
-                  💻 Code:
-                </h3>
-                <Button
-                  onClick={() => copyToClipboard(experiment.code)}
-                  variant="outline"
-                  size="sm"
-                  className="flex items-center space-x-2 hover:bg-gray-50"
-                >
-                  <Copy className="h-4 w-4" />
-                  <span>Copy Code</span>
-                </Button>
-              </div>
-              <div className="bg-gray-900 rounded-lg p-4 overflow-x-auto">
-                <pre className="text-green-400 text-sm font-mono whitespace-pre-wrap">
-                  {experiment.code}
-                </pre>
-              </div>
-            </div>
-
-            {/* Output Section */}
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-3 border-b pb-2">
-                📊 Output:
-              </h3>
-              <div className="bg-gray-100 rounded-lg p-4">
-                <pre className="text-gray-800 text-sm font-mono whitespace-pre-wrap">
-                  {experiment.output}
-                </pre>
-              </div>
-            </div>
-
-            {/* Conclusion Section */}
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-3 border-b pb-2">
-                🎯 Conclusion:
-              </h3>
-              <p className="text-gray-700 leading-relaxed">{experiment.conclusion}</p>
-            </div>
-          </CardContent>
-        </Card>
-      ))}
-    </div>
-  );
-};
-
-// Component for Experiment Videos tab
-const ExperimentVideosTab = ({ experiments }: { experiments: Experiment[] }) => {
-  return (
-    <div className="space-y-8">
-      {experiments.map((experiment) => (
-        <Card key={experiment.experimentNo} className="border-2 border-gray-200 shadow-lg">
-          <CardHeader className="bg-gray-50 border-b">
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="text-xl font-bold text-gray-900">
-                  Experiment No: {experiment.experimentNo}
-                </CardTitle>
-                <CardDescription className="text-lg font-semibold text-gray-700 mt-2">
-                  {experiment.title}
-                </CardDescription>
-              </div>
-              <Badge className="bg-gray-100 text-gray-800 px-3 py-1 flex items-center space-x-1">
-                <Play className="h-3 w-3" />
-                <span>Video</span>
-              </Badge>
-            </div>
-          </CardHeader>
-          
-          <CardContent className="p-6">
-            <div className="aspect-video w-4/5 mx-auto">
-              <iframe
-                src={experiment.videoUrl}
-                title={`${experiment.title} - Video Tutorial`}
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="w-full h-full rounded-lg shadow-md"
-              ></iframe>
-            </div>
-          </CardContent>
-        </Card>
-      ))}
-    </div>
-  );
-};
-
 export default function PracticalsPage({ params }: PracticalsPageProps) {
   const [resolvedParams, setResolvedParams] = useState<{
     year: string;
@@ -205,7 +35,6 @@ export default function PracticalsPage({ params }: PracticalsPageProps) {
     branch: string;
     subjectName: string;
   } | null>(null);
-  const [activeTab, setActiveTab] = useState('experiments');
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -287,47 +116,6 @@ export default function PracticalsPage({ params }: PracticalsPageProps) {
 
       {/* Content */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Section Header */}
-        <div className="text-center mb-12">
-          <div className="flex justify-center mb-8">
-            <div className="p-6 rounded-3xl bg-gray-100">
-              <div className="w-12 h-12 flex items-center justify-center text-gray-700 text-2xl">📚</div>
-            </div>
-          </div>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
-            Practicals Code & Lab Manual
-          </h1>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            Detailed study materials and comprehensive code & lab manuals for <span className="font-semibold">{subject.name}</span>
-          </p>
-        </div>
-
-        {/* Tab Navigation */}
-        <div className="flex justify-center mb-8">
-          <div className="inline-flex rounded-lg border border-gray-200 bg-gray-50 p-1">
-            <button
-              onClick={() => setActiveTab('experiments')}
-              className={`px-6 py-3 rounded-md text-sm font-medium transition-all ${
-                activeTab === 'experiments'
-                  ? 'bg-white text-gray-900 shadow-sm border border-gray-200'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              🧪 Experiments & Code
-            </button>
-            <button
-              onClick={() => setActiveTab('videos')}
-              className={`px-6 py-3 rounded-md text-sm font-medium transition-all ${
-                activeTab === 'videos'
-                  ? 'bg-white text-gray-900 shadow-sm border border-gray-200'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              🎥 Experiment Videos
-            </button>
-          </div>
-        </div>
-
         {/* Debug Info */}
         <div className="text-center mb-4">
           <p className="text-sm text-gray-500">
@@ -341,29 +129,8 @@ export default function PracticalsPage({ params }: PracticalsPageProps) {
           )}
         </div>
 
-        {/* Tab Content */}
-        <div className="max-w-5xl mx-auto">
-          {experiments.length > 0 ? (
-            <>
-              {activeTab === 'experiments' && <ExperimentsTab experiments={experiments} />}
-              {activeTab === 'videos' && <ExperimentVideosTab experiments={experiments} />}
-            </>
-          ) : (
-            <div className="text-center py-12">
-              <div className="text-6xl mb-4">🔬</div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">No Experiments Available</h3>
-              <p className="text-gray-600 mb-4">
-                Experiments for <strong>{resolvedParams.subjectName}</strong> are not yet available.
-              </p>
-              <p className="text-sm text-gray-500">
-                Available subjects with experiments: <br/>
-                <span className="font-mono bg-gray-100 px-2 py-1 rounded">
-                  {Object.keys(experimentsData).join(', ')}
-                </span>
-              </p>
-            </div>
-          )}
-        </div>
+        {/* Practicals Client Component */}
+        <PracticalsClient experiments={experiments} subject={subject} subjectName={resolvedParams.subjectName} />
 
         {/* Bottom Actions */}
         <div className="flex justify-center gap-4 mt-12">

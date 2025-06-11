@@ -66,6 +66,80 @@ const mockNotesComments = [
   }
 ];
 
+// API helper functions
+const saveVideosToAPI = async (subjectName: string, videos: SubjectVideos) => {
+  try {
+    const response = await fetch('/api/videos', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        subject: subjectName,
+        videos: videos,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to save videos');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error saving videos:', error);
+    throw error;
+  }
+};
+
+const updateModuleInAPI = async (subjectName: string, moduleId: string, moduleData: Partial<Module>) => {
+  try {
+    const response = await fetch('/api/videos', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        subject: subjectName,
+        moduleId,
+        moduleData,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to update module');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error updating module:', error);
+    throw error;
+  }
+};
+
+const deleteModuleFromAPI = async (subjectName: string, moduleId: string) => {
+  try {
+    const response = await fetch('/api/videos', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        subject: subjectName,
+        moduleId,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to delete module');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error deleting module:', error);
+    throw error;
+  }
+};
+
 export default function NotesClient({ subject, subjectVideos, subjectName }: NotesClientProps) {
   const [currentModule, setCurrentModule] = useState<Module | null>(null);
   const [newComment, setNewComment] = useState('');
@@ -150,7 +224,7 @@ export default function NotesClient({ subject, subjectVideos, subjectName }: Not
     }
   };
 
-  const handleAddModule = () => {
+  const handleAddModule = async () => {
     const newModuleId = `module-${Date.now()}`;
     const newModule: Module = {
       id: newModuleId,
@@ -159,9 +233,46 @@ export default function NotesClient({ subject, subjectVideos, subjectName }: Not
       relatedVideoLink: "",
       topics: []
     };
-    setModules(prev => [...prev, newModule]);
-    // Automatically start editing the new module
-    handleEditModule(newModuleId, newModule.name, newModule.pdfUrl, newModule.relatedVideoLink);
+    
+    try {
+      // Update local state first
+      const updatedModules = [...modules, newModule];
+      setModules(updatedModules);
+
+      // Save to API
+      await saveVideosToAPI(subjectName, { modules: updatedModules });
+      
+      // Automatically start editing the new module
+      handleEditModule(newModuleId, newModule.name, newModule.pdfUrl, newModule.relatedVideoLink);
+      
+      // Show success toast
+      const toast = document.createElement('div');
+      toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300';
+      toast.textContent = '✅ Module added successfully!';
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => {
+          document.body.removeChild(toast);
+        }, 300);
+      }, 3000);
+
+    } catch (error) {
+      console.error('Failed to add module:', error);
+      // Show error toast
+      const toast = document.createElement('div');
+      toast.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300';
+      toast.textContent = '❌ Failed to add module!';
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => {
+          document.body.removeChild(toast);
+        }, 300);
+      }, 3000);
+    }
   };
 
   const handleEditModule = (moduleId: string, currentName: string, currentPdfUrl: string, currentVideoLink: string) => {
@@ -173,18 +284,57 @@ export default function NotesClient({ subject, subjectVideos, subjectName }: Not
     });
   };
 
-  const handleSaveModule = (moduleId: string) => {
+  const handleSaveModule = async (moduleId: string) => {
     if (editModuleData.name.trim()) {
-      setModules(prev => prev.map(module => 
-        module.id === moduleId 
-          ? { 
-              ...module, 
-              name: editModuleData.name.trim(),
-              pdfUrl: editModuleData.pdfUrl.trim(),
-              relatedVideoLink: editModuleData.relatedVideoLink.trim()
-            }
-          : module
-      ));
+      try {
+        // Update local state first
+        const updatedModules = modules.map(module => 
+          module.id === moduleId 
+            ? { 
+                ...module, 
+                name: editModuleData.name.trim(),
+                pdfUrl: editModuleData.pdfUrl.trim(),
+                relatedVideoLink: editModuleData.relatedVideoLink.trim()
+              }
+            : module
+        );
+        setModules(updatedModules);
+
+        // Save to API
+        await updateModuleInAPI(subjectName, moduleId, {
+          name: editModuleData.name.trim(),
+          pdfUrl: editModuleData.pdfUrl.trim(),
+          relatedVideoLink: editModuleData.relatedVideoLink.trim()
+        });
+        
+        // Show success toast
+        const toast = document.createElement('div');
+        toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300';
+        toast.textContent = '✅ Module saved successfully!';
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+          toast.style.opacity = '0';
+          setTimeout(() => {
+            document.body.removeChild(toast);
+          }, 300);
+        }, 3000);
+
+      } catch (error) {
+        console.error('Failed to save module:', error);
+        // Show error toast
+        const toast = document.createElement('div');
+        toast.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300';
+        toast.textContent = '❌ Failed to save module!';
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+          toast.style.opacity = '0';
+          setTimeout(() => {
+            document.body.removeChild(toast);
+          }, 300);
+        }, 3000);
+      }
     }
     setEditingModule(null);
     setEditModuleData({ name: '', pdfUrl: '', relatedVideoLink: '' });
@@ -205,19 +355,53 @@ export default function NotesClient({ subject, subjectVideos, subjectName }: Not
     });
   };
 
-  const confirmDeleteModule = (moduleId: string) => {
-    setModules(prev => prev.filter(module => module.id !== moduleId));
-    
-    // If we're deleting the currently selected module, clear selection
-    if (currentModule?.id === moduleId) {
-      const remainingModules = modules.filter(m => m.id !== moduleId);
-      if (remainingModules.length > 0) {
-        setCurrentModule(remainingModules[0]);
-        setSelectedModule(remainingModules[0].id);
-      } else {
-        setCurrentModule(null);
-        setSelectedModule('');
+  const confirmDeleteModule = async (moduleId: string) => {
+    try {
+      // Update local state first
+      const updatedModules = modules.filter(module => module.id !== moduleId);
+      setModules(updatedModules);
+      
+      // If we're deleting the currently selected module, clear selection
+      if (currentModule?.id === moduleId) {
+        if (updatedModules.length > 0) {
+          setCurrentModule(updatedModules[0]);
+          setSelectedModule(updatedModules[0].id);
+        } else {
+          setCurrentModule(null);
+          setSelectedModule('');
+        }
       }
+
+      // Delete from API
+      await deleteModuleFromAPI(subjectName, moduleId);
+      
+      // Show success toast
+      const toast = document.createElement('div');
+      toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300';
+      toast.textContent = '✅ Module deleted successfully!';
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => {
+          document.body.removeChild(toast);
+        }, 300);
+      }, 3000);
+
+    } catch (error) {
+      console.error('Failed to delete module:', error);
+      // Show error toast
+      const toast = document.createElement('div');
+      toast.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300';
+      toast.textContent = '❌ Failed to delete module!';
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => {
+          document.body.removeChild(toast);
+        }, 300);
+      }, 3000);
     }
     
     setDeleteModal({ isOpen: false, type: null, id: '', title: '' });
