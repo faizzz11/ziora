@@ -19,7 +19,8 @@ import {
   Home,
   Award,
   Clock,
-  ArrowRight
+  ArrowRight,
+  MessageCircle
 } from "lucide-react";
 import { cn } from '@/lib/utils';
 import branchSubjectsData from '@/data/branch-subjects.json';
@@ -66,6 +67,12 @@ const sectionData: { [key: string]: { title: string; icon: React.ComponentType<{
     icon: Star,
     description: 'Carefully selected important questions for exam preparation.',
     gradient: 'from-yellow-500 to-orange-500'
+  },
+  'viva-questions': {
+    title: 'Viva Questions',
+    icon: MessageCircle,
+    description: 'Comprehensive collection of viva voce questions and answers for oral examinations.',
+    gradient: 'from-gray-500 to-gray-900'
   }
 };
 

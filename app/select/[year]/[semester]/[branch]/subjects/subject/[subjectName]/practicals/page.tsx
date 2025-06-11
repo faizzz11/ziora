@@ -33,7 +33,7 @@ export default function PracticalsPage({ params }: PracticalsPageProps) {
     year: string;
     semester: string;
     branch: string;
-    subjectName: string;
+  subjectName: string;
   } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -55,14 +55,14 @@ export default function PracticalsPage({ params }: PracticalsPageProps) {
   if (isLoading || !resolvedParams) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-white to-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
-        </div>
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading...</p>
+          </div>
       </div>
     );
   }
-
+  
   // Get subject info from branch subjects data
   const { branches } = branchSubjectsData;
   const branchKey = resolvedParams.year === 'first-year' ? 'first-year' : resolvedParams.branch;
@@ -73,15 +73,15 @@ export default function PracticalsPage({ params }: PracticalsPageProps) {
   if (!subject) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-white to-gray-50 flex items-center justify-center">
-        <div className="text-center">
+          <div className="text-center">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Subject Not Found</h1>
           <p className="text-gray-600 mb-8">The subject you're looking for doesn't exist.</p>
           <Link 
             href={`/select/${resolvedParams.year}/${resolvedParams.semester}/${resolvedParams.branch}/subjects`}
             className="inline-flex items-center px-6 py-3 bg-black text-white rounded-full hover:bg-gray-800 transition-colors"
           >
-            Back to Subjects
-          </Link>
+              Back to Subjects
+            </Link>
         </div>
       </div>
     );
@@ -112,7 +112,7 @@ export default function PracticalsPage({ params }: PracticalsPageProps) {
             <span className="text-gray-900 font-semibold">Practicals Code & Lab Manual</span>
           </nav>
         </div>
-      </div>
+            </div>
 
       {/* Content */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -127,7 +127,7 @@ export default function PracticalsPage({ params }: PracticalsPageProps) {
               No experiments found for this subject. Available subjects: {Object.keys(experimentsData).join(', ')}
             </p>
           )}
-        </div>
+            </div>
 
         {/* Practicals Client Component */}
         <PracticalsClient experiments={experiments} subject={subject} subjectName={resolvedParams.subjectName} />
@@ -139,14 +139,14 @@ export default function PracticalsPage({ params }: PracticalsPageProps) {
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Subject
             </Button>
-          </Link>
+                  </Link>
           
           <Link href="/">
             <Button variant="outline" className="px-6 py-3 rounded-full hover:bg-gray-50 transition-all duration-300">
               <Home className="w-4 h-4 mr-2" />
               Home
             </Button>
-          </Link>
+                  </Link>
         </div>
       </div>
     </div>
