@@ -1,0 +1,66 @@
+{
+  "operating-system": {
+    "papers": [
+      {
+        "id": "may-2024",
+        "title": "May 2024",
+        "year": "2024",
+        "month": "May",
+        "fileName": "operating-system-may-2024.pdf",
+        "imagePreview": "/PYQ-img/operating-system-may-2024.jpg"
+      },
+      {
+        "id": "dec-2023",
+        "title": "December 2023",
+        "year": "2023",
+        "month": "December",
+        "fileName": "operating-system-dec-2023.pdf",
+        "imagePreview": "/PYQ-img/operating-system-dec-2023.jpg"
+      },
+      {
+        "id": "may-2023",
+        "title": "May 2023",
+        "year": "2023",
+        "month": "May",
+        "fileName": "operating-system-may-2023.pdf",
+        "imagePreview": "/PYQ-img/operating-system-may-2023.jpg"
+      },
+      {
+        "id": "dec-2022",
+        "title": "December 2022",
+        "year": "2022",
+        "month": "December",
+        "fileName": "operating-system-dec-2022.pdf",
+        "imagePreview": "/PYQ-img/operating-system-dec-2022.jpg"
+      },
+      {
+        "id": "1749632684585",
+        "title": "may 2022",
+        "year": "2022",
+        "month": "may",
+        "fileName": "operating-system-may-2024.pdf",
+        "imagePreview": "/PYQ-img/operating-system-may-2024.jpg"
+      },
+      {
+        "id": "1749632705734",
+        "title": "jan 1999",
+        "year": "1999",
+        "month": "jan",
+        "fileName": "operating-system-may-2024.pdf",
+        "imagePreview": "/PYQ-img/operating-system-dec-2022.jpg"
+      }
+    ]
+  },
+  "eng-maths-4": {
+    "papers": [
+      {
+        "id": "1749632758820",
+        "title": "maths 2022",
+        "year": "2022",
+        "month": "jan ",
+        "fileName": "maths-2024.pdf",
+        "imagePreview": "/PYQ-img/maths-may-2024.jpg"
+      }
+    ]
+  }
+}

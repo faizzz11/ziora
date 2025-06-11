@@ -1,10 +1,15 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Image from 'next/image';
+import { Pencil, Trash2, Plus } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
 
 interface Paper {
   id: string;
@@ -36,12 +41,134 @@ interface PYQClientProps {
   subjectName: string;
 }
 
+// API helper functions
+const savePaperToAPI = async (subjectName: string, paperData: Paper) => {
+  try {
+    const response = await fetch('/api/papers', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        subject: subjectName,
+        paper: paperData,
+      }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to save paper');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error saving paper:', error);
+    throw error;
+  }
+};
+
+const updatePaperInAPI = async (subjectName: string, paperId: string, paperData: Partial<Paper>) => {
+  try {
+    const response = await fetch('/api/papers', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        subject: subjectName,
+        paperId,
+        paperData,
+      }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to update paper');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error updating paper:', error);
+    throw error;
+  }
+};
+
+const deletePaperFromAPI = async (subjectName: string, paperId: string) => {
+  try {
+    const response = await fetch('/api/papers', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        subject: subjectName,
+        paperId,
+      }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to delete paper');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error deleting paper:', error);
+    throw error;
+  }
+};
+
 export default function PYQClient({ subject, subjectPYQ, subjectName }: PYQClientProps) {
   const [selectedPaper, setSelectedPaper] = useState<Paper | null>(null);
   const [isZoomed, setIsZoomed] = useState(false);
+  const [papers, setPapers] = useState<Paper[]>(subjectPYQ.papers);
+  const [editingPaper, setEditingPaper] = useState<string | null>(null);
+  const [isAddingPaper, setIsAddingPaper] = useState(false);
+  const [shouldSave, setShouldSave] = useState(false);
+  const [editPaperData, setEditPaperData] = useState({
+    title: '',
+    year: '',
+    month: '',
+    fileName: '',
+    imagePreview: ''
+  });
+  const [deleteModal, setDeleteModal] = useState<{
+    isOpen: boolean;
+    id: string;
+    title: string;
+  }>({
+    isOpen: false,
+    id: '',
+    title: ''
+  });
+
+  // Add useEffect to save papers when they change
+  useEffect(() => {
+    const savePapers = async () => {
+      try {
+        await fetch('/api/papers', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            subject: subjectName,
+            papers: papers
+          }),
+        });
+        setShouldSave(false);
+      } catch (error) {
+        console.error('Error saving papers:', error);
+      }
+    };
+
+    if (shouldSave) {
+      savePapers();
+    }
+  }, [shouldSave, papers, subjectName]);
 
   const handlePaperSelect = (paperId: string) => {
-    const paper = subjectPYQ.papers.find(p => p.id === paperId);
+    const paper = papers.find(p => p.id === paperId);
     if (paper) {
       setSelectedPaper(paper);
       setIsZoomed(false); // Reset zoom when changing papers
@@ -71,6 +198,85 @@ export default function PYQClient({ subject, subjectPYQ, subjectName }: PYQClien
     setIsZoomed(!isZoomed);
   };
 
+  const handleAddPaper = () => {
+    setIsAddingPaper(true);
+    setEditPaperData({
+      title: '',
+      year: '',
+      month: '',
+      fileName: '',
+      imagePreview: ''
+    });
+  };
+
+  const handleEditPaper = (paperId: string) => {
+    const paper = papers.find(p => p.id === paperId);
+    if (paper) {
+      setEditingPaper(paperId);
+      setEditPaperData({
+        title: paper.title,
+        year: paper.year,
+        month: paper.month,
+        fileName: paper.fileName,
+        imagePreview: paper.imagePreview
+      });
+    }
+  };
+
+  const handleSavePaper = async () => {
+    try {
+      if (editingPaper) {
+        // Update existing paper
+        await updatePaperInAPI(subjectName, editingPaper, editPaperData);
+        setPapers(papers.map(paper => 
+          paper.id === editingPaper ? { ...paper, ...editPaperData } : paper
+        ));
+        setShouldSave(true);
+        toast.success("Paper updated successfully");
+      } else {
+        // Add new paper
+        const newPaper = {
+          id: Date.now().toString(),
+          ...editPaperData
+        };
+        await savePaperToAPI(subjectName, newPaper);
+        setPapers([...papers, newPaper]);
+        setShouldSave(true);
+        toast.success("Paper added successfully");
+      }
+      setEditingPaper(null);
+      setIsAddingPaper(false);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to save paper");
+    }
+  };
+
+  const handleDeletePaper = (paperId: string) => {
+    const paper = papers.find(p => p.id === paperId);
+    if (paper) {
+      setDeleteModal({
+        isOpen: true,
+        id: paperId,
+        title: paper.title
+      });
+    }
+  };
+
+  const confirmDeletePaper = async () => {
+    try {
+      await deletePaperFromAPI(subjectName, deleteModal.id);
+      setPapers(papers.filter(paper => paper.id !== deleteModal.id));
+      setShouldSave(true);
+      if (selectedPaper?.id === deleteModal.id) {
+        setSelectedPaper(null);
+      }
+      setDeleteModal({ isOpen: false, id: '', title: '' });
+      toast.success("Paper deleted successfully");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to delete paper");
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header Section */}
@@ -92,11 +298,50 @@ export default function PYQClient({ subject, subjectPYQ, subjectName }: PYQClien
                 <SelectValue placeholder="Select Question Paper" />
               </SelectTrigger>
               <SelectContent>
-                {subjectPYQ.papers.map((paper) => (
-                  <SelectItem key={paper.id} value={paper.id}>
-                    {paper.title}
-                  </SelectItem>
+                {papers.map((paper) => (
+                  <div key={paper.id} className="flex items-center justify-between px-2 py-1 hover:bg-gray-100">
+                    <SelectItem value={paper.id}>
+                      {paper.title}
+                    </SelectItem>
+                    <div className="flex items-center space-x-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleEditPaper(paper.id);
+                        }}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleDeletePaper(paper.id);
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4 text-red-500" />
+                      </Button>
+                    </div>
+                  </div>
                 ))}
+                <div className="border-t border-gray-200 mt-1">
+                  <Button
+                    variant="ghost"
+                    className="w-full flex items-center justify-center py-2 text-blue-600"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleAddPaper();
+                    }}
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add New Paper
+                  </Button>
+                </div>
               </SelectContent>
             </Select>
           </div>
@@ -229,6 +474,96 @@ export default function PYQClient({ subject, subjectPYQ, subjectName }: PYQClien
           </CardContent>
         </Card>
       )}
+
+      {/* Paper Edit Dialog */}
+      <Dialog open={editingPaper !== null || isAddingPaper} onOpenChange={() => {
+        setEditingPaper(null);
+        setIsAddingPaper(false);
+      }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{editingPaper ? 'Edit Paper' : 'Add New Paper'}</DialogTitle>
+            <DialogDescription>
+              {editingPaper ? 'Update the paper details below.' : 'Enter the details for the new paper.'}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="title">Title</Label>
+              <Input
+                id="title"
+                value={editPaperData.title}
+                onChange={(e) => setEditPaperData({ ...editPaperData, title: e.target.value })}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="year">Year</Label>
+              <Input
+                id="year"
+                value={editPaperData.year}
+                onChange={(e) => setEditPaperData({ ...editPaperData, year: e.target.value })}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="month">Month</Label>
+              <Input
+                id="month"
+                value={editPaperData.month}
+                onChange={(e) => setEditPaperData({ ...editPaperData, month: e.target.value })}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="fileName">File Name</Label>
+              <Input
+                id="fileName"
+                value={editPaperData.fileName}
+                onChange={(e) => setEditPaperData({ ...editPaperData, fileName: e.target.value })}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="imagePreview">Image Preview URL</Label>
+              <Input
+                id="imagePreview"
+                value={editPaperData.imagePreview}
+                onChange={(e) => setEditPaperData({ ...editPaperData, imagePreview: e.target.value })}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => {
+              setEditingPaper(null);
+              setIsAddingPaper(false);
+            }}>
+              Cancel
+            </Button>
+            <Button onClick={handleSavePaper}>
+              {editingPaper ? 'Update' : 'Add'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteModal.isOpen} onOpenChange={(open) => {
+        if (!open) setDeleteModal({ isOpen: false, id: '', title: '' });
+      }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Paper</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete "{deleteModal.title}"? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteModal({ isOpen: false, id: '', title: '' })}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={confirmDeletePaper}>
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 } 
