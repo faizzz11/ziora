@@ -105,12 +105,13 @@ const branches = {
   }
 };
 
-const SubjectsPage = ({ params }: SubjectsPageProps) => {
+const SubjectsPage = async ({ params }: SubjectsPageProps) => {
+  const { year, semester, branch } = await params;
   const { academicYears } = academicData;
   const { branches: branchData } = branchSubjectsData;
   
   // Find the selected year
-  const selectedYear = academicYears.find(year => year.id === params.year);
+  const selectedYear = academicYears.find(yearItem => yearItem.id === year);
   
   if (!selectedYear) {
     notFound();
@@ -118,7 +119,7 @@ const SubjectsPage = ({ params }: SubjectsPageProps) => {
 
   // Find the selected semester
   const selectedSemester = selectedYear.semesters.find(
-    semester => semester.number.toString() === params.semester
+    semesterItem => semesterItem.number.toString() === semester
   );
 
   if (!selectedSemester) {
@@ -126,7 +127,7 @@ const SubjectsPage = ({ params }: SubjectsPageProps) => {
   }
 
   // Get branch data based on year
-  const branchKey = params.year === 'FE' ? 'FE' : params.branch;
+  const branchKey = year === 'FE' ? 'FE' : branch;
   const selectedBranchData = (branchData as any)[branchKey];
   
   if (!selectedBranchData) {
@@ -134,15 +135,15 @@ const SubjectsPage = ({ params }: SubjectsPageProps) => {
   }
 
   // Get subjects for the selected semester
-  const semesterSubjects: Subject[] = selectedBranchData.semesters[params.semester] || [];
+  const semesterSubjects: Subject[] = selectedBranchData.semesters[semester] || [];
   
   if (semesterSubjects.length === 0) {
     notFound();
   }
 
   // Get branch display info
-  const selectedBranch = (branches as any)[params.branch] || branches.general;
-  const { icon: BranchIcon, gradient: branchGradient } = getBranchIcon(params.branch);
+  const selectedBranch = (branches as any)[branch] || branches.general;
+  const { icon: BranchIcon, gradient: branchGradient } = getBranchIcon(branch);
 
   // Generate unique gradient for each subject
   const getSubjectGradient = (index: number) => {
@@ -190,13 +191,13 @@ const SubjectsPage = ({ params }: SubjectsPageProps) => {
             Academic Years
           </Link>
           <ChevronRight className="w-4 h-4 mx-2 text-gray-400" />
-          <Link href={`/select/${params.year}`} className="text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors">
+          <Link href={`/select/${year}`} className="text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors">
             {selectedYear.name}
           </Link>
           <ChevronRight className="w-4 h-4 mx-2 text-gray-400" />
-          {params.year !== 'FE' ? (
+          {year !== 'FE' ? (
             <>
-              <Link href={`/select/${params.year}/${params.semester}`} className="text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors">
+              <Link href={`/select/${year}/${semester}`} className="text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors">
                 Semester {selectedSemester.number}
               </Link>
               <ChevronRight className="w-4 h-4 mx-2 text-gray-400" />
@@ -212,7 +213,7 @@ const SubjectsPage = ({ params }: SubjectsPageProps) => {
           {semesterSubjects.map((subject: Subject, index: number) => (
             <Link 
               key={subject.id} 
-              href={`/select/${params.year}/${params.semester}/${params.branch}/subjects/subject/${subject.id}`}
+              href={`/select/${year}/${semester}/${branch}/subjects/subject/${subject.id}`}
               className="group h-full"
             >
               <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 group-hover:border-gray-200 group-hover:-translate-y-2 h-full flex flex-col">
@@ -278,15 +279,15 @@ const SubjectsPage = ({ params }: SubjectsPageProps) => {
 
         {/* Bottom Actions */}
         <div className="flex justify-center gap-4 mt-12">
-          {params.year !== 'FE' ? (
-            <Link href={`/select/${params.year}/${params.semester}`}>
+          {year !== 'FE' ? (
+            <Link href={`/select/${year}/${semester}`}>
               <button className="inline-flex items-center px-6 py-3 text-sm font-medium text-gray-600 bg-gradient-to-r from-gray-100 to-gray-200 rounded-full hover:from-gray-200 hover:to-gray-300 transition-all duration-300 border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-md">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Branches
               </button>
             </Link>
           ) : (
-            <Link href={`/select/${params.year}`}>
+            <Link href={`/select/${year}`}>
               <button className="inline-flex items-center px-6 py-3 text-sm font-medium text-gray-600 bg-gradient-to-r from-gray-100 to-gray-200 rounded-full hover:from-gray-200 hover:to-gray-300 transition-all duration-300 border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-md">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Semesters
