@@ -56,19 +56,35 @@ const LoginPage = () => {
     setErrors({});
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Invalid username/email or password');
+      }
       
-      // Simulate successful login (you would implement actual authentication here)
+      // Store user data in localStorage or state management solution
+      localStorage.setItem('user', JSON.stringify(data.user));
+      
+      // Show success message
       setSuccessMessage('Login successful! Redirecting to dashboard...');
       
-      // Redirect to dashboard or home page after successful login
+      // Redirect to dashboard after success
       setTimeout(() => {
-        window.location.href = '/dashboard';  // or wherever you want to redirect
+        window.location.href = '/';
       }, 1500);
 
     } catch (error) {
-      setErrors({ general: 'Invalid username/email or password. Please try again.' });
+      setErrors({ 
+        general: error instanceof Error ? error.message : 'An error occurred during login' 
+      });
     } finally {
       setIsLoading(false);
     }

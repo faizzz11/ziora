@@ -133,10 +133,21 @@ const SignupPage = () => {
     setErrors({});
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Something went wrong');
+      }
       
-      // Simulate successful signup
+      // Show success message
       setSuccessMessage('Account created successfully! Redirecting to login...');
       
       // Clear form
@@ -158,7 +169,9 @@ const SignupPage = () => {
       }, 2000);
 
     } catch (error) {
-      setErrors({ general: 'An error occurred. Please try again.' });
+      setErrors({ 
+        general: error instanceof Error ? error.message : 'An error occurred. Please try again.' 
+      });
     } finally {
       setIsLoading(false);
     }
