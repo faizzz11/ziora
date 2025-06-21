@@ -36,6 +36,9 @@ interface VideoLecturesClientProps {
   subject: Subject;
   subjectVideos: SubjectVideos;
   subjectName: string;
+  year: string;
+  semester: string;
+  branch: string;
 }
 
 // Mock comments data (will be replaced with database later)
@@ -80,16 +83,20 @@ const convertToEmbedUrl = (url: string): string => {
 };
 
 // API helper functions
-const saveVideosToAPI = async (subjectName: string, videos: SubjectVideos) => {
+const saveVideosToAPI = async (year: string, semester: string, branch: string, subjectName: string, videos: SubjectVideos) => {
   try {
-    const response = await fetch('/api/videos', {
+    const response = await fetch('/api/content', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        year,
+        semester,
+        branch,
         subject: subjectName,
-        videos: videos,
+        contentType: 'video-lecs',
+        content: videos,
       }),
     });
 
@@ -104,18 +111,20 @@ const saveVideosToAPI = async (subjectName: string, videos: SubjectVideos) => {
   }
 };
 
-const updateVideoInAPI = async (subjectName: string, moduleId: string, topicId: string, topicData: Partial<Topic>) => {
+const updateVideoInAPI = async (year: string, semester: string, branch: string, subjectName: string, updatedVideos: SubjectVideos) => {
   try {
-    const response = await fetch('/api/videos', {
+    const response = await fetch('/api/content', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        year,
+        semester,
+        branch,
         subject: subjectName,
-        moduleId,
-        topicId,
-        topicData,
+        contentType: 'video-lecs',
+        content: updatedVideos,
       }),
     });
 
@@ -130,17 +139,20 @@ const updateVideoInAPI = async (subjectName: string, moduleId: string, topicId: 
   }
 };
 
-const deleteVideoFromAPI = async (subjectName: string, moduleId: string, topicId: string) => {
+const deleteVideoFromAPI = async (year: string, semester: string, branch: string, subjectName: string, updatedVideos: SubjectVideos) => {
   try {
-    const response = await fetch('/api/videos', {
-      method: 'DELETE',
+    const response = await fetch('/api/content', {
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        year,
+        semester,
+        branch,
         subject: subjectName,
-        moduleId,
-        topicId,
+        contentType: 'video-lecs',
+        content: updatedVideos,
       }),
     });
 
@@ -155,7 +167,7 @@ const deleteVideoFromAPI = async (subjectName: string, moduleId: string, topicId
   }
 };
 
-export default function VideoLecturesClient({ subject, subjectVideos, subjectName }: VideoLecturesClientProps) {
+export default function VideoLecturesClient({ subject, subjectVideos, subjectName, year, semester, branch }: VideoLecturesClientProps) {
   const [currentTopic, setCurrentTopic] = useState<Topic | null>(null);
   const [selectedModule, setSelectedModule] = useState<string>('');
   const [newComment, setNewComment] = useState('');
@@ -251,7 +263,7 @@ export default function VideoLecturesClient({ subject, subjectVideos, subjectNam
       setModules(updatedModules);
 
       // Save to API
-      await updateVideoInAPI(subjectName, moduleId, newVideoId, newVideo);
+      await updateVideoInAPI(year, semester, branch, subjectName, { modules: updatedModules });
       
       // Start editing the new video
       setEditingVideo(newVideoId);
@@ -373,11 +385,7 @@ export default function VideoLecturesClient({ subject, subjectVideos, subjectNam
         setModules(updatedModules);
 
         // Save to API
-        await updateVideoInAPI(subjectName, moduleId, videoId, {
-          title: editVideoData.title.trim(),
-          videoUrl: editVideoData.videoUrl.trim(),
-          notes: editVideoData.notes.trim()
-        });
+        await updateVideoInAPI(year, semester, branch, subjectName, { modules: updatedModules });
         
         // Show success toast
         const toast = document.createElement('div');
@@ -445,7 +453,7 @@ export default function VideoLecturesClient({ subject, subjectVideos, subjectNam
       }
 
       // Delete from API
-      await deleteVideoFromAPI(subjectName, moduleId, videoId);
+      await deleteVideoFromAPI(year, semester, branch, subjectName, { modules: updatedModules });
       
       // Show success toast
       const toast = document.createElement('div');

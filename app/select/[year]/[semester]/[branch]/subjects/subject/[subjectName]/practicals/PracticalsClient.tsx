@@ -23,19 +23,26 @@ interface PracticalsClientProps {
   experiments: Experiment[];
   subject: any;
   subjectName: string;
+  year: string;
+  semester: string;
+  branch: string;
 }
 
 // API helper functions
-const saveExperimentsToAPI = async (subjectName: string, experiments: Experiment[]) => {
+const saveExperimentsToAPI = async (year: string, semester: string, branch: string, subjectName: string, experiments: Experiment[]) => {
   try {
-    const response = await fetch('/api/experiments', {
+    const response = await fetch('/api/content', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        year,
+        semester,
+        branch,
         subject: subjectName,
-        experiments: experiments,
+        contentType: 'practicals',
+        content: { experiments },
       }),
     });
 
@@ -50,17 +57,20 @@ const saveExperimentsToAPI = async (subjectName: string, experiments: Experiment
   }
 };
 
-const updateExperimentInAPI = async (subjectName: string, experimentNo: number, experimentData: Partial<Experiment>) => {
+const updateExperimentInAPI = async (year: string, semester: string, branch: string, subjectName: string, experiments: Experiment[]) => {
   try {
-    const response = await fetch('/api/experiments', {
+    const response = await fetch('/api/content', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        year,
+        semester,
+        branch,
         subject: subjectName,
-        experimentNo,
-        experimentData,
+        contentType: 'practicals',
+        content: { experiments },
       }),
     });
 
@@ -75,16 +85,20 @@ const updateExperimentInAPI = async (subjectName: string, experimentNo: number, 
   }
 };
 
-const deleteExperimentFromAPI = async (subjectName: string, experimentNo: number) => {
+const deleteExperimentFromAPI = async (year: string, semester: string, branch: string, subjectName: string, experiments: Experiment[]) => {
   try {
-    const response = await fetch('/api/experiments', {
-      method: 'DELETE',
+    const response = await fetch('/api/content', {
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        year,
+        semester,
+        branch,
         subject: subjectName,
-        experimentNo,
+        contentType: 'practicals',
+        content: { experiments },
       }),
     });
 
@@ -546,7 +560,7 @@ const ExperimentVideosTab = ({
   );
 };
 
-export default function PracticalsClient({ experiments: initialExperiments, subject, subjectName }: PracticalsClientProps) {
+export default function PracticalsClient({ experiments: initialExperiments, subject, subjectName, year, semester, branch }: PracticalsClientProps) {
   const [activeTab, setActiveTab] = useState('experiments');
   const [experiments, setExperiments] = useState<Experiment[]>(initialExperiments);
   const [editingExperiment, setEditingExperiment] = useState<number | null>(null);
@@ -598,7 +612,7 @@ export default function PracticalsClient({ experiments: initialExperiments, subj
         setExperiments(updatedExperiments);
 
         // Save to API
-        await saveExperimentsToAPI(subjectName, updatedExperiments);
+        await saveExperimentsToAPI(year, semester, branch, subjectName, updatedExperiments);
         
         // Show success toast
         const toast = document.createElement('div');
@@ -655,7 +669,7 @@ export default function PracticalsClient({ experiments: initialExperiments, subj
       setExperiments(updatedExperiments);
 
       // Delete from API
-      await deleteExperimentFromAPI(subjectName, experimentNo);
+      await deleteExperimentFromAPI(year, semester, branch, subjectName, updatedExperiments);
       
       // Show success toast
       const toast = document.createElement('div');
@@ -715,7 +729,7 @@ export default function PracticalsClient({ experiments: initialExperiments, subj
         setExperiments(updatedExperiments);
 
         // Save to API
-        await saveExperimentsToAPI(subjectName, updatedExperiments);
+        await saveExperimentsToAPI(year, semester, branch, subjectName, updatedExperiments);
         
         // Show success toast
         const toast = document.createElement('div');

@@ -110,7 +110,7 @@ Contains video lectures and notes data for each subject, organized by modules an
 ```
 
 **Key Fields:**
-- `pdfUrl`: Google Drive preview URL for PDF notes (used in notes page)
+- `pdfUrl`: Google  preview URL for PDF notes (used in notes page)
 - `relatedVideoLink`: YouTube video URL that relates to the entire module
 - `videoUrl`: YouTube embed URL for individual topic videos
 - `duration`: Video duration in MM:SS format
