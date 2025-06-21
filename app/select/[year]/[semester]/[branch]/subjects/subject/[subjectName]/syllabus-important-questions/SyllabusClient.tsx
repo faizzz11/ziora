@@ -190,6 +190,23 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
     modules: initialImpQuestions?.modules || []
   });
   
+  // Check if user is admin
+  const [isAdmin, setIsAdmin] = useState(false);
+  
+  useEffect(() => {
+    // Check for admin status from localStorage
+    const adminData = localStorage.getItem('admin');
+    const userData = localStorage.getItem('user');
+    
+    if (adminData) {
+      const admin = JSON.parse(adminData);
+      setIsAdmin(admin.role === 'admin' || admin.isAdmin === true);
+    } else if (userData) {
+      const user = JSON.parse(userData);
+      setIsAdmin(user.role === 'admin' || user.isAdmin === true);
+    }
+  }, []);
+  
   // Syllabus states
   const [editingModule, setEditingModule] = useState<string | null>(null);
   const [isAddingModule, setIsAddingModule] = useState(false);
@@ -752,13 +769,15 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
                     Total Hours: <span className="font-semibold">{syllabus.totalHours}</span>
                   </p>
                 </div>
-                <Button
-                  onClick={handleAddModule}
-                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2"
-                >
-                  <Plus className="h-4 w-4" />
-                  <span>Add Module</span>
-                </Button>
+                {isAdmin && (
+                  <Button
+                    onClick={handleAddModule}
+                    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2"
+                  >
+                    <Plus className="h-4 w-4" />
+                    <span>Add Module</span>
+                  </Button>
+                )}
               </div>
             </CardHeader>
             <CardContent className="p-0">
@@ -874,24 +893,26 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
                               </Button>
                             </div>
                           ) : (
-                            <div className="flex space-x-2">
-                              <Button
-                                onClick={() => handleEditModule(module)}
-                                size="sm"
-                                variant="outline"
-                                className="hover:bg-blue-50"
-                              >
-                                <Edit className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                onClick={() => handleDeleteModule(module)}
-                                size="sm"
-                                variant="outline"
-                                className="hover:bg-red-50 text-red-600"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </div>
+                            isAdmin && (
+                              <div className="flex space-x-2">
+                                <Button
+                                  onClick={() => handleEditModule(module)}
+                                  size="sm"
+                                  variant="outline"
+                                  className="hover:bg-blue-50"
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  onClick={() => handleDeleteModule(module)}
+                                  size="sm"
+                                  variant="outline"
+                                  className="hover:bg-red-50 text-red-600"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            )
                           )}
                         </td>
                       </tr>
@@ -1013,13 +1034,15 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
               <h2 className="text-2xl font-bold text-gray-900">Important Questions by Module</h2>
               <p className="text-gray-600 mt-1">Manage modules and their important questions</p>
             </div>
-            <Button
-              onClick={handleAddImpModule}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2"
-            >
-              <Plus className="h-4 w-4" />
-              <span>Add Module</span>
-            </Button>
+            {isAdmin && (
+              <Button
+                onClick={handleAddImpModule}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2"
+              >
+                <Plus className="h-4 w-4" />
+                <span>Add Module</span>
+              </Button>
+            )}
           </div>
 
           {/* Legend */}
@@ -1099,32 +1122,34 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
                         <CardTitle className="text-lg font-semibold text-gray-900">
                           Module {module.moduleNo} - {module.title}
                         </CardTitle>
-                        <div className="flex items-center space-x-2">
-                          <Button
-                            onClick={() => handleEditImpModule(module)}
-                            size="sm"
-                            variant="outline"
-                            className="hover:bg-blue-50"
-                          >
-                            <Edit className="h-3 w-3" />
-                          </Button>
-                          <Button
-                            onClick={() => handleDeleteImpModule(module)}
-                            size="sm"
-                            variant="outline"
-                            className="hover:bg-red-50 text-red-600"
-                          >
-                            <Trash2 className="h-3 w-3" />
-                          </Button>
-                          <Button
-                            onClick={() => handleAddQuestion(module.moduleNo)}
-                            className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg flex items-center space-x-2"
-                            size="sm"
-                          >
-                            <Plus className="h-3 w-3" />
-                            <span>Add Question</span>
-                          </Button>
-                        </div>
+                        {isAdmin && (
+                          <div className="flex items-center space-x-2">
+                            <Button
+                              onClick={() => handleEditImpModule(module)}
+                              size="sm"
+                              variant="outline"
+                              className="hover:bg-blue-50"
+                            >
+                              <Edit className="h-3 w-3" />
+                            </Button>
+                            <Button
+                              onClick={() => handleDeleteImpModule(module)}
+                              size="sm"
+                              variant="outline"
+                              className="hover:bg-red-50 text-red-600"
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </Button>
+                            <Button
+                              onClick={() => handleAddQuestion(module.moduleNo)}
+                              className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg flex items-center space-x-2"
+                              size="sm"
+                            >
+                              <Plus className="h-3 w-3" />
+                              <span>Add Question</span>
+                            </Button>
+                          </div>
+                        )}
                       </>
                     )}
                   </div>
@@ -1191,24 +1216,26 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
                             </div>
                             <div className="ml-4 flex items-center space-x-2">
                               {getFrequencyBadge(question.frequency, question.repetition)}
-                              <div className="flex space-x-1">
-                                <Button
-                                  onClick={() => handleEditQuestion(module.moduleNo, questionIndex, question)}
-                                  size="sm"
-                                  variant="outline"
-                                  className="hover:bg-blue-50"
-                                >
-                                  <Edit className="h-3 w-3" />
-                                </Button>
-                                <Button
-                                  onClick={() => handleDeleteQuestion(module.moduleNo, questionIndex, question)}
-                                  size="sm"
-                                  variant="outline"
-                                  className="hover:bg-red-50 text-red-600"
-                                >
-                                  <Trash2 className="h-3 w-3" />
-                                </Button>
-                              </div>
+                              {isAdmin && (
+                                <div className="flex space-x-1">
+                                  <Button
+                                    onClick={() => handleEditQuestion(module.moduleNo, questionIndex, question)}
+                                    size="sm"
+                                    variant="outline"
+                                    className="hover:bg-blue-50"
+                                  >
+                                    <Edit className="h-3 w-3" />
+                                  </Button>
+                                  <Button
+                                    onClick={() => handleDeleteQuestion(module.moduleNo, questionIndex, question)}
+                                    size="sm"
+                                    variant="outline"
+                                    className="hover:bg-red-50 text-red-600"
+                                  >
+                                    <Trash2 className="h-3 w-3" />
+                                  </Button>
+                                </div>
+                              )}
                             </div>
                           </div>
                         )}

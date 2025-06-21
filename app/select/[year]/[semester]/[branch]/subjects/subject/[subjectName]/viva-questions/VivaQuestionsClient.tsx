@@ -79,6 +79,23 @@ export default function VivaQuestionsClient({ subject, vivaData, subjectName, ye
   const [vivaQuestions, setVivaQuestions] = useState<VivaQuestion[]>(vivaData.questions);
   const [customCategories, setCustomCategories] = useState<string[]>([]);
   
+  // Check if user is admin
+  const [isAdmin, setIsAdmin] = useState(false);
+  
+  React.useEffect(() => {
+    // Check for admin status from localStorage
+    const adminData = localStorage.getItem('admin');
+    const userData = localStorage.getItem('user');
+    
+    if (adminData) {
+      const admin = JSON.parse(adminData);
+      setIsAdmin(admin.role === 'admin' || admin.isAdmin === true);
+    } else if (userData) {
+      const user = JSON.parse(userData);
+      setIsAdmin(user.role === 'admin' || user.isAdmin === true);
+    }
+  }, []);
+  
   // CRUD States
   const [isAddingQuestion, setIsAddingQuestion] = useState(false);
   const [editingQuestionId, setEditingQuestionId] = useState<string | null>(null);
@@ -293,14 +310,16 @@ export default function VivaQuestionsClient({ subject, vivaData, subjectName, ye
           </Badge>
         </div>
 
-        {/* Add Question Button */}
-        <Button
-          onClick={handleAddQuestion}
-          className="bg-gray-900 text-white hover:bg-gray-800 px-6 py-3 rounded-full"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          Add New Question
-        </Button>
+        {/* Add Question Button - Only show for admins */}
+        {isAdmin && (
+          <Button
+            onClick={handleAddQuestion}
+            className="bg-gray-900 text-white hover:bg-gray-800 px-6 py-3 rounded-full"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Add New Question
+          </Button>
+        )}
       </div>
 
       {/* Search and Filters */}
@@ -389,23 +408,25 @@ export default function VivaQuestionsClient({ subject, vivaData, subjectName, ye
                       </Button>
                     </div>
                   ) : (
-                    <div className="flex gap-2">
-                      <Button
-                        onClick={() => handleEditQuestion(question)}
-                        size="sm"
-                        variant="outline"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        onClick={() => handleDeleteQuestion(question)}
-                        size="sm"
-                        variant="outline"
-                        className="text-red-600 hover:text-red-700"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
+                    isAdmin && (
+                      <div className="flex gap-2">
+                        <Button
+                          onClick={() => handleEditQuestion(question)}
+                          size="sm"
+                          variant="outline"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          onClick={() => handleDeleteQuestion(question)}
+                          size="sm"
+                          variant="outline"
+                          className="text-red-600 hover:text-red-700"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    )
                   )}
                   <Badge className={getCategoryColor(question.category)}>
                     {question.category}

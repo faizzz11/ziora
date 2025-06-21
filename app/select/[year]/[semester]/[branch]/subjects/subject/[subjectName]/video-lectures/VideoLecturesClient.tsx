@@ -194,6 +194,23 @@ export default function VideoLecturesClient({ subject, subjectVideos, subjectNam
     title: ''
   });
 
+  // Check if user is admin
+  const [isAdmin, setIsAdmin] = useState(false);
+  
+  useEffect(() => {
+    // Check for admin status from localStorage
+    const adminData = localStorage.getItem('admin');
+    const userData = localStorage.getItem('user');
+    
+    if (adminData) {
+      const admin = JSON.parse(adminData);
+      setIsAdmin(admin.role === 'admin' || admin.isAdmin === true);
+    } else if (userData) {
+      const user = JSON.parse(userData);
+      setIsAdmin(user.role === 'admin' || user.isAdmin === true);
+    }
+  }, []);
+
   useEffect(() => {
     if (modules?.length > 0) {
       const firstModule = modules[0];
@@ -670,66 +687,68 @@ export default function VideoLecturesClient({ subject, subjectVideos, subjectNam
                       
                       {selectedModule === module.id && (
                         <div className="mt-2 space-y-2">
-                          {/* Module Edit Section */}
-                          <div className="p-3 bg-gray-100 rounded-lg border">
-                            {editingModule === module.id ? (
-                              <div className="space-y-2">
-                                <input
-                                  type="text"
-                                  value={editModuleName}
-                                  onChange={(e) => setEditModuleName(e.target.value)}
-                                  className="w-full p-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                  placeholder="Module name"
-                                  autoFocus
-                                />
-                                <div className="flex space-x-2">
-                                  <Button
-                                    onClick={() => handleSaveModuleName(module.id)}
-                                    size="sm"
-                                    className="bg-green-600 text-white hover:bg-green-700"
-                                  >
-                                    <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                    </svg>
-                                    Save
-                                  </Button>
-                                  <Button
-                                    onClick={handleCancelEdit}
-                                    size="sm"
-                                    variant="outline"
-                                  >
-                                    Cancel
-                                  </Button>
+                          {/* Module Edit Section - Only show for admins */}
+                          {isAdmin && (
+                            <div className="p-3 bg-gray-100 rounded-lg border">
+                              {editingModule === module.id ? (
+                                <div className="space-y-2">
+                                  <input
+                                    type="text"
+                                    value={editModuleName}
+                                    onChange={(e) => setEditModuleName(e.target.value)}
+                                    className="w-full p-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    placeholder="Module name"
+                                    autoFocus
+                                  />
+                                  <div className="flex space-x-2">
+                                    <Button
+                                      onClick={() => handleSaveModuleName(module.id)}
+                                      size="sm"
+                                      className="bg-green-600 text-white hover:bg-green-700"
+                                    >
+                                      <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                      </svg>
+                                      Save
+                                    </Button>
+                                    <Button
+                                      onClick={handleCancelEdit}
+                                      size="sm"
+                                      variant="outline"
+                                    >
+                                      Cancel
+                                    </Button>
+                                  </div>
                                 </div>
-                              </div>
-                            ) : (
-                              <div className="flex items-center justify-between">
-                                <span className="text-sm font-medium text-gray-700">Module Actions</span>
-                                <div className="flex space-x-1">
-                                  <Button
-                                    onClick={() => handleEditModule(module.id, module.name)}
-                                    size="sm"
-                                    variant="outline"
-                                    className="h-8 w-8 p-0"
-                                  >
-                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                    </svg>
-                                  </Button>
-                                  <Button
-                                    onClick={() => handleDeleteModule(module.id)}
-                                    size="sm"
-                                    variant="outline"
-                                    className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
-                                  >
-                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                    </svg>
-                                  </Button>
+                              ) : (
+                                <div className="flex items-center justify-between">
+                                  <span className="text-sm font-medium text-gray-700">Module Actions</span>
+                                  <div className="flex space-x-1">
+                                    <Button
+                                      onClick={() => handleEditModule(module.id, module.name)}
+                                      size="sm"
+                                      variant="outline"
+                                      className="h-8 w-8 p-0"
+                                    >
+                                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                      </svg>
+                                    </Button>
+                                    <Button
+                                      onClick={() => handleDeleteModule(module.id)}
+                                      size="sm"
+                                      variant="outline"
+                                      className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                                    >
+                                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                      </svg>
+                                    </Button>
+                                  </div>
                                 </div>
-                              </div>
-                            )}
-                          </div>
+                              )}
+                            </div>
+                          )}
 
                           {/* Topics List */}
                           {module.topics.map((topic) => (
@@ -809,70 +828,76 @@ export default function VideoLecturesClient({ subject, subjectVideos, subjectNam
                                     </div>
                                   </button>
                                   
-                                  {/* Video Action Buttons */}
-                                  <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <div className="flex space-x-1">
-                                      <Button
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          handleEditVideo(topic);
-                                        }}
-                                        size="sm"
-                                        variant="outline"
-                                        className="h-6 w-6 p-0 bg-white border-gray-300"
-                                      >
-                                        <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                        </svg>
-                                      </Button>
-                                      <Button
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          handleDeleteVideo(module.id, topic.id);
-                                        }}
-                                        size="sm"
-                                        variant="outline"
-                                        className="h-6 w-6 p-0 bg-white border-gray-300 text-red-600 hover:text-red-700 hover:bg-red-50"
-                                      >
-                                        <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                        </svg>
-                                      </Button>
+                                  {/* Video Action Buttons - Only show for admins */}
+                                  {isAdmin && (
+                                    <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                      <div className="flex space-x-1">
+                                        <Button
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleEditVideo(topic);
+                                          }}
+                                          size="sm"
+                                          variant="outline"
+                                          className="h-6 w-6 p-0 bg-white border-gray-300"
+                                        >
+                                          <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                          </svg>
+                                        </Button>
+                                        <Button
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleDeleteVideo(module.id, topic.id);
+                                          }}
+                                          size="sm"
+                                          variant="outline"
+                                          className="h-6 w-6 p-0 bg-white border-gray-300 text-red-600 hover:text-red-700 hover:bg-red-50"
+                                        >
+                                          <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                          </svg>
+                                        </Button>
+                                      </div>
                                     </div>
-                                  </div>
+                                  )}
                                 </div>
                               )}
                             </div>
                           ))}
                           
-                          {/* Add Video Button */}
-                          <Button
-                            onClick={() => handleAddVideo(module.id)}
-                            variant="outline"
-                            size="sm"
-                            className="w-full mt-2 border-dashed border-gray-300 text-gray-600 hover:text-gray-900 hover:border-gray-400"
-                          >
-                            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                            </svg>
-                            Add Video
-                          </Button>
+                          {/* Add Video Button - Only show for admins */}
+                          {isAdmin && (
+                            <Button
+                              onClick={() => handleAddVideo(module.id)}
+                              variant="outline"
+                              size="sm"
+                              className="w-full mt-2 border-dashed border-gray-300 text-gray-600 hover:text-gray-900 hover:border-gray-400"
+                            >
+                              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                              </svg>
+                              Add Video
+                            </Button>
+                          )}
                         </div>
                       )}
                     </div>
                   ))}
                   
-                  {/* Add Module Button */}
-                  <Button
-                    onClick={handleAddModule}
-                    variant="outline"
-                    className="w-full mt-4 border-dashed border-gray-300 text-gray-600 hover:text-gray-900 hover:border-gray-400"
-                  >
-                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                    </svg>
-                    Add Module
-                  </Button>
+                  {/* Add Module Button - Only show for admins */}
+                  {isAdmin && (
+                    <Button
+                      onClick={handleAddModule}
+                      variant="outline"
+                      className="w-full mt-4 border-dashed border-gray-300 text-gray-600 hover:text-gray-900 hover:border-gray-400"
+                    >
+                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                      </svg>
+                      Add Module
+                    </Button>
+                  )}
                 </div>
               </CardContent>
             </Card>

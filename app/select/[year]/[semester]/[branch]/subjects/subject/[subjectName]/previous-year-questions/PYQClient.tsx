@@ -155,6 +155,23 @@ export default function PYQClient({ subject, subjectPYQ, subjectName, year, seme
     title: ''
   });
 
+  // Check if user is admin
+  const [isAdmin, setIsAdmin] = useState(false);
+  
+  useEffect(() => {
+    // Check for admin status from localStorage
+    const adminData = localStorage.getItem('admin');
+    const userData = localStorage.getItem('user');
+    
+    if (adminData) {
+      const admin = JSON.parse(adminData);
+      setIsAdmin(admin.role === 'admin' || admin.isAdmin === true);
+    } else if (userData) {
+      const user = JSON.parse(userData);
+      setIsAdmin(user.role === 'admin' || user.isAdmin === true);
+    }
+  }, []);
+
   // Helper function to convert Google Drive URLs to embeddable format
   const getEmbeddablePdfUrl = (url: string) => {
     if (!url) return '';
@@ -336,45 +353,49 @@ export default function PYQClient({ subject, subjectPYQ, subjectName, year, seme
                     <SelectItem value={paper.id}>
                       {paper.title}
                     </SelectItem>
-                    <div className="flex items-center space-x-2">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          handleEditPaper(paper.id);
-                        }}
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          handleDeletePaper(paper.id);
-                        }}
-                      >
-                        <Trash2 className="h-4 w-4 text-red-500" />
-                      </Button>
-                    </div>
+                    {isAdmin && (
+                      <div className="flex items-center space-x-2">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleEditPaper(paper.id);
+                          }}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleDeletePaper(paper.id);
+                          }}
+                        >
+                          <Trash2 className="h-4 w-4 text-red-500" />
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 ))}
-                <div className="border-t border-gray-200 mt-1">
-                  <Button
-                    variant="ghost"
-                    className="w-full flex items-center justify-center py-2 text-blue-600"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleAddPaper();
-                    }}
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add New Paper
-                  </Button>
-                </div>
+                {isAdmin && (
+                  <div className="border-t border-gray-200 mt-1">
+                    <Button
+                      variant="ghost"
+                      className="w-full flex items-center justify-center py-2 text-blue-600"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleAddPaper();
+                      }}
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add New Paper
+                    </Button>
+                  </div>
+                )}
               </SelectContent>
             </Select>
           </div>

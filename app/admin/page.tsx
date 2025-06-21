@@ -27,7 +27,7 @@ const AdminLogin = () => {
   };
 
   const validateCredentials = () => {
-    if (formData.username === 'admin' && formData.password === '123') {
+    if (formData.username === 'zero' && formData.password === 'zeroktfc') {
       return true;
     }
     return false;
@@ -52,12 +52,32 @@ const AdminLogin = () => {
 
   const handleRequestOTP = async () => {
     setIsLoading(true);
+    setError('');
     
-    // Simulate OTP request delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    setOtpSent(true);
-    setIsLoading(false);
+    try {
+      const response = await fetch('/api/admin/send-otp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          username: formData.username, 
+          password: formData.password 
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to send OTP');
+      }
+
+      setOtpSent(true);
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Failed to send OTP. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleOTPSubmit = async (e: React.FormEvent) => {
@@ -65,20 +85,41 @@ const AdminLogin = () => {
     setIsLoading(true);
     setError('');
 
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    try {
+      const response = await fetch('/api/admin/verify-otp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          username: formData.username, 
+          otp: formData.otp 
+        }),
+      });
 
-    if (formData.otp === '111111') {
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to verify OTP');
+      }
+
+      // Store admin session data
+      localStorage.setItem('admin', JSON.stringify(data.admin));
+      
+      // Also store as regular user session for app compatibility
+      localStorage.setItem('user', JSON.stringify(data.user));
+      
       setStep('success');
-      // Redirect to admin dashboard after successful login
+      
+      // Redirect to select page after successful admin login
       setTimeout(() => {
-        window.location.href = '/admin/dashboard';
+        window.location.href = '/select';
       }, 1500);
-    } else {
-      setError('Invalid OTP. Please try again.');
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Invalid OTP. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
-    
-    setIsLoading(false);
   };
 
   const renderCredentialsStep = () => (
@@ -165,7 +206,7 @@ const AdminLogin = () => {
               Verify Your Identity
             </h3>
             <p className="text-sm text-gray-600 dark:text-gray-300">
-              We need to send a verification code to your admin email for security.
+              We need to send a verification code to all authorized admin emails for security.
             </p>
           </div>
           <Button
@@ -179,7 +220,7 @@ const AdminLogin = () => {
                 <span>Sending OTP...</span>
               </div>
             ) : (
-              'Send OTP to Admin Email'
+              'Send OTP to Admin Emails'
             )}
           </Button>
         </div>
@@ -193,7 +234,7 @@ const AdminLogin = () => {
               Enter Verification Code
             </h3>
             <p className="text-sm text-gray-600 dark:text-gray-300">
-              We've sent a 6-digit code to your admin email address.
+              We've sent a 6-digit code to all authorized admin email addresses. Check any of the admin emails for the code.
             </p>
           </div>
 
