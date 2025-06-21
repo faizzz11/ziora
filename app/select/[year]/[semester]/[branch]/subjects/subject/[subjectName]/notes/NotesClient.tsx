@@ -1,9 +1,22 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+
+interface Comment {
+  id: string;
+  author: string;
+  content: string;
+  timestamp: string;
+  userId?: string;
+  replies: Comment[];
+  likes: number;
+  dislikes: number;
+  likedBy: string[];
+  dislikedBy: string[];
+}
 
 interface Topic {
   id: string;
@@ -19,6 +32,7 @@ interface Module {
   pdfUrl: string;
   relatedVideoLink: string;
   topics: Topic[];
+  comments: Comment[];
 }
 
 interface Subject {
@@ -43,31 +57,6 @@ interface NotesClientProps {
   semester: string;
   branch: string;
 }
-
-// Mock comments data for notes (will be replaced with database later)
-const mockNotesComments = [
-  {
-    id: 1,
-    author: "Alex Thompson",
-    time: "1 hour ago",
-    content: "Could you explain the diagram on page 15? I'm having trouble understanding the process flow.",
-    replies: 2
-  },
-  {
-    id: 2,
-    author: "Maria Garcia",
-    time: "3 hours ago", 
-    content: "Great notes! The examples really help clarify the concepts. Thank you for sharing.",
-    replies: 0
-  },
-  {
-    id: 3,
-    author: "David Kim",
-    time: "6 hours ago",
-    content: "Is there a practice problem set that goes with these notes? I'd like to test my understanding.",
-    replies: 4
-  }
-];
 
 // API helper functions
 const saveNotesToAPI = async (year: string, semester: string, branch: string, subject: string, content: SubjectVideos) => {
@@ -126,6 +115,199 @@ const updateNotesInAPI = async (year: string, semester: string, branch: string, 
   }
 };
 
+// Recursive Comment Component - Moved outside to prevent re-rendering
+const CommentComponent: React.FC<{ 
+  comment: Comment; 
+  depth?: number;
+  onReply: (commentId: string) => void;
+  replyingTo: string | null;
+  replyContent: string;
+  setReplyContent: (content: string) => void;
+  onReplySubmit: (e: React.FormEvent, parentCommentId: string) => void;
+  onToggleReply: (commentId: string) => void;
+  onLikeComment: (commentId: string) => void;
+  onDislikeComment: (commentId: string) => void;
+  onDeleteComment: (commentId: string) => void;
+  currentUserId?: string;
+  isAdmin: boolean;
+}> = React.memo(({ 
+  comment, 
+  depth = 0, 
+  onReply, 
+  replyingTo, 
+  replyContent, 
+  setReplyContent, 
+  onReplySubmit, 
+  onToggleReply,
+  onLikeComment,
+  onDislikeComment,
+  onDeleteComment,
+  currentUserId,
+  isAdmin
+}) => {
+  const maxDepth = 10; // Limit nesting depth
+  const canReply = depth < maxDepth;
+  
+  // State for collapsing/expanding replies - Default to FALSE (hidden)
+  const [isRepliesExpanded, setIsRepliesExpanded] = React.useState(false);
+  
+  const toggleRepliesExpansion = () => {
+    setIsRepliesExpanded(!isRepliesExpanded);
+  };
+
+  // Check if current user has liked/disliked this comment
+  const hasLiked = currentUserId ? comment.likedBy.includes(currentUserId) : false;
+  const hasDisliked = currentUserId ? comment.dislikedBy.includes(currentUserId) : false;
+  
+  return (
+    <div className={`${depth > 0 ? 'ml-8 mt-3' : ''}`}>
+      <div className="flex items-start space-x-3 p-4 bg-gray-50 rounded-lg">
+        <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+          <span className="text-xs font-bold text-gray-600">
+            {comment.author.split(' ').map(n => n[0]).join('')}
+          </span>
+        </div>
+        <div className="flex-1">
+          <div className="flex items-center space-x-2 mb-1">
+            <span className="font-medium text-gray-900">{comment.author}</span>
+            <span className="text-sm text-gray-500">{comment.timestamp}</span>
+            {/* Admin Delete Button */}
+            {isAdmin && (
+              <button 
+                onClick={() => onDeleteComment(comment.id)}
+                className="ml-auto text-red-500 hover:text-red-700 p-1 rounded transition-colors"
+                title="Delete comment (Admin only)"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            )}
+          </div>
+          <p className="text-gray-700 mb-2">{comment.content}</p>
+          
+          {/* Action buttons */}
+          <div className="flex items-center space-x-4">
+            {/* Like/Dislike buttons */}
+            <div className="flex items-center space-x-3">
+              <button 
+                onClick={() => onLikeComment(comment.id)}
+                className={`flex items-center space-x-1 text-sm transition-colors ${
+                  hasLiked 
+                    ? 'text-blue-600 hover:text-blue-700' 
+                    : 'text-gray-500 hover:text-blue-600'
+                }`}
+              >
+                <svg className="w-4 h-4" fill={hasLiked ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L9 8v12m-6-6h2m4 0h2" />
+                </svg>
+                <span>{comment.likes}</span>
+              </button>
+              
+              <button 
+                onClick={() => onDislikeComment(comment.id)}
+                className={`flex items-center space-x-1 text-sm transition-colors ${
+                  hasDisliked 
+                    ? 'text-red-600 hover:text-red-700' 
+                    : 'text-gray-500 hover:text-red-600'
+                }`}
+              >
+                <svg className="w-4 h-4" fill={hasDisliked ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018c.163 0 .326.02.485.06L17 4m-7 10v5a2 2 0 002 2h.095c.5 0 .905-.405.905-.905 0-.714.211-1.412.608-2.006L15 16V4M9 10h2m4 0h2" />
+                </svg>
+                <span>{comment.dislikes}</span>
+              </button>
+            </div>
+
+            {canReply && (
+              <button 
+                onClick={() => onToggleReply(comment.id)}
+                className="text-sm text-blue-600 hover:text-blue-800"
+              >
+                Reply
+              </button>
+            )}
+            
+            {/* Replies toggle button */}
+            {comment.replies.length > 0 && (
+              <button 
+                onClick={toggleRepliesExpansion}
+                className="flex items-center space-x-1 text-sm text-gray-600 hover:text-gray-800"
+              >
+                <svg 
+                  className={`w-4 h-4 transition-transform ${isRepliesExpanded ? 'rotate-90' : ''}`} 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+                <span>
+                  {isRepliesExpanded ? 'Hide' : 'Show'} {comment.replies.length} {comment.replies.length === 1 ? 'reply' : 'replies'}
+                </span>
+              </button>
+            )}
+          </div>
+          
+          {/* Reply Form */}
+          {replyingTo === comment.id && (
+            <form onSubmit={(e) => onReplySubmit(e, comment.id)} className="mt-3">
+              <textarea
+                value={replyContent}
+                onChange={(e) => setReplyContent(e.target.value)}
+                placeholder="Write a reply..."
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                rows={3}
+                required
+                autoFocus
+              />
+              <div className="flex items-center space-x-2 mt-2">
+                <Button type="submit" size="sm" className="bg-blue-600 text-white hover:bg-blue-700">
+                  Post Reply
+                </Button>
+                <Button 
+                  type="button" 
+                  size="sm" 
+                  variant="outline"
+                  onClick={() => onToggleReply(comment.id)}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </form>
+          )}
+        </div>
+      </div>
+      
+      {/* Nested Replies - Collapsible */}
+      {comment.replies.length > 0 && isRepliesExpanded && (
+        <div className="mt-2">
+          {comment.replies.map((reply) => (
+            <CommentComponent 
+              key={reply.id} 
+              comment={reply} 
+              depth={depth + 1}
+              onReply={onReply}
+              replyingTo={replyingTo}
+              replyContent={replyContent}
+              setReplyContent={setReplyContent}
+              onReplySubmit={onReplySubmit}
+              onToggleReply={onToggleReply}
+              onLikeComment={onLikeComment}
+              onDislikeComment={onDislikeComment}
+              onDeleteComment={onDeleteComment}
+              currentUserId={currentUserId}
+              isAdmin={isAdmin}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+});
+
+CommentComponent.displayName = 'CommentComponent';
+
 export default function NotesClient({ subject, subjectVideos, subjectName, year, semester, branch }: NotesClientProps) {
   const [currentModule, setCurrentModule] = useState<Module | null>(null);
   const [newComment, setNewComment] = useState('');
@@ -153,6 +335,11 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
   // Check if user is admin
   const [isAdmin, setIsAdmin] = useState(false);
   
+  // Comment state management
+  const [replyingTo, setReplyingTo] = useState<string | null>(null);
+  const [replyContent, setReplyContent] = useState('');
+  const [currentUser, setCurrentUser] = useState<{ name: string; id: string } | null>(null);
+  
   useEffect(() => {
     // Check for admin status from localStorage
     const adminData = localStorage.getItem('admin');
@@ -161,18 +348,41 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
     if (adminData) {
       const admin = JSON.parse(adminData);
       setIsAdmin(admin.role === 'admin' || admin.isAdmin === true);
+      setCurrentUser({ name: 'Admin User', id: 'admin' });
     } else if (userData) {
       const user = JSON.parse(userData);
       setIsAdmin(user.role === 'admin' || user.isAdmin === true);
+      setCurrentUser({ name: user.name || 'Anonymous User', id: user.id || 'anonymous' });
+    } else {
+      setCurrentUser({ name: 'Anonymous User', id: 'anonymous' });
     }
   }, []);
 
   useEffect(() => {
     if (modules?.length > 0) {
-      setCurrentModule(modules[0]);
-      setSelectedModule(modules[0].id);
+      // Ensure all modules have comments array and comments have like/dislike properties
+      const modulesWithComments = modules.map(module => ({
+        ...module,
+        comments: (module.comments || []).map(comment => ({
+          ...comment,
+          likes: comment.likes || 0,
+          dislikes: comment.dislikes || 0,
+          likedBy: comment.likedBy || [],
+          dislikedBy: comment.dislikedBy || [],
+          replies: (comment.replies || []).map(reply => ({
+            ...reply,
+            likes: reply.likes || 0,
+            dislikes: reply.dislikes || 0,
+            likedBy: reply.likedBy || [],
+            dislikedBy: reply.dislikedBy || []
+          }))
+        }))
+      }));
+      setModules(modulesWithComments);
+      setCurrentModule(modulesWithComments[0]);
+      setSelectedModule(modulesWithComments[0].id);
     }
-  }, [modules]);
+  }, []);
 
   useEffect(() => {
     // Reset PDF error when module changes
@@ -199,14 +409,279 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
     }
   };
 
-  const handleCommentSubmit = (e: React.FormEvent) => {
+  // Memoized comment handlers to prevent re-renders
+  const handleCommentSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
-    if (newComment.trim()) {
-      // This will be connected to database later
-      console.log('New comment:', newComment);
-      setNewComment('');
+    if (!currentModule || !newComment.trim()) return;
+
+    const newCommentObj: Comment = {
+      id: `comment-${Date.now()}`,
+      author: currentUser?.name || 'Anonymous User',
+      content: newComment.trim(),
+      timestamp: new Date().toLocaleString(),
+      userId: currentUser?.id,
+      replies: [],
+      likes: 0,
+      dislikes: 0,
+      likedBy: [],
+      dislikedBy: []
+    };
+
+    const updatedModules = modules.map(module => {
+      if (module.id === currentModule.id) {
+        return { ...module, comments: [...module.comments, newCommentObj] };
+      }
+      return module;
+    });
+
+    setModules(updatedModules);
+    setCurrentModule(updatedModules.find(m => m.id === currentModule.id) || currentModule);
+    setNewComment('');
+
+    // Save to API
+    updateNotesInAPI(year, semester, branch, subjectName, { modules: updatedModules })
+      .catch(error => {
+        console.error('Error saving comment:', error);
+        // Revert changes on error
+        setModules(modules);
+        setCurrentModule(currentModule);
+      });
+  }, [currentModule, newComment, currentUser, modules, year, semester, branch, subjectName]);
+
+  const handleReplySubmit = useCallback((e: React.FormEvent, parentCommentId: string) => {
+    e.preventDefault();
+    if (!currentModule || !replyContent.trim()) return;
+
+    const newReplyObj: Comment = {
+      id: `comment-${Date.now()}`,
+      author: currentUser?.name || 'Anonymous User',
+      content: replyContent.trim(),
+      timestamp: new Date().toLocaleString(),
+      userId: currentUser?.id,
+      replies: [],
+      likes: 0,
+      dislikes: 0,
+      likedBy: [],
+      dislikedBy: []
+    };
+
+    const addReplyToComment = (comments: Comment[]): Comment[] => {
+      return comments.map(comment => {
+        if (comment.id === parentCommentId) {
+          return { ...comment, replies: [...comment.replies, newReplyObj] };
+        } else if (comment.replies.length > 0) {
+          return { ...comment, replies: addReplyToComment(comment.replies) };
+        }
+        return comment;
+      });
+    };
+
+    const updatedModules = modules.map(module => {
+      if (module.id === currentModule.id) {
+        return { ...module, comments: addReplyToComment(module.comments) };
+      }
+      return module;
+    });
+
+    setModules(updatedModules);
+    setCurrentModule(updatedModules.find(m => m.id === currentModule.id) || currentModule);
+    setReplyContent('');
+    setReplyingTo(null);
+
+    // Save to API
+    updateNotesInAPI(year, semester, branch, subjectName, { modules: updatedModules })
+      .catch(error => {
+        console.error('Error saving reply:', error);
+        // Revert changes on error
+        setModules(modules);
+        setCurrentModule(currentModule);
+      });
+  }, [currentModule, replyContent, currentUser, modules, year, semester, branch, subjectName]);
+
+  const toggleReply = useCallback((commentId: string) => {
+    setReplyingTo(replyingTo === commentId ? null : commentId);
+    setReplyContent('');
+  }, [replyingTo]);
+
+  const handleSetReplyContent = useCallback((content: string) => {
+    setReplyContent(content);
+  }, []);
+
+  // Like/Dislike handlers
+  const handleLikeComment = useCallback(async (commentId: string) => {
+    if (!currentModule || !currentUser?.id) return;
+
+    const updateCommentLikes = (comments: Comment[]): Comment[] => {
+      return comments.map(comment => {
+        if (comment.id === commentId) {
+          const hasLiked = comment.likedBy.includes(currentUser.id);
+          const hasDisliked = comment.dislikedBy.includes(currentUser.id);
+          
+          if (hasLiked) {
+            // Remove like
+            return {
+              ...comment,
+              likes: comment.likes - 1,
+              likedBy: comment.likedBy.filter(id => id !== currentUser.id)
+            };
+          } else {
+            // Add like and remove dislike if exists
+            return {
+              ...comment,
+              likes: comment.likes + 1,
+              dislikes: hasDisliked ? comment.dislikes - 1 : comment.dislikes,
+              likedBy: [...comment.likedBy, currentUser.id],
+              dislikedBy: hasDisliked ? comment.dislikedBy.filter(id => id !== currentUser.id) : comment.dislikedBy
+            };
+          }
+        } else if (comment.replies.length > 0) {
+          return { ...comment, replies: updateCommentLikes(comment.replies) };
+        }
+        return comment;
+      });
+    };
+
+    const updatedModules = modules.map(module => {
+      if (module.id === currentModule.id) {
+        return { ...module, comments: updateCommentLikes(module.comments) };
+      }
+      return module;
+    });
+
+    try {
+      setModules(updatedModules);
+      setCurrentModule(updatedModules.find(m => m.id === currentModule.id) || currentModule);
+      
+      // Save to API
+      await updateNotesInAPI(year, semester, branch, subjectName, { modules: updatedModules });
+    } catch (error) {
+      console.error('Error updating like:', error);
+      // Revert changes on error
+      setModules(modules);
+      setCurrentModule(currentModule);
     }
-  };
+  }, [currentModule, currentUser, modules, year, semester, branch, subjectName]);
+
+  const handleDislikeComment = useCallback(async (commentId: string) => {
+    if (!currentModule || !currentUser?.id) return;
+
+    const updateCommentDislikes = (comments: Comment[]): Comment[] => {
+      return comments.map(comment => {
+        if (comment.id === commentId) {
+          const hasLiked = comment.likedBy.includes(currentUser.id);
+          const hasDisliked = comment.dislikedBy.includes(currentUser.id);
+          
+          if (hasDisliked) {
+            // Remove dislike
+            return {
+              ...comment,
+              dislikes: comment.dislikes - 1,
+              dislikedBy: comment.dislikedBy.filter(id => id !== currentUser.id)
+            };
+          } else {
+            // Add dislike and remove like if exists
+            return {
+              ...comment,
+              likes: hasLiked ? comment.likes - 1 : comment.likes,
+              dislikes: comment.dislikes + 1,
+              likedBy: hasLiked ? comment.likedBy.filter(id => id !== currentUser.id) : comment.likedBy,
+              dislikedBy: [...comment.dislikedBy, currentUser.id]
+            };
+          }
+        } else if (comment.replies.length > 0) {
+          return { ...comment, replies: updateCommentDislikes(comment.replies) };
+        }
+        return comment;
+      });
+    };
+
+    const updatedModules = modules.map(module => {
+      if (module.id === currentModule.id) {
+        return { ...module, comments: updateCommentDislikes(module.comments) };
+      }
+      return module;
+    });
+
+    try {
+      setModules(updatedModules);
+      setCurrentModule(updatedModules.find(m => m.id === currentModule.id) || currentModule);
+      
+      // Save to API
+      await updateNotesInAPI(year, semester, branch, subjectName, { modules: updatedModules });
+    } catch (error) {
+      console.error('Error updating dislike:', error);
+      // Revert changes on error
+      setModules(modules);
+      setCurrentModule(currentModule);
+    }
+  }, [currentModule, currentUser, modules, year, semester, branch, subjectName]);
+
+  // Delete comment handler (Admin only)
+  const handleDeleteComment = useCallback(async (commentId: string) => {
+    if (!currentModule || !isAdmin) return;
+
+    const deleteCommentFromArray = (comments: Comment[]): Comment[] => {
+      return comments.reduce((acc: Comment[], comment) => {
+        if (comment.id === commentId) {
+          // Skip this comment (delete it)
+          return acc;
+        } else if (comment.replies.length > 0) {
+          // Recursively delete from replies
+          return [...acc, { ...comment, replies: deleteCommentFromArray(comment.replies) }];
+        } else {
+          // Keep this comment
+          return [...acc, comment];
+        }
+      }, []);
+    };
+
+    const updatedModules = modules.map(module => {
+      if (module.id === currentModule.id) {
+        return { ...module, comments: deleteCommentFromArray(module.comments) };
+      }
+      return module;
+    });
+
+    try {
+      setModules(updatedModules);
+      setCurrentModule(updatedModules.find(m => m.id === currentModule.id) || currentModule);
+      
+      // Save to API
+      await updateNotesInAPI(year, semester, branch, subjectName, { modules: updatedModules });
+      
+      // Show success toast
+      const toast = document.createElement('div');
+      toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300';
+      toast.textContent = '✅ Comment deleted successfully!';
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => {
+          document.body.removeChild(toast);
+        }, 300);
+      }, 3000);
+      
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+      // Revert changes on error
+      setModules(modules);
+      setCurrentModule(currentModule);
+      
+      // Show error toast
+      const toast = document.createElement('div');
+      toast.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300';
+      toast.textContent = '❌ Failed to delete comment!';
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => {
+          document.body.removeChild(toast);
+        }, 300);
+      }, 3000);
+    }
+  }, [currentModule, isAdmin, modules, year, semester, branch, subjectName]);
 
   const handlePdfError = () => {
     setPdfError(true);
@@ -234,7 +709,8 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
       name: `New Module ${modules.length + 1}`,
       pdfUrl: "",
       relatedVideoLink: "",
-      topics: []
+      topics: [],
+      comments: []
     };
     
     try {
@@ -596,25 +1072,35 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
 
                 {/* Comments List */}
                 <div className="space-y-4">
-                  {mockNotesComments.map((comment) => (
-                    <div key={comment.id} className="flex items-start space-x-3 p-4 bg-gray-50 rounded-lg">
-                      <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-                        <span className="text-xs font-medium text-gray-700">
-                          {comment.author.split(' ').map(n => n[0]).join('')}
-                        </span>
+                  {currentModule?.comments && currentModule.comments.length > 0 ? (
+                    currentModule.comments.map((comment) => (
+                      <CommentComponent 
+                        key={comment.id} 
+                        comment={comment} 
+                        onReply={(commentId) => toggleReply(commentId)}
+                        replyingTo={replyingTo}
+                        replyContent={replyContent}
+                        setReplyContent={setReplyContent}
+                        onReplySubmit={handleReplySubmit}
+                        onToggleReply={toggleReply}
+                        onLikeComment={handleLikeComment}
+                        onDislikeComment={handleDislikeComment}
+                        onDeleteComment={handleDeleteComment}
+                        currentUserId={currentUser?.id}
+                        isAdmin={isAdmin}
+                      />
+                    ))
+                  ) : (
+                    <div className="text-center py-8">
+                      <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-3.582 8-8 8a8.959 8.959 0 01-4.906-1.476L3 21l2.476-5.094A8.959 8.959 0 013 12c0-4.418 3.582-8 8-8s8 3.582 8 8z" />
+                        </svg>
                       </div>
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-2 mb-1">
-                          <span className="font-medium text-gray-900">{comment.author}</span>
-                          <span className="text-sm text-gray-500">{comment.time}</span>
-                        </div>
-                        <p className="text-gray-700 mb-2">{comment.content}</p>
-                        <button className="text-sm text-gray-500 hover:text-gray-700">
-                          {comment.replies === 0 ? 'Reply' : `${comment.replies} replies`}
-                        </button>
-                      </div>
+                      <h4 className="text-lg font-medium text-gray-900 mb-2">No comments yet</h4>
+                      <p className="text-gray-500">Be the first to start a discussion about this module!</p>
                     </div>
-                  ))}
+                  )}
                 </div>
               </CardContent>
             </Card>
