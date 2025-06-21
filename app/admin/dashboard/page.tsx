@@ -1340,7 +1340,99 @@ const AdminDashboard = () => {
 
   // Notes Manager Component
   const NotesManager = ({ subject }: { subject: Subject }) => {
-    const [notes, setNotes] = useState<any[]>([]);
+    const [notes, setNotes] = useState<{modules: VideoModule[]}>({ modules: [] });
+    const [selectedYear, setSelectedYear] = useState<string>('');
+    const [selectedSemester, setSelectedSemester] = useState<string>('');
+    const [selectedBranch, setSelectedBranch] = useState<string>('');
+    const [isCreating, setIsCreating] = useState(false);
+    const [editingModule, setEditingModule] = useState<VideoModule | null>(null);
+
+    const years = ['FE', 'SE', 'TE', 'BE'];
+    const semesters = ['1', '2', '3', '4', '5', '6', '7', '8'];
+    const branches = [
+      'computer-engineering',
+      'information-technology', 
+      'electronics-engineering',
+      'mechanical-engineering',
+      'civil-engineering'
+    ];
+
+    const saveNotesToAPI = async (content: {modules: VideoModule[]}) => {
+      if (!selectedYear || !selectedSemester || !selectedBranch) {
+        showNotification('Please select year, semester, and branch');
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/content', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            year: selectedYear,
+            semester: selectedSemester, 
+            branch: selectedBranch,
+            subject: subject.id,
+            contentType: 'notes',
+            content
+          })
+        });
+
+        if (!response.ok) throw new Error('Failed to save notes');
+        showNotification('Notes saved successfully');
+      } catch (error) {
+        showNotification('Error saving notes');
+      }
+    };
+
+    const loadNotesFromAPI = async () => {
+      if (!selectedYear || !selectedSemester || !selectedBranch) return;
+
+      try {
+        const response = await fetch(
+          `/api/content?year=${selectedYear}&semester=${selectedSemester}&branch=${selectedBranch}&subject=${subject.id}&contentType=notes`
+        );
+        
+        if (response.ok) {
+          const data = await response.json();
+          setNotes(data.content || { modules: [] });
+        }
+      } catch (error) {
+        console.error('Error loading notes:', error);
+      }
+    };
+
+    const handleSaveModule = async (moduleData: Omit<VideoModule, 'id' | 'topics'>) => {
+      const newModule: VideoModule = {
+        ...moduleData,
+        id: editingModule?.id || Date.now().toString(),
+        topics: editingModule?.topics || []
+      };
+
+      const updatedModules = editingModule 
+        ? notes.modules.map(m => m.id === editingModule.id ? newModule : m)
+        : [...notes.modules, newModule];
+
+      const updatedNotes = { modules: updatedModules };
+      setNotes(updatedNotes);
+      await saveNotesToAPI(updatedNotes);
+      
+      setIsCreating(false);
+      setEditingModule(null);
+    };
+
+    const handleDeleteModule = async (moduleId: string) => {
+      const updatedModules = notes.modules.filter(m => m.id !== moduleId);
+      const updatedNotes = { modules: updatedModules };
+      setNotes(updatedNotes);
+      await saveNotesToAPI(updatedNotes);
+    };
+
+    // Load notes when year/semester/branch changes
+    React.useEffect(() => {
+      if (selectedYear && selectedSemester && selectedBranch) {
+        loadNotesFromAPI();
+      }
+    }, [selectedYear, selectedSemester, selectedBranch]);
 
     return (
       <div className="space-y-12">
@@ -1349,21 +1441,160 @@ const AdminDashboard = () => {
             <h2 className="text-3xl font-bold text-gray-900 mb-2">Study Notes</h2>
             <p className="text-lg text-gray-600">Manage PDF notes and study materials for {subject.name}</p>
           </div>
-          <button className="inline-flex items-center justify-center px-6 py-3 text-base font-semibold text-white bg-black rounded-2xl hover:bg-gray-800 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
-            <Plus className="w-5 h-5 mr-2" />
-            Add Notes
-          </button>
         </div>
 
-        <div className="bg-white rounded-2xl p-16 border border-gray-200 text-center">
-          <div className="w-24 h-24 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-            <FileText className="w-12 h-12 text-gray-600" />
+        {/* Year/Semester/Branch Selection */}
+        <div className="bg-white rounded-2xl p-8 border border-gray-200">
+          <h3 className="text-xl font-bold text-gray-900 mb-6">Select Academic Context</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+              <Label htmlFor="year">Academic Year</Label>
+              <Select value={selectedYear} onValueChange={setSelectedYear}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select year" />
+                </SelectTrigger>
+                <SelectContent>
+                  {years.map(year => (
+                    <SelectItem key={year} value={year}>{year}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="semester">Semester</Label>
+              <Select value={selectedSemester} onValueChange={setSelectedSemester}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select semester" />
+                </SelectTrigger>
+                <SelectContent>
+                  {semesters.map(sem => (
+                    <SelectItem key={sem} value={sem}>Semester {sem}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="branch">Branch</Label>
+              <Select value={selectedBranch} onValueChange={setSelectedBranch}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select branch" />
+                </SelectTrigger>
+                <SelectContent>
+                  {branches.map(branch => (
+                    <SelectItem key={branch} value={branch}>
+                      {branch.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
-          <h3 className="text-2xl font-bold text-gray-900 mb-3">No Notes Yet</h3>
-          <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-            Upload PDF notes and study materials for {subject.name}
-          </p>
         </div>
+
+        {selectedYear && selectedSemester && selectedBranch && (
+          <>
+            <div className="flex justify-between items-center">
+              <div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                  Notes for {selectedYear} - Semester {selectedSemester} - {selectedBranch.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                </h3>
+                <p className="text-gray-600">Subject: {subject.name}</p>
+              </div>
+              <Button 
+                onClick={() => setIsCreating(true)}
+                className="inline-flex items-center justify-center px-6 py-3 text-base font-semibold text-white bg-black rounded-2xl hover:bg-gray-800 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+              >
+                <Plus className="w-5 h-5 mr-2" />
+                Add Module
+              </Button>
+            </div>
+
+            {notes.modules.length === 0 ? (
+              <div className="bg-white rounded-2xl p-16 border border-gray-200 text-center">
+                <div className="w-24 h-24 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                  <FileText className="w-12 h-12 text-gray-600" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-3">No Notes Yet</h3>
+                <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+                  Upload PDF notes and study materials for {subject.name}
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {notes.modules.map((module) => (
+                  <Card key={module.id} className="rounded-2xl border-gray-200 hover:shadow-lg transition-all duration-300">
+                    <CardHeader className="pb-4">
+                      <div className="flex justify-between items-start">
+                        <CardTitle className="text-xl font-bold text-gray-900">{module.name}</CardTitle>
+                        <div className="flex space-x-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setEditingModule(module)}
+                            className="p-2"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleDeleteModule(module.id)}
+                            className="p-2 text-red-600 hover:text-red-800"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        {module.pdfUrl && (
+                          <div className="flex items-center space-x-2 text-sm text-gray-600">
+                            <FileText className="w-4 h-4" />
+                            <span>PDF Available</span>
+                          </div>
+                        )}
+                        {module.relatedVideoLink && (
+                          <div className="flex items-center space-x-2 text-sm text-gray-600">
+                            <Video className="w-4 h-4" />
+                            <span>Video Link Available</span>
+                          </div>
+                        )}
+                        <div className="flex items-center space-x-2 text-sm text-gray-600">
+                          <BookOpen className="w-4 h-4" />
+                          <span>{module.topics.length} Topics</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+
+            {(isCreating || editingModule) && (
+              <Dialog open={isCreating || !!editingModule} onOpenChange={(open) => {
+                if (!open) {
+                  setIsCreating(false);
+                  setEditingModule(null);
+                }
+              }}>
+                <DialogContent className="max-w-2xl">
+                  <DialogHeader>
+                    <DialogTitle>{editingModule ? 'Edit Module' : 'Add New Module'}</DialogTitle>
+                  </DialogHeader>
+                  <ModuleForm 
+                    module={editingModule} 
+                    onSave={handleSaveModule}
+                    onCancel={() => {
+                      setIsCreating(false);
+                      setEditingModule(null);
+                    }}
+                  />
+                </DialogContent>
+              </Dialog>
+            )}
+          </>
+        )}
       </div>
     );
   };

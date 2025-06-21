@@ -146,13 +146,13 @@ const Navbar = () => {
                   <Link href="/login">
                     Sign in
                   </Link>
-                </Button>
+            </Button>
                 <Button asChild>
                   <Link href="/signup">
                     Sign up
                   </Link>
                 </Button>
-              </div>
+          </div>
             )}
 
             <DropdownMenu>

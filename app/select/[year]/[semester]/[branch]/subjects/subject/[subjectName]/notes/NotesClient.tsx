@@ -39,6 +39,9 @@ interface NotesClientProps {
   subject: Subject;
   subjectVideos: SubjectVideos;
   subjectName: string;
+  year: string;
+  semester: string;
+  branch: string;
 }
 
 // Mock comments data for notes (will be replaced with database later)
@@ -67,80 +70,63 @@ const mockNotesComments = [
 ];
 
 // API helper functions
-const saveVideosToAPI = async (subjectName: string, videos: SubjectVideos) => {
+const saveNotesToAPI = async (year: string, semester: string, branch: string, subject: string, content: SubjectVideos) => {
   try {
-    const response = await fetch('/api/videos', {
+    const response = await fetch('/api/content', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        subject: subjectName,
-        videos: videos,
+        year,
+        semester,
+        branch,
+        subject,
+        contentType: 'notes',
+        content,
       }),
     });
 
     if (!response.ok) {
-      throw new Error('Failed to save videos');
+      throw new Error('Failed to save notes');
     }
 
     return await response.json();
   } catch (error) {
-    console.error('Error saving videos:', error);
+    console.error('Error saving notes:', error);
     throw error;
   }
 };
 
-const updateModuleInAPI = async (subjectName: string, moduleId: string, moduleData: Partial<Module>) => {
+const updateNotesInAPI = async (year: string, semester: string, branch: string, subject: string, content: SubjectVideos) => {
   try {
-    const response = await fetch('/api/videos', {
+    const response = await fetch('/api/content', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        subject: subjectName,
-        moduleId,
-        moduleData,
+        year,
+        semester,
+        branch,
+        subject,
+        contentType: 'notes',
+        content,
       }),
     });
 
     if (!response.ok) {
-      throw new Error('Failed to update module');
+      throw new Error('Failed to update notes');
     }
 
     return await response.json();
   } catch (error) {
-    console.error('Error updating module:', error);
+    console.error('Error updating notes:', error);
     throw error;
   }
 };
 
-const deleteModuleFromAPI = async (subjectName: string, moduleId: string) => {
-  try {
-    const response = await fetch('/api/videos', {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        subject: subjectName,
-        moduleId,
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to delete module');
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error('Error deleting module:', error);
-    throw error;
-  }
-};
-
-export default function NotesClient({ subject, subjectVideos, subjectName }: NotesClientProps) {
+export default function NotesClient({ subject, subjectVideos, subjectName, year, semester, branch }: NotesClientProps) {
   const [currentModule, setCurrentModule] = useState<Module | null>(null);
   const [newComment, setNewComment] = useState('');
   const [pdfError, setPdfError] = useState(false);
@@ -240,7 +226,7 @@ export default function NotesClient({ subject, subjectVideos, subjectName }: Not
       setModules(updatedModules);
 
       // Save to API
-      await saveVideosToAPI(subjectName, { modules: updatedModules });
+      await saveNotesToAPI(year, semester, branch, subjectName, { modules: updatedModules });
       
       // Automatically start editing the new module
       handleEditModule(newModuleId, newModule.name, newModule.pdfUrl, newModule.relatedVideoLink);
@@ -301,11 +287,7 @@ export default function NotesClient({ subject, subjectVideos, subjectName }: Not
         setModules(updatedModules);
 
         // Save to API
-        await updateModuleInAPI(subjectName, moduleId, {
-          name: editModuleData.name.trim(),
-          pdfUrl: editModuleData.pdfUrl.trim(),
-          relatedVideoLink: editModuleData.relatedVideoLink.trim()
-        });
+        await updateNotesInAPI(year, semester, branch, subjectName, { modules: updatedModules });
         
         // Show success toast
         const toast = document.createElement('div');
@@ -372,8 +354,8 @@ export default function NotesClient({ subject, subjectVideos, subjectName }: Not
         }
       }
 
-      // Delete from API
-      await deleteModuleFromAPI(subjectName, moduleId);
+      // Save updated content to API
+      await updateNotesInAPI(year, semester, branch, subjectName, { modules: updatedModules });
       
       // Show success toast
       const toast = document.createElement('div');
@@ -489,7 +471,7 @@ export default function NotesClient({ subject, subjectVideos, subjectName }: Not
                 {currentModule ? (
                   <div>
                     <div className="bg-gray-100 rounded-t-lg overflow-hidden" style={{ height: '70vh' }}>
-                      {!pdfError ? (
+                      {!pdfError && currentModule.pdfUrl && currentModule.pdfUrl.trim() !== '' ? (
                         <iframe
                           src={getPdfUrl(currentModule.pdfUrl)}
                           className="w-full h-full"
@@ -504,14 +486,23 @@ export default function NotesClient({ subject, subjectVideos, subjectName }: Not
                             <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
-                            <h3 className="text-lg font-medium text-gray-900 mb-2">PDF Preview Unavailable</h3>
-                            <p className="text-gray-600 mb-4">The PDF cannot be displayed in preview mode.</p>
-                            <Button 
-                              onClick={handleDownloadPdf}
-                              className="bg-gray-900 text-white hover:bg-gray-800"
-                            >
-                              Open PDF in New Tab
-                            </Button>
+                            <h3 className="text-lg font-medium text-gray-900 mb-2">
+                              {!currentModule.pdfUrl || currentModule.pdfUrl.trim() === '' ? 'No PDF Set' : 'PDF Preview Unavailable'}
+                            </h3>
+                            <p className="text-gray-600 mb-4">
+                              {!currentModule.pdfUrl || currentModule.pdfUrl.trim() === '' 
+                                ? 'Please add a PDF URL to this module to view notes.' 
+                                : 'The PDF cannot be displayed in preview mode.'
+                              }
+                            </p>
+                            {currentModule.pdfUrl && currentModule.pdfUrl.trim() !== '' && (
+                              <Button 
+                                onClick={handleDownloadPdf}
+                                className="bg-gray-900 text-white hover:bg-gray-800"
+                              >
+                                Open PDF in New Tab
+                              </Button>
+                            )}
                           </div>
                         </div>
                       )}

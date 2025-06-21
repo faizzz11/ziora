@@ -2,7 +2,6 @@ import React from 'react';
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 import NotesClient from './NotesClient';
-import videosData from '@/data/videos.json';
 import branchSubjectsData from '@/data/branch-subjects.json';
 
 interface NotesPageProps {
@@ -12,6 +11,46 @@ interface NotesPageProps {
     branch: string;
     subjectName: string;
   }>;
+}
+
+// Fetch notes content from MongoDB based on URL parameters
+async function fetchNotesContent(year: string, semester: string, branch: string, subject: string) {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const response = await fetch(
+      `${baseUrl}/api/content?year=${year}&semester=${semester}&branch=${branch}&subject=${subject}&contentType=notes`,
+      { cache: 'no-store' }
+    );
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch notes content');
+    }
+    
+    const data = await response.json();
+    return data.content;
+  } catch (error) {
+    console.error('Error fetching notes content:', error);
+    // Return default structure if fetch fails
+    return {
+      modules: [
+        {
+          id: "module-1",
+          name: "Introduction and Fundamentals",
+          pdfUrl: "https://drive.google.com/file/d/1rlg-623P2ktK6_n6jIS7zYC4zOYGV2ys/preview",
+          relatedVideoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+          topics: [
+            {
+              id: "topic-1-1",
+              title: "Course Overview and Objectives", 
+              videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+              duration: "15:30",
+              notes: "Introduction to the course structure and learning objectives."
+            }
+          ]
+        }
+      ]
+    };
+  }
 }
 
 export default async function NotesPage({ params }: NotesPageProps) {
@@ -31,40 +70,8 @@ export default async function NotesPage({ params }: NotesPageProps) {
     credits: 3
   };
 
-  const subjectVideos = videosData[subjectName as keyof typeof videosData] || {
-    modules: [
-      {
-        id: "module-1",
-        name: "Introduction and Fundamentals",
-        pdfUrl: "https://drive.google.com/file/d/1rlg-623P2ktK6_n6jIS7zYC4zOYGV2ys/preview",
-        relatedVideoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-        topics: [
-          {
-            id: "topic-1-1",
-            title: "Course Overview and Objectives", 
-            videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-            duration: "15:30",
-            notes: "Introduction to the course structure and learning objectives."
-          }
-        ]
-      },
-      {
-        id: "module-2", 
-        name: "Core Principles and Theory",
-        pdfUrl: "https://drive.google.com/file/d/1rlg-623P2ktK6_n6jIS7zYC4zOYGV2ys/preview",
-        relatedVideoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-        topics: [
-          {
-            id: "topic-2-1",
-            title: "Theoretical Framework",
-            videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ", 
-            duration: "28:15",
-            notes: "Deep dive into theoretical foundations."
-          }
-        ]
-      }
-    ]
-  };
+  // Fetch dynamic notes content based on URL parameters
+  const subjectVideos = await fetchNotesContent(year, semester, branch, subjectName);
 
   const backUrl = `/select/${year}/${semester}/${branch}/subjects/subject/${subjectName}`;
 
@@ -91,6 +98,9 @@ export default async function NotesPage({ params }: NotesPageProps) {
         subject={subject}
         subjectVideos={subjectVideos}
         subjectName={subjectName}
+        year={year}
+        semester={semester}
+        branch={branch}
       />
     </div>
   );
