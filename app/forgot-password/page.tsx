@@ -51,8 +51,8 @@ const ForgotPasswordPage = () => {
 
     if (!formData.otp) {
       newErrors.otp = 'OTP is required';
-    } else if (formData.otp !== '111111') {
-      newErrors.otp = 'Invalid OTP. Please try again.';
+    } else if (formData.otp.length !== 6) {
+      newErrors.otp = 'OTP must be 6 digits';
     }
 
     setErrors(newErrors);
@@ -91,11 +91,25 @@ const ForgotPasswordPage = () => {
     setErrors({});
 
     try {
-      // Simulate API call to send OTP
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      const response = await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: formData.email }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to send OTP');
+      }
+
       setCurrentStep('otp');
     } catch (error) {
-      setErrors({ general: 'Failed to send OTP. Please try again.' });
+      setErrors({ 
+        general: error instanceof Error ? error.message : 'Failed to send OTP. Please try again.' 
+      });
     } finally {
       setIsLoading(false);
     }
@@ -112,11 +126,28 @@ const ForgotPasswordPage = () => {
     setErrors({});
 
     try {
-      // Simulate API call to verify OTP
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const response = await fetch('/api/auth/verify-otp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          email: formData.email, 
+          otp: formData.otp 
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to verify OTP');
+      }
+
       setCurrentStep('password');
     } catch (error) {
-      setErrors({ general: 'Failed to verify OTP. Please try again.' });
+      setErrors({ 
+        general: error instanceof Error ? error.message : 'Failed to verify OTP. Please try again.' 
+      });
     } finally {
       setIsLoading(false);
     }
@@ -133,8 +164,24 @@ const ForgotPasswordPage = () => {
     setErrors({});
 
     try {
-      // Simulate API call to reset password
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      const response = await fetch('/api/auth/reset-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          email: formData.email,
+          otp: formData.otp,
+          newPassword: formData.newPassword 
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to reset password');
+      }
+
       setCurrentStep('success');
       
       // Redirect to login after success
@@ -142,7 +189,9 @@ const ForgotPasswordPage = () => {
         window.location.href = '/login';
       }, 3000);
     } catch (error) {
-      setErrors({ general: 'Failed to reset password. Please try again.' });
+      setErrors({ 
+        general: error instanceof Error ? error.message : 'Failed to reset password. Please try again.' 
+      });
     } finally {
       setIsLoading(false);
     }
