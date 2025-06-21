@@ -38,19 +38,26 @@ interface PYQClientProps {
   subject: Subject;
   subjectPYQ: SubjectPYQ;
   subjectName: string;
+  year: string;
+  semester: string;
+  branch: string;
 }
 
 // API helper functions
-const savePaperToAPI = async (subjectName: string, paperData: Paper) => {
+const savePaperToAPI = async (year: string, semester: string, branch: string, subjectName: string, papers: Paper[]) => {
   try {
-    const response = await fetch('/api/papers', {
+    const response = await fetch('/api/content', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        year,
+        semester,
+        branch,
         subject: subjectName,
-        paper: paperData,
+        contentType: 'pyq',
+        content: { papers },
       }),
     });
 
@@ -66,17 +73,20 @@ const savePaperToAPI = async (subjectName: string, paperData: Paper) => {
   }
 };
 
-const updatePaperInAPI = async (subjectName: string, paperId: string, paperData: Partial<Paper>) => {
+const updatePaperInAPI = async (year: string, semester: string, branch: string, subjectName: string, papers: Paper[]) => {
   try {
-    const response = await fetch('/api/papers', {
+    const response = await fetch('/api/content', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        year,
+        semester,
+        branch,
         subject: subjectName,
-        paperId,
-        paperData,
+        contentType: 'pyq',
+        content: { papers },
       }),
     });
 
@@ -92,16 +102,20 @@ const updatePaperInAPI = async (subjectName: string, paperId: string, paperData:
   }
 };
 
-const deletePaperFromAPI = async (subjectName: string, paperId: string) => {
+const deletePaperFromAPI = async (year: string, semester: string, branch: string, subjectName: string, papers: Paper[]) => {
   try {
-    const response = await fetch('/api/papers', {
-      method: 'DELETE',
+    const response = await fetch('/api/content', {
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        year,
+        semester,
+        branch,
         subject: subjectName,
-        paperId,
+        contentType: 'pyq',
+        content: { papers },
       }),
     });
 
@@ -117,12 +131,11 @@ const deletePaperFromAPI = async (subjectName: string, paperId: string) => {
   }
 };
 
-export default function PYQClient({ subject, subjectPYQ, subjectName }: PYQClientProps) {
+export default function PYQClient({ subject, subjectPYQ, subjectName, year, semester, branch }: PYQClientProps) {
   const [selectedPaper, setSelectedPaper] = useState<Paper | null>(null);
-  const [papers, setPapers] = useState<Paper[]>(subjectPYQ.papers);
+  const [papers, setPapers] = useState<Paper[]>(subjectPYQ?.papers || []);
   const [editingPaper, setEditingPaper] = useState<string | null>(null);
   const [isAddingPaper, setIsAddingPaper] = useState(false);
-  const [shouldSave, setShouldSave] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [editPaperData, setEditPaperData] = useState({
@@ -158,30 +171,7 @@ export default function PYQClient({ subject, subjectPYQ, subjectName }: PYQClien
     return url;
   };
 
-  // Add useEffect to save papers when they change
-  useEffect(() => {
-    const savePapers = async () => {
-      try {
-        await fetch('/api/papers', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            subject: subjectName,
-            papers: papers
-          }),
-        });
-        setShouldSave(false);
-      } catch (error) {
-        console.error('Error saving papers:', error);
-      }
-    };
-
-    if (shouldSave) {
-      savePapers();
-    }
-  }, [shouldSave, papers, subjectName]);
+  // Remove the automatic save useEffect since we now save explicitly through API calls
 
   // Add useEffect to refresh iframe when selected paper changes
   useEffect(() => {
@@ -266,13 +256,15 @@ export default function PYQClient({ subject, subjectPYQ, subjectName }: PYQClien
 
   const handleSavePaper = async () => {
     try {
+      let updatedPapers;
+      
       if (editingPaper) {
         // Update existing paper
-        await updatePaperInAPI(subjectName, editingPaper, editPaperData);
-        setPapers(papers.map(paper => 
+        updatedPapers = papers.map(paper => 
           paper.id === editingPaper ? { ...paper, ...editPaperData } : paper
-        ));
-        setShouldSave(true);
+        );
+        await updatePaperInAPI(year, semester, branch, subjectName, updatedPapers);
+        setPapers(updatedPapers);
         toast.success("Paper updated successfully");
       } else {
         // Add new paper
@@ -280,9 +272,9 @@ export default function PYQClient({ subject, subjectPYQ, subjectName }: PYQClien
           id: Date.now().toString(),
           ...editPaperData
         };
-        await savePaperToAPI(subjectName, newPaper);
-        setPapers([...papers, newPaper]);
-        setShouldSave(true);
+        updatedPapers = [...papers, newPaper];
+        await savePaperToAPI(year, semester, branch, subjectName, updatedPapers);
+        setPapers(updatedPapers);
         toast.success("Paper added successfully");
       }
       setEditingPaper(null);
@@ -305,9 +297,9 @@ export default function PYQClient({ subject, subjectPYQ, subjectName }: PYQClien
 
   const confirmDeletePaper = async () => {
     try {
-      await deletePaperFromAPI(subjectName, deleteModal.id);
-      setPapers(papers.filter(paper => paper.id !== deleteModal.id));
-      setShouldSave(true);
+      const updatedPapers = papers.filter(paper => paper.id !== deleteModal.id);
+      await deletePaperFromAPI(year, semester, branch, subjectName, updatedPapers);
+      setPapers(updatedPapers);
       if (selectedPaper?.id === deleteModal.id) {
         setSelectedPaper(null);
       }

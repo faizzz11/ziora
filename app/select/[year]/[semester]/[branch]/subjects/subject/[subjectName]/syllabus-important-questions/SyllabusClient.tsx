@@ -56,19 +56,27 @@ interface SyllabusClientProps {
   syllabus: Syllabus;
   impQuestions: ImpQuestions;
   subjectName: string;
+  backUrl: string;
+  year: string;
+  semester: string;
+  branch: string;
 }
 
 // API helper functions for syllabus
-const saveSyllabusToAPI = async (subjectName: string, syllabus: Syllabus) => {
+const saveSyllabusToAPI = async (year: string, semester: string, branch: string, subjectName: string, syllabusData: any) => {
   try {
-    const response = await fetch('/api/syllabus', {
+    const response = await fetch('/api/content', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        year,
+        semester,
+        branch,
         subject: subjectName,
-        syllabus: syllabus,
+        contentType: 'syllabus',
+        content: syllabusData,
       }),
     });
 
@@ -83,17 +91,20 @@ const saveSyllabusToAPI = async (subjectName: string, syllabus: Syllabus) => {
   }
 };
 
-const updateModuleInAPI = async (subjectName: string, moduleNo: string, moduleData: Partial<Module>) => {
+const updateModuleInAPI = async (year: string, semester: string, branch: string, subjectName: string, syllabusData: any) => {
   try {
-    const response = await fetch('/api/syllabus', {
+    const response = await fetch('/api/content', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        year,
+        semester,
+        branch,
         subject: subjectName,
-        moduleNo,
-        moduleData,
+        contentType: 'syllabus',
+        content: syllabusData,
       }),
     });
 
@@ -108,16 +119,20 @@ const updateModuleInAPI = async (subjectName: string, moduleNo: string, moduleDa
   }
 };
 
-const deleteModuleFromAPI = async (subjectName: string, moduleNo: string) => {
+const deleteModuleFromAPI = async (year: string, semester: string, branch: string, subjectName: string, syllabusData: any) => {
   try {
-    const response = await fetch('/api/syllabus', {
-      method: 'DELETE',
+    const response = await fetch('/api/content', {
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        year,
+        semester,
+        branch,
         subject: subjectName,
-        moduleNo,
+        contentType: 'syllabus',
+        content: syllabusData,
       }),
     });
 
@@ -132,35 +147,48 @@ const deleteModuleFromAPI = async (subjectName: string, moduleNo: string) => {
   }
 };
 
-// API helper functions for important questions
-const saveQuestionsToAPI = async (subjectName: string, questions: ImpQuestions) => {
+// API helper functions for important questions - now integrated with syllabus
+const saveContentToAPI = async (year: string, semester: string, branch: string, subjectName: string, syllabusData: any, impQuestionsData: any) => {
   try {
-    const response = await fetch('/api/important-questions', {
+    const response = await fetch('/api/content', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        year,
+        semester,
+        branch,
         subject: subjectName,
-        questions: questions,
+        contentType: 'syllabus',
+        content: {
+          syllabus: syllabusData,
+          impQuestions: impQuestionsData
+        },
       }),
     });
 
     if (!response.ok) {
-      throw new Error('Failed to save questions');
+      throw new Error('Failed to save content');
     }
 
     return await response.json();
   } catch (error) {
-    console.error('Error saving questions:', error);
+    console.error('Error saving content:', error);
     throw error;
   }
 };
 
-export default function SyllabusClient({ subject, syllabus: initialSyllabus, impQuestions: initialImpQuestions, subjectName }: SyllabusClientProps) {
+export default function SyllabusClient({ subject, syllabus: initialSyllabus, impQuestions: initialImpQuestions, subjectName, backUrl, year, semester, branch }: SyllabusClientProps) {
   const [activeTab, setActiveTab] = useState('syllabus');
-  const [syllabus, setSyllabus] = useState<Syllabus>(initialSyllabus);
-  const [impQuestions, setImpQuestions] = useState<ImpQuestions>(initialImpQuestions);
+  const [syllabus, setSyllabus] = useState<Syllabus>({
+    ...initialSyllabus,
+    modules: initialSyllabus?.modules || []
+  });
+  const [impQuestions, setImpQuestions] = useState<ImpQuestions>({
+    ...initialImpQuestions,
+    modules: initialImpQuestions?.modules || []
+  });
   
   // Syllabus states
   const [editingModule, setEditingModule] = useState<string | null>(null);
@@ -201,6 +229,23 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
     questionIndex: -1,
     question: '',
     originalQuestion: { question: '', frequency: 1, repetition: 'Most Repeated' }
+  });
+
+  // Important Questions Module Management states
+  const [isAddingImpModule, setIsAddingImpModule] = useState(false);
+  const [editingImpModule, setEditingImpModule] = useState<string | null>(null);
+  const [impModuleForm, setImpModuleForm] = useState({
+    moduleNo: '',
+    title: ''
+  });
+  const [deleteImpModuleModal, setDeleteImpModuleModal] = useState<{
+    isOpen: boolean;
+    moduleNo: string;
+    title: string;
+  }>({
+    isOpen: false,
+    moduleNo: '',
+    title: ''
   });
 
   const [questionForm, setQuestionForm] = useState({
@@ -281,27 +326,34 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
     };
 
     try {
+      let updatedSyllabus;
+      
       if (editingModule) {
         // Update existing module
-        setSyllabus(prev => ({
-          ...prev,
-          modules: prev.modules.map(m => 
+        updatedSyllabus = {
+          ...syllabus,
+          modules: syllabus.modules.map(m => 
             m.moduleNo === editingModule ? moduleData : m
           ),
-          totalHours: prev.modules.reduce((total, m) => 
+          totalHours: syllabus.modules.reduce((total, m) => 
             m.moduleNo === editingModule ? total - m.hours + moduleData.hours : total + m.hours, 0
           )
-        }));
+        };
         setEditingModule(null);
       } else {
         // Add new module
-        setSyllabus(prev => ({
-          ...prev,
-          modules: [...prev.modules, moduleData],
-          totalHours: prev.totalHours + moduleData.hours
-        }));
+        updatedSyllabus = {
+          ...syllabus,
+          modules: [...syllabus.modules, moduleData],
+          totalHours: syllabus.totalHours + moduleData.hours
+        };
         setIsAddingModule(false);
       }
+
+      setSyllabus(updatedSyllabus);
+
+      // Save to API
+      await saveContentToAPI(year, semester, branch, subjectName, updatedSyllabus, impQuestions);
 
       setModuleForm({
         moduleNo: '',
@@ -325,11 +377,17 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
 
   const confirmDeleteModule = async () => {
     try {
-      setSyllabus(prev => ({
-        ...prev,
-        modules: prev.modules.filter(m => m.moduleNo !== deleteModal.moduleNo),
-        totalHours: prev.totalHours - (prev.modules.find(m => m.moduleNo === deleteModal.moduleNo)?.hours || 0)
-      }));
+      const updatedSyllabus = {
+        ...syllabus,
+        modules: syllabus.modules.filter(m => m.moduleNo !== deleteModal.moduleNo),
+        totalHours: syllabus.totalHours - (syllabus.modules.find(m => m.moduleNo === deleteModal.moduleNo)?.hours || 0)
+      };
+      
+      setSyllabus(updatedSyllabus);
+      
+      // Save to API
+      await saveContentToAPI(year, semester, branch, subjectName, updatedSyllabus, impQuestions);
+      
       setDeleteModal({ isOpen: false, moduleNo: '', title: '' });
     } catch (error) {
       console.error('Error deleting module:', error);
@@ -371,6 +429,109 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
     }));
   };
 
+  // CRUD Functions for Important Questions Modules
+  const handleAddImpModule = () => {
+    setIsAddingImpModule(true);
+    setImpModuleForm({
+      moduleNo: '',
+      title: ''
+    });
+  };
+
+  const handleEditImpModule = (module: ImpModule) => {
+    setEditingImpModule(module.moduleNo);
+    setImpModuleForm({
+      moduleNo: module.moduleNo,
+      title: module.title
+    });
+  };
+
+  const handleSaveImpModule = async () => {
+    if (!impModuleForm.moduleNo.trim() || !impModuleForm.title.trim()) {
+      alert("Please fill in module number and title");
+      return;
+    }
+
+    const moduleData = {
+      moduleNo: impModuleForm.moduleNo,
+      title: impModuleForm.title,
+      questions: []
+    };
+
+    try {
+      let updatedImpQuestions;
+      
+      if (editingImpModule) {
+        // Update existing module
+        updatedImpQuestions = {
+          ...impQuestions,
+          modules: impQuestions.modules.map(m => 
+            m.moduleNo === editingImpModule 
+              ? { ...m, moduleNo: moduleData.moduleNo, title: moduleData.title }
+              : m
+          )
+        };
+        setEditingImpModule(null);
+      } else {
+        // Add new module
+        updatedImpQuestions = {
+          ...impQuestions,
+          modules: [...impQuestions.modules, moduleData]
+        };
+        setIsAddingImpModule(false);
+      }
+
+      setImpQuestions(updatedImpQuestions);
+
+      // Save to API
+      await saveContentToAPI(year, semester, branch, subjectName, syllabus, updatedImpQuestions);
+
+      setImpModuleForm({
+        moduleNo: '',
+        title: ''
+      });
+    } catch (error) {
+      console.error('Error saving important questions module:', error);
+      alert('Failed to save module');
+    }
+  };
+
+  const handleDeleteImpModule = (module: ImpModule) => {
+    setDeleteImpModuleModal({
+      isOpen: true,
+      moduleNo: module.moduleNo,
+      title: module.title
+    });
+  };
+
+  const confirmDeleteImpModule = async () => {
+    try {
+      const updatedImpQuestions = {
+        ...impQuestions,
+        modules: impQuestions.modules.filter(m => m.moduleNo !== deleteImpModuleModal.moduleNo)
+      };
+      
+      setImpQuestions(updatedImpQuestions);
+      
+      // Save to API
+      await saveContentToAPI(year, semester, branch, subjectName, syllabus, updatedImpQuestions);
+      
+      setDeleteImpModuleModal({ isOpen: false, moduleNo: '', title: '' });
+    } catch (error) {
+      console.error('Error deleting important questions module:', error);
+      alert('Failed to delete module');
+    }
+  };
+
+  const handleCancelImpModuleEdit = () => {
+    setEditingImpModule(null);
+    setIsAddingImpModule(false);
+    setImpModuleForm({
+      moduleNo: '',
+      title: ''
+    });
+  };
+
   // CRUD Functions for Important Questions
   const handleAddQuestion = (moduleNo: string) => {
     setIsAddingQuestion(moduleNo);
@@ -405,11 +566,13 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
     };
 
     try {
+      let updatedImpQuestions;
+      
       if (editingQuestion) {
         // Update existing question by finding it using the original question data
-        setImpQuestions(prev => ({
-          ...prev,
-          modules: prev.modules.map(module => 
+        updatedImpQuestions = {
+          ...impQuestions,
+          modules: impQuestions.modules.map(module => 
             module.moduleNo === editingQuestion.moduleNo 
               ? {
                   ...module,
@@ -422,13 +585,13 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
                 }
               : module
           )
-        }));
+        };
         setEditingQuestion(null);
       } else if (isAddingQuestion) {
         // Add new question
-        setImpQuestions(prev => ({
-          ...prev,
-          modules: prev.modules.map(module => 
+        updatedImpQuestions = {
+          ...impQuestions,
+          modules: impQuestions.modules.map(module => 
             module.moduleNo === isAddingQuestion 
               ? {
                   ...module,
@@ -436,8 +599,15 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
                 }
               : module
           )
-        }));
+        };
         setIsAddingQuestion(null);
+      }
+
+      if (updatedImpQuestions) {
+        setImpQuestions(updatedImpQuestions);
+        
+        // Save to API
+        await saveContentToAPI(year, semester, branch, subjectName, syllabus, updatedImpQuestions);
       }
 
       setQuestionForm({
@@ -463,9 +633,9 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
 
   const confirmDeleteQuestion = async () => {
     try {
-      setImpQuestions(prev => ({
-        ...prev,
-        modules: prev.modules.map(module => 
+      const updatedImpQuestions = {
+        ...impQuestions,
+        modules: impQuestions.modules.map(module => 
           module.moduleNo === deleteQuestionModal.moduleNo
             ? {
                 ...module,
@@ -478,7 +648,13 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
               }
             : module
         )
-      }));
+      };
+      
+      setImpQuestions(updatedImpQuestions);
+      
+      // Save to API
+      await saveContentToAPI(year, semester, branch, subjectName, syllabus, updatedImpQuestions);
+      
       setDeleteQuestionModal({ 
         isOpen: false, 
         moduleNo: '', 
@@ -599,7 +775,7 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {syllabus.modules.map((module, index) => (
+                    {(syllabus.modules || []).map((module, index) => (
                       <tr key={index} className="hover:bg-gray-50 transition-colors">
                         <td className="px-6 py-4 text-sm font-medium text-gray-900 align-top">
                           {editingModule === module.moduleNo ? (
@@ -831,6 +1007,21 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
 
         {/* Important Questions Tab */}
         <TabsContent value="important-questions" className="space-y-6">
+          {/* Header with Add Module Button */}
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900">Important Questions by Module</h2>
+              <p className="text-gray-600 mt-1">Manage modules and their important questions</p>
+            </div>
+            <Button
+              onClick={handleAddImpModule}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2"
+            >
+              <Plus className="h-4 w-4" />
+              <span>Add Module</span>
+            </Button>
+          </div>
+
           {/* Legend */}
           <Card className="bg-blue-50 border border-blue-200">
             <CardContent className="p-4">
@@ -866,26 +1057,81 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
 
           {/* Important Questions by Module */}
           <div className="space-y-6">
-            {impQuestions.modules.map((module, moduleIndex) => (
+            {(impQuestions.modules || []).map((module, moduleIndex) => (
               <Card key={moduleIndex} className="bg-white border border-gray-200">
                 <CardHeader className="border-b border-gray-200 bg-gray-50">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg font-semibold text-gray-900">
-                      Module {module.moduleNo} - {module.title}
-                    </CardTitle>
-                    <Button
-                      onClick={() => handleAddQuestion(module.moduleNo)}
-                      className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg flex items-center space-x-2"
-                      size="sm"
-                    >
-                      <Plus className="h-3 w-3" />
-                      <span>Add Question</span>
-                    </Button>
+                    {editingImpModule === module.moduleNo ? (
+                      <div className="flex items-center space-x-4 flex-1">
+                        <div className="flex items-center space-x-2">
+                          <Input
+                            value={impModuleForm.moduleNo}
+                            onChange={(e) => setImpModuleForm(prev => ({ ...prev, moduleNo: e.target.value }))}
+                            placeholder="Module No."
+                            className="w-24"
+                          />
+                          <Input
+                            value={impModuleForm.title}
+                            onChange={(e) => setImpModuleForm(prev => ({ ...prev, title: e.target.value }))}
+                            placeholder="Module Title"
+                            className="flex-1"
+                          />
+                        </div>
+                        <div className="flex space-x-2">
+                          <Button
+                            onClick={handleSaveImpModule}
+                            size="sm"
+                            className="bg-green-600 hover:bg-green-700 text-white"
+                          >
+                            <Save className="h-3 w-3" />
+                          </Button>
+                          <Button
+                            onClick={handleCancelImpModuleEdit}
+                            size="sm"
+                            variant="outline"
+                          >
+                            <X className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <CardTitle className="text-lg font-semibold text-gray-900">
+                          Module {module.moduleNo} - {module.title}
+                        </CardTitle>
+                        <div className="flex items-center space-x-2">
+                          <Button
+                            onClick={() => handleEditImpModule(module)}
+                            size="sm"
+                            variant="outline"
+                            className="hover:bg-blue-50"
+                          >
+                            <Edit className="h-3 w-3" />
+                          </Button>
+                          <Button
+                            onClick={() => handleDeleteImpModule(module)}
+                            size="sm"
+                            variant="outline"
+                            className="hover:bg-red-50 text-red-600"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
+                          <Button
+                            onClick={() => handleAddQuestion(module.moduleNo)}
+                            className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg flex items-center space-x-2"
+                            size="sm"
+                          >
+                            <Plus className="h-3 w-3" />
+                            <span>Add Question</span>
+                          </Button>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </CardHeader>
                 <CardContent className="p-6">
                   <div className="space-y-4">
-                    {module.questions.map((question, questionIndex) => (
+                    {(module.questions || []).map((question, questionIndex) => (
                       <div key={`${question.question}-${question.frequency}-${questionIndex}`} className="border-l-4 border-gray-200 pl-4 py-2">
                         {editingQuestion?.moduleNo === module.moduleNo && 
                          editingQuestion?.originalQuestion.question === question.question &&
@@ -1024,6 +1270,54 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
                 </CardContent>
               </Card>
             ))}
+
+            {/* Add New Module Form for Important Questions */}
+            {isAddingImpModule && (
+              <Card className="bg-blue-50 border border-blue-200">
+                <CardHeader>
+                  <CardTitle className="text-lg font-semibold text-blue-900">Add New Module for Important Questions</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="impModuleNo">Module No.</Label>
+                      <Input
+                        id="impModuleNo"
+                        value={impModuleForm.moduleNo}
+                        onChange={(e) => setImpModuleForm(prev => ({ ...prev, moduleNo: e.target.value }))}
+                        placeholder="e.g., 1, 2, 3"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="impModuleTitle">Module Title</Label>
+                      <Input
+                        id="impModuleTitle"
+                        value={impModuleForm.title}
+                        onChange={(e) => setImpModuleForm(prev => ({ ...prev, title: e.target.value }))}
+                        placeholder="e.g., Introduction to Programming"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex space-x-2">
+                    <Button
+                      onClick={handleSaveImpModule}
+                      className="bg-green-600 hover:bg-green-700 text-white"
+                    >
+                      <Save className="h-4 w-4 mr-2" />
+                      Save Module
+                    </Button>
+                    <Button
+                      onClick={handleCancelImpModuleEdit}
+                      variant="outline"
+                    >
+                      <X className="h-4 w-4 mr-2" />
+                      Cancel
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </TabsContent>
       </Tabs>
@@ -1064,6 +1358,26 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
               Cancel
             </Button>
             <Button variant="destructive" onClick={confirmDeleteQuestion}>
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Important Questions Module Confirmation Modal */}
+      <Dialog open={deleteImpModuleModal.isOpen} onOpenChange={(open) => setDeleteImpModuleModal(prev => ({ ...prev, isOpen: open }))}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Module</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete module "{deleteImpModuleModal.title}"? This will also delete all questions in this module. This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteImpModuleModal({ isOpen: false, moduleNo: '', title: '' })}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={confirmDeleteImpModule}>
               Delete
             </Button>
           </DialogFooter>

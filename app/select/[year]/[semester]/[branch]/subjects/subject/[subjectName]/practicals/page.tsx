@@ -1,10 +1,7 @@
-'use client';
-
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Link from 'next/link';
-import { ChevronRight, ArrowLeft, Home } from "lucide-react";
+import { ChevronRight, ArrowLeft, Home } from 'lucide-react';
 import { Button } from "@/components/ui/button";
-import experimentsData from '@/data/experiments.json';
 import branchSubjectsData from '@/data/branch-subjects.json';
 import PracticalsClient from './PracticalsClient';
 
@@ -17,83 +14,73 @@ interface PracticalsPageProps {
   }>;
 }
 
-interface Experiment {
-  experimentNo: number;
-  title: string;
-  aim: string;
-  theory: string;
-  code: string;
-  output: string;
-  conclusion: string;
-  videoUrl: string;
+// Fetch practicals content from MongoDB based on URL parameters
+async function fetchPracticalsContent(year: string, semester: string, branch: string, subject: string) {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const response = await fetch(
+      `${baseUrl}/api/content?year=${year}&semester=${semester}&branch=${branch}&subject=${subject}&contentType=practicals`,
+      { cache: 'no-store' }
+    );
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch practicals content');
+    }
+    
+    const data = await response.json();
+    return data.content;
+  } catch (error) {
+    console.error('Error fetching practicals content:', error);
+    // Return default structure if fetch fails
+    return {
+      experiments: [
+        {
+          experimentNo: 1,
+          title: "Introduction to Lab Equipment",
+          aim: "To familiarize students with basic lab equipment and safety procedures",
+          theory: "Basic laboratory safety and equipment introduction...",
+          code: "// Sample code will be provided here",
+          output: "Expected output and observations",
+          conclusion: "Understanding of basic lab procedures achieved",
+          videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+        },
+        {
+          experimentNo: 2,
+          title: "Basic Programming Concepts",
+          aim: "To understand fundamental programming concepts",
+          theory: "Programming fundamentals and basic concepts...",
+          code: "// Sample code implementation",
+          output: "Program execution results",
+          conclusion: "Basic programming concepts demonstrated",
+          videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+        }
+      ]
+    };
+  }
 }
 
-export default function PracticalsPage({ params }: PracticalsPageProps) {
-  const [resolvedParams, setResolvedParams] = useState<{
-    year: string;
-    semester: string;
-    branch: string;
-  subjectName: string;
-  } | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const resolveParams = async () => {
-      try {
-        const resolved = await params;
-        setResolvedParams(resolved);
-        setIsLoading(false);
-      } catch (error) {
-        console.error('Error resolving params:', error);
-        setIsLoading(false);
-      }
-    };
-
-    resolveParams();
-  }, [params]);
-
-  if (isLoading || !resolvedParams) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-white to-gray-50 flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading...</p>
-          </div>
-      </div>
-    );
-  }
+export default async function PracticalsPage({ params }: PracticalsPageProps) {
+  const { year, semester, branch, subjectName } = await params;
   
   // Get subject info from branch subjects data
   const { branches } = branchSubjectsData;
-  const branchKey = resolvedParams.year === 'first-year' ? 'first-year' : resolvedParams.branch;
+  const branchKey = year === 'first-year' ? 'first-year' : branch;
   const selectedBranchData = (branches as any)[branchKey];
-  const semesterSubjects = selectedBranchData?.semesters[resolvedParams.semester] || [];
-  const subject = semesterSubjects.find((s: any) => s.id === resolvedParams.subjectName);
+  const semesterSubjects = selectedBranchData?.semesters[semester] || [];
+  const subject = semesterSubjects.find((s: any) => s.id === subjectName) || {
+    id: subjectName,
+    name: subjectName.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+    description: `Study materials for ${subjectName}`,
+    icon: '📚',
+    code: 'N/A',
+    credits: 3
+  };
 
-  if (!subject) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-white to-gray-50 flex items-center justify-center">
-          <div className="text-center">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Subject Not Found</h1>
-          <p className="text-gray-600 mb-8">The subject you're looking for doesn't exist.</p>
-          <Link 
-            href={`/select/${resolvedParams.year}/${resolvedParams.semester}/${resolvedParams.branch}/subjects`}
-            className="inline-flex items-center px-6 py-3 bg-black text-white rounded-full hover:bg-gray-800 transition-colors"
-          >
-              Back to Subjects
-            </Link>
-        </div>
-      </div>
-    );
-  }
+  // Fetch dynamic practicals content based on URL parameters
+  const practicalsData = await fetchPracticalsContent(year, semester, branch, subjectName);
+  const experiments = practicalsData.experiments || [];
 
-  const experiments = (experimentsData as any)[resolvedParams.subjectName] || [];
-  const backUrl = `/select/${resolvedParams.year}/${resolvedParams.semester}/${resolvedParams.branch}/subjects/subject/${resolvedParams.subjectName}`;
-
-  // Debug information
-  console.log('Subject Name:', resolvedParams.subjectName);
-  console.log('Available experiment keys:', Object.keys(experimentsData));
-  console.log('Experiments found:', experiments.length);
+  const backUrl = `/select/${year}/${semester}/${branch}/subjects/subject/${subjectName}`;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-white to-gray-50">
@@ -103,7 +90,7 @@ export default function PracticalsPage({ params }: PracticalsPageProps) {
           <nav className="flex items-center space-x-2 text-sm text-gray-600">
             <Link href="/select" className="hover:text-gray-900 transition-colors font-medium">Academic Years</Link>
             <ChevronRight className="w-4 h-4 text-gray-400" />
-            <Link href={`/select/${resolvedParams.year}/${resolvedParams.semester}/${resolvedParams.branch}/subjects`} className="hover:text-gray-900 transition-colors font-medium">Subjects</Link>
+            <Link href={`/select/${year}/${semester}/${branch}/subjects`} className="hover:text-gray-900 transition-colors font-medium">Subjects</Link>
             <ChevronRight className="w-4 h-4 text-gray-400" />
             <Link href={backUrl} className="hover:text-gray-900 transition-colors font-medium">
               {subject.name}
@@ -112,42 +99,32 @@ export default function PracticalsPage({ params }: PracticalsPageProps) {
             <span className="text-gray-900 font-semibold">Practicals Code & Lab Manual</span>
           </nav>
         </div>
-            </div>
+      </div>
 
-      {/* Content */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Debug Info */}
-        <div className="text-center mb-4">
-          <p className="text-sm text-gray-500">
-            Subject ID: <code className="bg-gray-100 px-2 py-1 rounded">{resolvedParams.subjectName}</code> | 
-            Experiments Found: <span className="font-semibold">{experiments.length}</span>
-          </p>
-          {experiments.length === 0 && (
-            <p className="text-yellow-600 mt-2">
-              No experiments found for this subject. Available subjects: {Object.keys(experimentsData).join(', ')}
-            </p>
-          )}
-            </div>
+      <PracticalsClient 
+        experiments={experiments}
+        subject={subject}
+        subjectName={subjectName}
+        year={year}
+        semester={semester}
+        branch={branch}
+      />
 
-        {/* Practicals Client Component */}
-        <PracticalsClient experiments={experiments} subject={subject} subjectName={resolvedParams.subjectName} />
-
-        {/* Bottom Actions */}
-        <div className="flex justify-center gap-4 mt-12">
-          <Link href={backUrl}>
-            <Button variant="outline" className="px-6 py-3 rounded-full hover:bg-gray-50 transition-all duration-300">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Subject
-            </Button>
-                  </Link>
-          
-          <Link href="/">
-            <Button variant="outline" className="px-6 py-3 rounded-full hover:bg-gray-50 transition-all duration-300">
-              <Home className="w-4 h-4 mr-2" />
-              Home
-            </Button>
-                  </Link>
-        </div>
+      {/* Bottom Actions */}
+      <div className="flex justify-center gap-4 mt-12">
+        <Link href={backUrl}>
+          <Button variant="outline" className="px-6 py-3 rounded-full hover:bg-gray-50 transition-all duration-300">
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Subject
+          </Button>
+        </Link>
+        
+        <Link href="/">
+          <Button variant="outline" className="px-6 py-3 rounded-full hover:bg-gray-50 transition-all duration-300">
+            <Home className="w-4 h-4 mr-2" />
+            Home
+          </Button>
+        </Link>
       </div>
     </div>
   );
