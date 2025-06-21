@@ -3,18 +3,19 @@ import clientPromise from '@/lib/mongodb';
 import nodemailer from 'nodemailer';
 import crypto from 'crypto';
 
+// Get admin emails from environment variables
 const ADMIN_EMAILS = [
-  'banekaustubh27@gmail.com',
-  'karanprince85@gmail.com',
-  'faizmoulavi11@gmail.com'
-];
+  process.env.EMAIL_USER1,
+  process.env.EMAIL_USER2,
+  process.env.EMAIL_USER3
+].filter(Boolean) as string[]; // Filter out any undefined values
 
 export async function POST(req: Request) {
   try {
     const { username, password } = await req.json();
 
-    // Validate admin credentials
-    if (username !== 'zero' || password !== 'zeroktfc') {
+    // Validate admin credentials using environment variables
+    if (username !== process.env.ADMIN_ID || password !== process.env.ADMIN_PASS) {
       return NextResponse.json(
         { error: 'Invalid admin credentials' },
         { status: 401 }
