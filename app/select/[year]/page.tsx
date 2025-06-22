@@ -44,29 +44,29 @@ const SemesterSelectionPage = ({ params }: SemesterPageProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-background to-secondary/10 dark:from-black dark:to-gray-950 py-12">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12">
-          <Badge variant="secondary" className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-gray-100 to-gray-200 rounded-full text-sm font-medium text-gray-700 mb-6 border-0">
+          <Badge variant="secondary" className="inline-flex items-center px-4 py-2 bg-secondary rounded-full text-sm font-medium text-muted-foreground mb-6 border-0">
             <GraduationCap className="w-4 h-4 mr-2" />
             {selectedYear.fullName}
           </Badge>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent mb-4">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
             Choose Your Semester
           </h1>
-          <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
             Select your current semester in {selectedYear.name} to access study materials and resources.
           </p>
         </div>
 
         {/* Breadcrumb */}
         <div className="flex items-center justify-center mb-8">
-          <Link href="/select" className="text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors">
+          <Link href="/select" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
             Academic Years
           </Link>
-          <ChevronRight className="w-4 h-4 mx-2 text-gray-400" />
-          <span className="text-sm font-medium text-gray-900">
+          <ChevronRight className="w-4 h-4 mx-2 text-muted-foreground" />
+          <span className="text-sm font-medium text-foreground">
             {selectedYear.name} Semesters
           </span>
         </div>
@@ -79,7 +79,7 @@ const SemesterSelectionPage = ({ params }: SemesterPageProps) => {
               href={`/select/${params.year}/${semester.number}`}
               className="group h-full"
             >
-              <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 group-hover:border-gray-200 group-hover:-translate-y-2 h-full flex flex-col">
+              <div className="bg-card dark:bg-[oklch(0.205_0_0)] rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-border group-hover:border-primary/50 group-hover:-translate-y-2 h-full flex flex-col">
                 {/* Semester Number */}
                 <div className="text-center mb-6">
                   <div className={cn(
@@ -88,13 +88,13 @@ const SemesterSelectionPage = ({ params }: SemesterPageProps) => {
                   )}>
                     {semester.number}
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                  <h3 className="text-2xl font-bold text-foreground mb-2">
                     {semester.name}
                   </h3>
                 </div>
                 
                 {/* Description */}
-                <p className="text-center text-gray-600 mb-6 flex-grow">
+                <p className="text-center text-muted-foreground mb-6 flex-grow">
                   {semester.description}
                 </p>
                 
@@ -108,7 +108,7 @@ const SemesterSelectionPage = ({ params }: SemesterPageProps) => {
                 
                 {/* Action Button */}
                 <div className="text-center">
-                  <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-gray-900 to-gray-800 text-white rounded-full font-medium group-hover:from-gray-800 group-hover:to-gray-700 transition-all duration-300 shadow-md group-hover:shadow-lg">
+                  <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-gray-900 to-gray-800 dark:from-gray-700 dark:to-gray-600 text-white rounded-full font-medium group-hover:from-gray-800 group-hover:to-gray-700 dark:group-hover:from-gray-600 dark:group-hover:to-gray-500 transition-all duration-300 shadow-md group-hover:shadow-lg">
                     <BookOpen className="w-4 h-4 mr-2" />
                     View Subjects
                     <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
@@ -121,12 +121,12 @@ const SemesterSelectionPage = ({ params }: SemesterPageProps) => {
 
         {/* Year Info Card */}
         <div className="mt-12 max-w-2xl mx-auto">
-          <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl p-6 border border-gray-200">
+          <div className="bg-secondary dark:bg-[oklch(0.205_0_0)] rounded-2xl p-6 border border-border">
             <div className="text-center">
-              <h4 className="text-lg font-semibold text-gray-900 mb-2">
+              <h4 className="text-lg font-semibold text-foreground mb-2">
                 About {selectedYear.fullName}
               </h4>
-              <p className="text-gray-600">
+              <p className="text-muted-foreground">
                 {selectedYear.description}
               </p>
             </div>
@@ -136,14 +136,14 @@ const SemesterSelectionPage = ({ params }: SemesterPageProps) => {
         {/* Bottom Actions */}
         <div className="flex justify-center gap-4 mt-12">
           <Link href="/select">
-            <button className="inline-flex items-center px-6 py-3 text-sm font-medium text-gray-600 bg-gradient-to-r from-gray-100 to-gray-200 rounded-full hover:from-gray-200 hover:to-gray-300 transition-all duration-300 border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-md">
+            <button className="inline-flex items-center px-6 py-3 text-sm font-medium text-muted-foreground bg-secondary rounded-full hover:bg-secondary/80 transition-all duration-300 border border-border hover:border-primary/50 shadow-sm hover:shadow-md">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Years
             </button>
           </Link>
           
           <Link href="/">
-            <button className="inline-flex items-center px-6 py-3 text-sm font-medium text-gray-600 bg-gradient-to-r from-gray-100 to-gray-200 rounded-full hover:from-gray-200 hover:to-gray-300 transition-all duration-300 border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-md">
+            <button className="inline-flex items-center px-6 py-3 text-sm font-medium text-muted-foreground bg-secondary rounded-full hover:bg-secondary/80 transition-all duration-300 border border-border hover:border-primary/50 shadow-sm hover:shadow-md">
               <Home className="w-4 h-4 mr-2" />
               Home
             </button>

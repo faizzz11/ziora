@@ -161,16 +161,16 @@ const CommentComponent: React.FC<{
   
   return (
     <div className={`${depth > 0 ? 'ml-8 mt-3' : ''}`}>
-      <div className="flex items-start space-x-3 p-4 bg-gray-50 rounded-lg">
-        <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-          <span className="text-xs font-bold text-gray-600">
+      <div className="flex items-start space-x-3 p-4 bg-secondary dark:bg-[oklch(0.205_0_0)] rounded-lg">
+        <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center">
+          <span className="text-xs font-bold text-muted-foreground">
             {comment.author.split(' ').map(n => n[0]).join('')}
           </span>
         </div>
         <div className="flex-1">
           <div className="flex items-center space-x-2 mb-1">
-            <span className="font-medium text-gray-900">{comment.author}</span>
-            <span className="text-sm text-gray-500">{comment.timestamp}</span>
+            <span className="font-medium text-foreground">{comment.author}</span>
+            <span className="text-sm text-muted-foreground">{comment.timestamp}</span>
             {/* Admin Delete Button */}
             {isAdmin && (
               <button 
@@ -184,7 +184,7 @@ const CommentComponent: React.FC<{
               </button>
             )}
           </div>
-          <p className="text-gray-700 mb-2">{comment.content}</p>
+          <p className="text-muted-foreground mb-2">{comment.content}</p>
           
           {/* Action buttons */}
           <div className="flex items-center space-x-4">
@@ -195,7 +195,7 @@ const CommentComponent: React.FC<{
                 className={`flex items-center space-x-1 text-sm transition-colors ${
                   hasLiked 
                     ? 'text-blue-600 hover:text-blue-700' 
-                    : 'text-gray-500 hover:text-blue-600'
+                    : 'text-muted-foreground hover:text-blue-600'
                 }`}
               >
                 <svg className="w-4 h-4" fill={hasLiked ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
@@ -209,7 +209,7 @@ const CommentComponent: React.FC<{
                 className={`flex items-center space-x-1 text-sm transition-colors ${
                   hasDisliked 
                     ? 'text-red-600 hover:text-red-700' 
-                    : 'text-gray-500 hover:text-red-600'
+                    : 'text-muted-foreground hover:text-red-600'
                 }`}
               >
                 <svg className="w-4 h-4" fill={hasDisliked ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
@@ -232,7 +232,7 @@ const CommentComponent: React.FC<{
             {comment.replies.length > 0 && (
               <button 
                 onClick={toggleRepliesExpansion}
-                className="flex items-center space-x-1 text-sm text-gray-600 hover:text-gray-800"
+                className="flex items-center space-x-1 text-sm text-muted-foreground hover:text-foreground"
               >
                 <svg 
                   className={`w-4 h-4 transition-transform ${isRepliesExpanded ? 'rotate-90' : ''}`} 
@@ -889,7 +889,7 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
   return (
     <>
       {/* Top Navigation Bar */}
-      <section className="bg-white border-b border-gray-200 px-4 sm:px-6 lg:px-8 py-3">
+      <section className="bg-card dark:bg-[oklch(0.205_0_0)] border-b border-border px-4 sm:px-6 lg:px-8 py-3">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <Button 
@@ -905,7 +905,7 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
             </Button>
             
             <div className="text-center">
-              <h1 className="text-lg font-semibold text-gray-900">
+              <h1 className="text-lg font-semibold text-foreground">
                 {currentModule?.name || 'Select a module'}
               </h1>
             </div>
@@ -940,7 +940,7 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
             <Button 
               onClick={handleDownloadPdf}
               disabled={!currentModule?.pdfUrl}
-              className="bg-gray-900 text-white hover:bg-gray-800"
+              className="bg-gradient-to-r from-gray-900 to-gray-800 dark:from-gray-700 dark:to-gray-600 text-white hover:from-gray-800 hover:to-gray-700 dark:hover:from-gray-600 dark:hover:to-gray-500"
             >
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a4 4 0 01-4-4V5a4 4 0 014-4h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a4 4 0 01-4 4z" />
@@ -959,11 +959,11 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
           <div className="xl:col-span-2 space-y-6">
             
             {/* Notes Tab - Larger than video tab */}
-            <Card className="bg-white border border-gray-200">
+            <Card className="bg-card dark:bg-[oklch(0.205_0_0)] border border-border">
               <CardContent className="p-0">
                 {currentModule ? (
                   <div>
-                    <div className="bg-gray-100 rounded-t-lg overflow-hidden" style={{ height: '70vh' }}>
+                    <div className="bg-secondary dark:bg-[oklch(0.205_0_0)] rounded-t-lg overflow-hidden" style={{ height: '70vh' }}>
                       {!pdfError && currentModule.pdfUrl && currentModule.pdfUrl.trim() !== '' ? (
                         <iframe
                           src={getPdfUrl(currentModule.pdfUrl)}
@@ -974,15 +974,15 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
                           sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-gray-50">
+                        <div className="w-full h-full flex items-center justify-center bg-secondary dark:bg-[oklch(0.205_0_0)]">
                           <div className="text-center p-8">
-                            <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                            <h3 className="text-lg font-medium text-gray-900 mb-2">
-                              {!currentModule.pdfUrl || currentModule.pdfUrl.trim() === '' ? 'No PDF Set' : 'PDF Preview Unavailable'}
-                            </h3>
-                            <p className="text-gray-600 mb-4">
+                                                          <svg className="w-16 h-16 text-muted-foreground mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                              </svg>
+                              <h3 className="text-lg font-medium text-foreground mb-2">
+                                {!currentModule.pdfUrl || currentModule.pdfUrl.trim() === '' ? 'No PDF Set' : 'PDF Preview Unavailable'}
+                              </h3>
+                              <p className="text-muted-foreground mb-4">
                               {!currentModule.pdfUrl || currentModule.pdfUrl.trim() === '' 
                                 ? 'Please add a PDF URL to this module to view notes.' 
                                 : 'The PDF cannot be displayed in preview mode.'
@@ -991,7 +991,7 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
                             {currentModule.pdfUrl && currentModule.pdfUrl.trim() !== '' && (
                               <Button 
                                 onClick={handleDownloadPdf}
-                                className="bg-gray-900 text-white hover:bg-gray-800"
+                                className="bg-gradient-to-r from-gray-900 to-gray-800 dark:from-gray-700 dark:to-gray-600 text-white hover:from-gray-800 hover:to-gray-700 dark:hover:from-gray-600 dark:hover:to-gray-500"
                               >
                                 Open PDF in New Tab
                               </Button>
@@ -1001,17 +1001,17 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
                       )}
                     </div>
                     <div className="p-6">
-                      <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                      <h2 className="text-xl font-semibold text-foreground mb-2">
                         {currentModule.name} - Notes
                       </h2>
-                      <div className="flex items-center space-x-4 text-sm text-gray-600">
+                      <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                         <span className="flex items-center">
                           <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                           </svg>
                           PDF Document
                         </span>
-                        <Badge variant="secondary" className="bg-gray-100 text-gray-700">
+                        <Badge variant="secondary">
                           {subject.name}
                         </Badge>
                         {currentModule.relatedVideoLink && (
@@ -1023,18 +1023,18 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
                           </span>
                         )}
                       </div>
-                      <p className="mt-3 text-gray-600">
+                      <p className="mt-3 text-muted-foreground">
                         Comprehensive notes covering all topics in this module. Use the related video link to watch explanations for better understanding.
                       </p>
                     </div>
                   </div>
                 ) : (
-                  <div className="bg-gray-100 rounded-t-lg flex items-center justify-center" style={{ height: '70vh' }}>
+                  <div className="bg-secondary dark:bg-[oklch(0.205_0_0)] rounded-t-lg flex items-center justify-center" style={{ height: '70vh' }}>
                     <div className="text-center">
-                      <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-16 h-16 text-muted-foreground mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                       </svg>
-                      <p className="text-gray-600">Select a module to view notes</p>
+                      <p className="text-muted-foreground">Select a module to view notes</p>
                     </div>
                   </div>
                 )}
@@ -1042,27 +1042,27 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
             </Card>
 
             {/* Discussion / Comments Section */}
-            <Card className="bg-white border border-gray-200">
+            <Card className="bg-card dark:bg-[oklch(0.205_0_0)] border border-border">
               <CardContent className="p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Discussion / Comments</h3>
-                <p className="text-sm text-gray-600 mb-4">Ask questions or share insights about this module's notes</p>
+                <h3 className="text-lg font-semibold text-foreground mb-4">Discussion / Comments</h3>
+                <p className="text-sm text-muted-foreground mb-4">Ask questions or share insights about this module's notes</p>
                 
                 {/* Add Comment Form */}
                 <form onSubmit={handleCommentSubmit} className="mb-6">
                   <div className="flex items-start space-x-3">
-                    <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-                      <span className="text-sm font-medium text-gray-700">You</span>
+                    <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center">
+                      <span className="text-sm font-medium text-muted-foreground">You</span>
                     </div>
                     <div className="flex-1">
                       <textarea
                         value={newComment}
                         onChange={(e) => setNewComment(e.target.value)}
                         placeholder="Ask a question about these notes or share your thoughts..."
-                        className="w-full p-3 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full p-3 border border-border rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-background dark:bg-[oklch(0.205_0_0)] text-foreground"
                         rows={3}
                       />
                       <div className="flex justify-end mt-2">
-                        <Button type="submit" size="sm" className="bg-gray-900 text-white hover:bg-gray-800">
+                        <Button type="submit" size="sm" className="bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200">
                           Post Comment
                         </Button>
                       </div>
@@ -1092,13 +1092,13 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
                     ))
                   ) : (
                     <div className="text-center py-8">
-                      <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="w-16 h-16 bg-secondary dark:bg-[oklch(0.205_0_0)] rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg className="w-8 h-8 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-3.582 8-8 8a8.959 8.959 0 01-4.906-1.476L3 21l2.476-5.094A8.959 8.959 0 013 12c0-4.418 3.582-8 8-8s8 3.582 8 8z" />
                         </svg>
                       </div>
-                      <h4 className="text-lg font-medium text-gray-900 mb-2">No comments yet</h4>
-                      <p className="text-gray-500">Be the first to start a discussion about this module!</p>
+                      <h4 className="text-lg font-medium text-foreground mb-2">No comments yet</h4>
+                                              <p className="text-muted-foreground">Be the first to start a discussion about this module!</p>
                     </div>
                   )}
                 </div>
@@ -1108,19 +1108,19 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
 
           {/* Right Sidebar - Modules (Increased Size) */}
           <div className="xl:col-span-1">
-            <Card className="bg-white border border-gray-200 sticky top-6">
+                          <Card className="bg-card dark:bg-[oklch(0.205_0_0)] border border-border sticky top-6">
               <CardContent className="p-4">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Course Notes</h3>
+                <h3 className="text-lg font-semibold text-foreground mb-4">Course Notes</h3>
                 
                 <div className="space-y-3">
                   {modules.map((module) => (
                     <div key={module.id}>
                       <button
                         onClick={() => setSelectedModule(selectedModule === module.id ? '' : module.id)}
-                        className="w-full text-left p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+                        className="w-full text-left p-3 bg-secondary dark:bg-[oklch(0.205_0_0)] hover:bg-muted dark:hover:bg-[oklch(0.225_0_0)] rounded-lg transition-colors"
                       >
                         <div className="flex items-center justify-between">
-                          <span className="font-medium text-gray-900">{module.name}</span>
+                          <span className="font-medium text-foreground">{module.name}</span>
                           <svg 
                             className={`w-4 h-4 transition-transform ${selectedModule === module.id ? 'rotate-180' : ''}`} 
                             fill="none" 
@@ -1135,11 +1135,11 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
                       {selectedModule === module.id && (
                         <div className="mt-2 space-y-2">
                           {/* Module Actions Section */}
-                          <div className="p-3 bg-gray-100 rounded-lg border">
+                                                        <div className="p-3 bg-secondary dark:bg-[oklch(0.205_0_0)] rounded-lg border">
                                                          {editingModule === module.id ? (
                                <div className="space-y-3">
                                  <div>
-                                   <label className="block text-xs font-medium text-gray-700 mb-1">Module Name</label>
+                                   <label className="block text-xs font-medium text-muted-foreground mb-1">Module Name</label>
                                    <input
                                      type="text"
                                      value={editModuleData.name}
@@ -1150,7 +1150,7 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
                                    />
                                  </div>
                                  <div>
-                                   <label className="block text-xs font-medium text-gray-700 mb-1">PDF URL</label>
+                                   <label className="block text-xs font-medium text-muted-foreground mb-1">PDF URL</label>
                                    <input
                                      type="text"
                                      value={editModuleData.pdfUrl}
@@ -1160,7 +1160,7 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
                                    />
                                  </div>
                                  <div>
-                                   <label className="block text-xs font-medium text-gray-700 mb-1">Related Video URL</label>
+                                   <label className="block text-xs font-medium text-muted-foreground mb-1">Related Video URL</label>
                                    <input
                                      type="text"
                                      value={editModuleData.relatedVideoLink}
@@ -1192,7 +1192,7 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
                             ) : (
                               <div className="space-y-3">
                                 <div className="flex items-center justify-between">
-                                  <span className="text-sm font-medium text-gray-700">Module Actions</span>
+                                  <span className="text-sm font-medium text-muted-foreground">Module Actions</span>
                                   {isAdmin && (
                                     <div className="flex space-x-1">
                                       <Button
@@ -1221,7 +1221,7 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
                                 
                                 {/* Links Section */}
                                 <div className="space-y-2">
-                                  <label className="text-xs font-medium text-gray-700">Quick Links</label>
+                                  <label className="text-xs font-medium text-muted-foreground">Quick Links</label>
                                                                      <div className="flex flex-col space-y-1">
                                      {module.pdfUrl ? (
                                        <Button
@@ -1240,7 +1240,7 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
                                          size="sm"
                                          variant="outline"
                                          disabled
-                                         className="justify-start h-8 text-xs text-gray-400"
+                                         className="justify-start h-8 text-xs text-muted-foreground"
                                        >
                                          <svg className="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a4 4 0 01-4-4V5a4 4 0 014-4h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a4 4 0 01-4 4z" />
@@ -1265,7 +1265,7 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
                                          size="sm"
                                          variant="outline"
                                          disabled
-                                         className="justify-start h-8 text-xs text-gray-400"
+                                         className="justify-start h-8 text-xs text-muted-foreground"
                                        >
                                          <svg className="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.586a1 1 0 00.707-.293l2.414-2.414a1 1 0 01.707-.293H15" />
@@ -1300,7 +1300,7 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
                     <Button
                       onClick={handleAddModule}
                       variant="outline"
-                      className="w-full mt-4 border-dashed border-gray-300 text-gray-600 hover:text-gray-900 hover:border-gray-400"
+                      className="w-full mt-4 border-dashed border-border text-muted-foreground hover:text-foreground hover:border-muted-foreground"
                     >
                       <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -1318,17 +1318,17 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
       {/* Delete Confirmation Modal */}
       {deleteModal.isOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+          <div className="bg-card dark:bg-[oklch(0.205_0_0)] rounded-lg p-6 max-w-md w-full mx-4">
             <div className="flex items-center mb-4">
               <svg className="w-6 h-6 text-red-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16c-.77.833.192 2.5 1.732 2.5z" />
               </svg>
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-lg font-semibold text-foreground">
                 Delete Module
               </h3>
             </div>
             
-            <p className="text-gray-600 mb-6">
+            <p className="text-muted-foreground mb-6">
               Are you sure you want to delete "{deleteModal.title}"? This action cannot be undone and will remove all associated notes and links.
             </p>
             

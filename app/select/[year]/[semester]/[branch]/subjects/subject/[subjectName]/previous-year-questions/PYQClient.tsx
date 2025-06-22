@@ -333,11 +333,11 @@ export default function PYQClient({ subject, subjectPYQ, subjectName, year, seme
       <div className="mb-8">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            <h1 className="text-3xl font-bold text-foreground mb-2">
               Previous Year Questions
             </h1>
-            <p className="text-lg text-gray-600">
-              Subject: <span className="font-semibold text-gray-900">{subjectPYQ.subjectName}</span>
+            <p className="text-lg text-muted-foreground">
+              Subject: <span className="font-semibold text-foreground">{subjectPYQ.subjectName}</span>
             </p>
           </div>
           
@@ -349,7 +349,7 @@ export default function PYQClient({ subject, subjectPYQ, subjectName, year, seme
               </SelectTrigger>
               <SelectContent>
                 {papers.map((paper) => (
-                  <div key={paper.id} className="flex items-center justify-between px-2 py-1 hover:bg-gray-100">
+                  <div key={paper.id} className="flex items-center justify-between px-2 py-1 hover:bg-secondary dark:hover:bg-[oklch(0.205_0_0)]">
                     <SelectItem value={paper.id}>
                       {paper.title}
                     </SelectItem>
@@ -402,8 +402,8 @@ export default function PYQClient({ subject, subjectPYQ, subjectName, year, seme
         </div>
 
         {/* Description */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <p className="text-blue-800 text-sm">
+        <div className="bg-secondary dark:bg-[oklch(0.205_0_0)] border border-border rounded-lg p-4">
+          <p className="text-foreground text-sm">
             📝 Select a question paper from the dropdown above to view and download previous year questions. 
             You can view the PDF directly in the browser or download it for offline study.
           </p>
@@ -412,15 +412,15 @@ export default function PYQClient({ subject, subjectPYQ, subjectName, year, seme
 
       {/* Paper Display Section */}
       {selectedPaper ? (
-        <Card className="bg-white border border-gray-200">
+        <Card className="bg-card dark:bg-[oklch(0.205_0_0)] border border-border">
           <CardContent className="p-0">
             {/* Paper Header with Full View Button */}
-            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+            <div className="flex items-center justify-between p-6 border-b border-border">
               <div>
-                <h2 className="text-xl font-semibold text-gray-900">
+                <h2 className="text-xl font-semibold text-foreground">
                   {selectedPaper.month} {selectedPaper.year} - {subjectPYQ.subjectName}
                 </h2>
-                <p className="text-sm text-gray-600 mt-1">
+                <p className="text-sm text-muted-foreground mt-1">
                   Question Paper • {selectedPaper.title}
                 </p>
               </div>
@@ -439,14 +439,14 @@ export default function PYQClient({ subject, subjectPYQ, subjectName, year, seme
 
             {/* PDF Preview */}
             <div className="p-6">
-              <div className="relative bg-gray-50 rounded-lg overflow-hidden" style={{ height: '70vh' }}>
+              <div className="relative bg-secondary dark:bg-[oklch(0.185_0_0)] rounded-lg overflow-hidden" style={{ height: '70vh' }}>
                 {selectedPaper.pdfUrl ? (
                   <>
                     {isLoading && (
-                      <div className="absolute inset-0 bg-gray-100 flex items-center justify-center z-10">
+                      <div className="absolute inset-0 bg-secondary dark:bg-[oklch(0.185_0_0)] flex items-center justify-center z-10">
                         <div className="text-center">
-                          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
-                          <p className="text-gray-600">Loading PDF...</p>
+                          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+                          <p className="text-muted-foreground">Loading PDF...</p>
                         </div>
                       </div>
                     )}
@@ -469,13 +469,13 @@ export default function PYQClient({ subject, subjectPYQ, subjectName, year, seme
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-center">
                     <div>
-                      <svg className="w-24 h-24 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-24 h-24 text-muted-foreground mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                       </svg>
-                      <p className="text-gray-600 text-lg">
+                      <p className="text-muted-foreground text-lg">
                         {selectedPaper.title} Question Paper
                       </p>
-                      <p className="text-gray-500 text-sm mt-2">
+                      <p className="text-muted-foreground/70 text-sm mt-2">
                         Click "Full Screen" to view the complete paper
                       </p>
                     </div>
@@ -485,7 +485,7 @@ export default function PYQClient({ subject, subjectPYQ, subjectName, year, seme
             </div>
 
             {/* Action Buttons */}
-            <div className="flex items-center justify-center space-x-4 p-6 border-t border-gray-200 bg-gray-50">
+            <div className="flex items-center justify-center space-x-4 p-6 border-t border-border bg-secondary dark:bg-[oklch(0.205_0_0)]">
               <Button 
                 onClick={handleFullView}
                 variant="outline"
@@ -499,7 +499,7 @@ export default function PYQClient({ subject, subjectPYQ, subjectName, year, seme
               
               <Button 
                 onClick={handleDownload}
-                className="flex items-center space-x-2 bg-gray-900 text-white hover:bg-gray-800"
+                className="flex items-center space-x-2 bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a4 4 0 01-4-4V5a4 4 0 014-4h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a4 4 0 01-4 4z" />
@@ -511,16 +511,16 @@ export default function PYQClient({ subject, subjectPYQ, subjectName, year, seme
         </Card>
       ) : (
         /* Empty State */
-        <Card className="bg-white border border-gray-200">
+        <Card className="bg-card dark:bg-[oklch(0.205_0_0)] border border-border">
           <CardContent className="p-12 text-center">
             <div className="max-w-md mx-auto">
-              <svg className="w-20 h-20 text-gray-400 mx-auto mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-20 h-20 text-muted-foreground mx-auto mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              <h3 className="text-xl font-semibold text-foreground mb-2">
                 Select a Question Paper
               </h3>
-              <p className="text-gray-600">
+              <p className="text-muted-foreground">
                 Choose a question paper from the dropdown above to view and download previous year questions for {subjectPYQ.subjectName}.
               </p>
             </div>

@@ -45,18 +45,18 @@ const YearSelectionPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-background to-secondary/10 dark:from-black dark:to-gray-950 py-12">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12">
-          <Badge variant="secondary" className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-gray-100 to-gray-200 rounded-full text-sm font-medium text-gray-700 mb-6 border-0">
+          <Badge variant="secondary" className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-secondary/80 to-secondary rounded-full text-sm font-medium text-muted-foreground mb-6 border-0">
             <Calendar className="w-4 h-4 mr-2" />
             Academic Year Selection
           </Badge>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent mb-4">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
             Choose Your Year
           </h1>
-          <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
             Select your current academic year to access relevant study materials and resources.
           </p>
         </div>
@@ -72,7 +72,7 @@ const YearSelectionPage = () => {
                 href={`/select/${year.id}`}
                 className="group h-full"
               >
-                <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 group-hover:border-gray-200 group-hover:-translate-y-2 h-full flex flex-col">
+                <div className="bg-card dark:bg-[oklch(0.205_0_0)] rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-border group-hover:border-primary/50 group-hover:-translate-y-2 h-full flex flex-col">
                   {/* Year Icon */}
                   <div className="flex justify-center mb-6">
                     <div className={cn(
@@ -85,17 +85,17 @@ const YearSelectionPage = () => {
                   </div>
                   
                   {/* Year Name */}
-                  <h3 className="text-xl font-bold text-gray-900 mb-2 text-center">
+                  <h3 className="text-xl font-bold text-foreground mb-2 text-center">
                     {year.name}
                   </h3>
                   
                   {/* Full Name */}
-                  <p className="text-sm font-medium text-gray-700 mb-3 text-center">
+                  <p className="text-sm font-medium text-muted-foreground mb-3 text-center">
                     {year.fullName}
                   </p>
                   
                   {/* Description */}
-                  <p className="text-sm text-gray-600 mb-4 text-center line-clamp-3 flex-grow">
+                  <p className="text-sm text-muted-foreground mb-4 text-center line-clamp-3 flex-grow">
                     {year.description}
                   </p>
                   
@@ -109,7 +109,7 @@ const YearSelectionPage = () => {
                   
                   {/* Hover Arrow */}
                   <div className="flex justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1">
-                    <div className="flex items-center text-sm font-medium text-gray-600">
+                    <div className="flex items-center text-sm font-medium text-muted-foreground">
                       <span className="mr-2">Explore</span>
                       <ArrowRight className="w-4 h-4" />
                     </div>
@@ -123,7 +123,7 @@ const YearSelectionPage = () => {
         {/* Bottom Action */}
         <div className="text-center mt-12">
           <Link href="/">
-            <button className="inline-flex items-center px-6 py-3 text-sm font-medium text-gray-600 bg-gradient-to-r from-gray-100 to-gray-200 rounded-full hover:from-gray-200 hover:to-gray-300 transition-all duration-300 border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-md">
+            <button className="inline-flex items-center px-6 py-3 text-sm font-medium text-muted-foreground bg-secondary rounded-full hover:bg-secondary/80 transition-all duration-300 border border-border hover:border-primary/50 shadow-sm hover:shadow-md">
               <Home className="w-4 h-4 mr-2" />
               Back to Home
             </button>

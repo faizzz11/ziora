@@ -83,20 +83,20 @@ export default async function PracticalsPage({ params }: PracticalsPageProps) {
   const backUrl = `/select/${year}/${semester}/${branch}/subjects/subject/${subjectName}`;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white to-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-background to-secondary/10 dark:from-black dark:to-gray-950">
       {/* Breadcrumb */}
-      <div className="px-4 sm:px-6 lg:px-8 py-6 bg-white border-b border-gray-200">
+      <div className="px-4 sm:px-6 lg:px-8 py-6 bg-card dark:bg-[oklch(0.205_0_0)] border-b border-border">
         <div className="max-w-6xl mx-auto">
-          <nav className="flex items-center space-x-2 text-sm text-gray-600">
-            <Link href="/select" className="hover:text-gray-900 transition-colors font-medium">Academic Years</Link>
-            <ChevronRight className="w-4 h-4 text-gray-400" />
-            <Link href={`/select/${year}/${semester}/${branch}/subjects`} className="hover:text-gray-900 transition-colors font-medium">Subjects</Link>
-            <ChevronRight className="w-4 h-4 text-gray-400" />
-            <Link href={backUrl} className="hover:text-gray-900 transition-colors font-medium">
+          <nav className="flex items-center space-x-2 text-sm text-muted-foreground">
+            <Link href="/select" className="hover:text-foreground transition-colors font-medium">Academic Years</Link>
+            <ChevronRight className="w-4 h-4 text-muted-foreground" />
+            <Link href={`/select/${year}/${semester}/${branch}/subjects`} className="hover:text-foreground transition-colors font-medium">Subjects</Link>
+            <ChevronRight className="w-4 h-4 text-muted-foreground" />
+            <Link href={backUrl} className="hover:text-foreground transition-colors font-medium">
               {subject.name}
             </Link>
-            <ChevronRight className="w-4 h-4 text-gray-400" />
-            <span className="text-gray-900 font-semibold">Practicals Code & Lab Manual</span>
+            <ChevronRight className="w-4 h-4 text-muted-foreground" />
+            <span className="text-foreground font-semibold">Practicals Code & Lab Manual</span>
           </nav>
         </div>
             </div>
@@ -111,16 +111,16 @@ export default async function PracticalsPage({ params }: PracticalsPageProps) {
       />
 
         {/* Bottom Actions */}
-        <div className="flex justify-center gap-4 mt-12">
+        <div className="flex justify-center gap-4 mt-12 pb-8">
           <Link href={backUrl}>
-            <Button variant="outline" className="px-6 py-3 rounded-full hover:bg-gray-50 transition-all duration-300">
+            <Button variant="outline" className="px-6 py-3 rounded-full hover:bg-secondary transition-all duration-300">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Subject
             </Button>
                   </Link>
           
           <Link href="/">
-            <Button variant="outline" className="px-6 py-3 rounded-full hover:bg-gray-50 transition-all duration-300">
+            <Button variant="outline" className="px-6 py-3 rounded-full hover:bg-secondary transition-all duration-300">
               <Home className="w-4 h-4 mr-2" />
               Home
             </Button>

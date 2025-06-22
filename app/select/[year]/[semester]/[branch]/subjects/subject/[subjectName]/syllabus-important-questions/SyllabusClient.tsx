@@ -710,17 +710,17 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
       case 4:
         return 'text-purple-600 font-semibold'; // 4th most repeated - Purple
       default:
-        return 'text-gray-900'; // One time repeated - Black
+        return 'text-foreground'; // One time repeated - Theme aware
     }
   };
 
   const getFrequencyBadge = (frequency: number, repetition: string) => {
     const colorClasses = {
-      1: 'bg-red-100 text-red-800 border-red-200',
-      2: 'bg-blue-100 text-blue-800 border-blue-200', 
-      3: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-      4: 'bg-purple-100 text-purple-800 border-purple-200',
-      5: 'bg-gray-100 text-gray-800 border-gray-200'
+      1: 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-100 border-red-200 dark:border-red-800',
+      2: 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100 border-blue-200 dark:border-blue-800', 
+      3: 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-100 border-yellow-200 dark:border-yellow-800',
+      4: 'bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-100 border-purple-200 dark:border-purple-800',
+      5: 'bg-secondary dark:bg-[oklch(0.205_0_0)] text-foreground border-border'
     };
 
     return (
@@ -734,11 +734,11 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header Section */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        <h1 className="text-3xl font-bold text-foreground mb-2">
           Syllabus & Important Questions
         </h1>
-        <p className="text-lg text-gray-600">
-          Subject: <span className="font-semibold text-gray-900">{syllabus.subjectName}</span>
+        <p className="text-lg text-muted-foreground">
+          Subject: <span className="font-semibold text-foreground">{syllabus.subjectName}</span>
         </p>
       </div>
 
@@ -751,14 +751,14 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
 
         {/* Syllabus Tab */}
         <TabsContent value="syllabus" className="space-y-6">
-          <Card className="bg-white border border-gray-200">
-            <CardHeader className="border-b border-gray-200">
+          <Card className="bg-card dark:bg-[oklch(0.205_0_0)] border border-border">
+            <CardHeader className="border-b border-border">
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle className="text-xl font-semibold text-gray-900">
+                  <CardTitle className="text-xl font-semibold text-foreground">
                     {syllabus.subjectName} - Course Syllabus
                   </CardTitle>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-muted-foreground">
                     Total Hours: <span className="font-semibold">{syllabus.totalHours}</span>
                   </p>
                 </div>
@@ -777,19 +777,19 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
               {/* Syllabus Table */}
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-gray-200">
+                  <thead className="bg-secondary dark:bg-[oklch(0.205_0_0)] border-b border-border">
                     <tr>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 w-20">Module No.</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 w-64">Topics</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Details</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 w-20">Hours</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 w-32">Actions</th>
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-foreground w-20">Module No.</th>
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-foreground w-64">Topics</th>
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">Details</th>
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-foreground w-20">Hours</th>
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-foreground w-32">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-200">
+                  <tbody className="divide-y divide-border">
                     {(syllabus.modules || []).map((module, index) => (
-                      <tr key={index} className="hover:bg-gray-50 transition-colors">
-                        <td className="px-6 py-4 text-sm font-medium text-gray-900 align-top">
+                      <tr key={index} className="hover:bg-secondary dark:hover:bg-[oklch(0.205_0_0)] transition-colors">
+                        <td className="px-6 py-4 text-sm font-medium text-foreground align-top">
                           {editingModule === module.moduleNo ? (
                             <Input
                               value={moduleForm.moduleNo}
@@ -801,7 +801,7 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
                             module.moduleNo
                           )}
                         </td>
-                        <td className="px-6 py-4 text-sm font-semibold text-gray-900 align-top">
+                        <td className="px-6 py-4 text-sm font-semibold text-foreground align-top">
                           {editingModule === module.moduleNo ? (
                             <Input
                               value={moduleForm.title}
@@ -812,7 +812,7 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
                             module.title
                           )}
                         </td>
-                        <td className="px-6 py-4 text-sm text-gray-700 align-top">
+                        <td className="px-6 py-4 text-sm text-muted-foreground align-top">
                           {editingModule === module.moduleNo ? (
                             <div className="space-y-2">
                               {moduleForm.topics.map((topic, topicIndex) => (
@@ -847,14 +847,14 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
                             <ul className="space-y-1">
                               {module.topics.map((topic, topicIndex) => (
                                 <li key={topicIndex} className="flex items-start">
-                                  <span className="text-gray-400 mr-2">•</span>
+                                  <span className="text-muted-foreground mr-2">•</span>
                                   <span>{topic}</span>
                                 </li>
                               ))}
                             </ul>
                           )}
                         </td>
-                        <td className="px-6 py-4 text-sm font-medium text-gray-900 align-top text-center">
+                        <td className="px-6 py-4 text-sm font-medium text-foreground align-top text-center">
                           {editingModule === module.moduleNo ? (
                             <Input
                               type="number"
@@ -911,12 +911,12 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
                       </tr>
                     ))}
                   </tbody>
-                  <tfoot className="bg-gray-50 border-t border-gray-200">
+                  <tfoot className="bg-secondary dark:bg-[oklch(0.205_0_0)] border-t border-border">
                     <tr>
-                      <td colSpan={4} className="px-6 py-4 text-sm font-semibold text-gray-900 text-right">
+                      <td colSpan={4} className="px-6 py-4 text-sm font-semibold text-foreground text-right">
                         Total:
                       </td>
-                      <td className="px-6 py-4 text-sm font-bold text-gray-900 text-center">
+                      <td className="px-6 py-4 text-sm font-bold text-foreground text-center">
                         {syllabus.totalHours}
                       </td>
                       <td></td>
@@ -1024,8 +1024,8 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
           {/* Header with Add Module Button */}
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">Important Questions by Module</h2>
-              <p className="text-gray-600 mt-1">Manage modules and their important questions</p>
+              <h2 className="text-2xl font-bold text-foreground">Important Questions by Module</h2>
+              <p className="text-muted-foreground mt-1">Manage modules and their important questions</p>
             </div>
             {isAdmin && (
               <Button
@@ -1039,9 +1039,9 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
           </div>
 
           {/* Legend */}
-          <Card className="bg-blue-50 border border-blue-200">
+          <Card className="bg-secondary dark:bg-[oklch(0.205_0_0)] border border-border">
             <CardContent className="p-4">
-              <h3 className="text-sm font-semibold text-blue-900 mb-3">Question Frequency Legend:</h3>
+              <h3 className="text-sm font-semibold text-foreground mb-3">Question Frequency Legend:</h3>
               <div className="flex flex-wrap gap-4 text-sm mb-3">
                 <div className="flex items-center space-x-2">
                   <div className="w-3 h-3 bg-red-500 rounded"></div>
@@ -1061,10 +1061,10 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
                 </div>
                 <div className="flex items-center space-x-2">
                   <div className="w-3 h-3 bg-gray-500 rounded"></div>
-                  <span className="text-gray-900">One Time Repeated</span>
+                  <span className="text-foreground">One Time Repeated</span>
                 </div>
               </div>
-              <div className="flex items-center space-x-2 text-xs text-blue-700 bg-blue-100 rounded-lg px-3 py-2">
+              <div className="flex items-center space-x-2 text-xs text-muted-foreground bg-secondary dark:bg-[oklch(0.185_0_0)] rounded-lg px-3 py-2">
                 <span className="text-blue-500">ℹ️</span>
                 <span><strong>Auto-Sorted:</strong> Questions are automatically arranged by repetition frequency - Most Repeated questions appear first, followed by 2nd Most Repeated, and so on.</span>
               </div>
@@ -1074,8 +1074,8 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
           {/* Important Questions by Module */}
           <div className="space-y-6">
             {(impQuestions.modules || []).map((module, moduleIndex) => (
-              <Card key={moduleIndex} className="bg-white border border-gray-200">
-                <CardHeader className="border-b border-gray-200 bg-gray-50">
+              <Card key={moduleIndex} className="bg-card dark:bg-[oklch(0.205_0_0)] border border-border">
+                <CardHeader className="border-b border-border bg-secondary dark:bg-[oklch(0.205_0_0)]">
                   <div className="flex items-center justify-between">
                     {editingImpModule === module.moduleNo ? (
                       <div className="flex items-center space-x-4 flex-1">
@@ -1112,7 +1112,7 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
                       </div>
                     ) : (
                       <>
-                        <CardTitle className="text-lg font-semibold text-gray-900">
+                        <CardTitle className="text-lg font-semibold text-foreground">
                           Module {module.moduleNo} - {module.title}
                         </CardTitle>
                         {isAdmin && (
