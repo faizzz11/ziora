@@ -1,6 +1,9 @@
 import React from 'react';
 import Link from 'next/link';
 import { Github, ExternalLink, Users, BookOpen, Target, Lightbulb, Heart, Code2, Sparkles, Rocket, Library, RotateCcw, Star } from 'lucide-react';
+import { FaRocket, FaUsers, FaBrain, FaLightbulb, FaGraduationCap, FaCode } from 'react-icons/fa';
+import { MdEngineering, MdSchool, MdQuiz, MdVideoLibrary } from 'react-icons/md';
+import { BiCodeAlt } from 'react-icons/bi';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -110,61 +113,138 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* Mission Section */}
+      {/* What Makes Ziora Special Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-6">
-              Our Mission
+              What Makes Ziora Special
             </h2>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              To democratize engineering education by providing free, high-quality study resources 
-              that help students understand complex concepts and excel in their academic pursuits.
+              Discover the unique features and advantages that set Ziora apart as the ultimate study companion for engineering students.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <div className="flex items-center mb-6">
-                <div className="p-3 bg-blue-100 rounded-full mr-4">
-                  <Lightbulb className="w-6 h-6 text-blue-600" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* Student-Centric Design */}
+            <div className="bg-card dark:bg-[oklch(0.205_0_0)] p-6 rounded-2xl shadow-lg border hover:shadow-xl transition-all duration-300 group">
+              <div className="flex items-center justify-center mb-4">
+                <div className="p-4 bg-blue-100 dark:bg-blue-900/20 rounded-full group-hover:scale-110 transition-transform duration-300">
+                  <FaUsers className="w-8 h-8 text-blue-600 dark:text-blue-400" />
                 </div>
-                <h3 className="text-2xl font-bold text-foreground">Why We Started Ziora</h3>
               </div>
-              <p className="text-muted-foreground leading-relaxed mb-6">
-                As engineering students ourselves, we experienced firsthand the challenges of finding quality study materials, 
-                understanding complex practical implementations, and preparing for exams with scattered resources.
-              </p>
-              <p className="text-muted-foreground leading-relaxed">
-                Ziora was born out of our desire to create a centralized platform that provides everything a student needs - 
-                from theoretical concepts to practical code examples, all organized by semester and subject for easy access.
+              <h3 className="text-xl font-bold text-foreground mb-3 text-center">Student-Centric Design</h3>
+              <p className="text-muted-foreground text-center leading-relaxed">
+                Built by students, for students. We understand the real challenges and provide solutions that actually work.
               </p>
             </div>
-            <div className="bg-card dark:bg-[oklch(0.205_0_0)] p-8 rounded-2xl shadow-lg border">
-              <div className="flex items-center mb-4">
-                <Heart className="w-5 h-5 text-muted-foreground mr-2" />
-                <span className="font-semibold text-foreground">Built with passion</span>
+
+            {/* Engineering Excellence */}
+            <div className="bg-card dark:bg-[oklch(0.205_0_0)] p-6 rounded-2xl shadow-lg border hover:shadow-xl transition-all duration-300 group">
+              <div className="flex items-center justify-center mb-4">
+                <div className="p-4 bg-green-100 dark:bg-green-900/20 rounded-full group-hover:scale-110 transition-transform duration-300">
+                  <MdEngineering className="w-8 h-8 text-green-600 dark:text-green-400" />
+                </div>
               </div>
-              <div className="space-y-3 text-sm text-muted-foreground">
-                <div className="flex items-center">
-                  <Sparkles className="w-4 h-4 mr-2 text-muted-foreground" />
-                  Student-first approach to learning
+              <h3 className="text-xl font-bold text-foreground mb-3 text-center">Engineering Excellence</h3>
+              <p className="text-muted-foreground text-center leading-relaxed">
+                Specialized content for all engineering branches with detailed practicals and real-world applications.
+              </p>
+            </div>
+
+            {/* Smart Learning */}
+            <div className="bg-card dark:bg-[oklch(0.205_0_0)] p-6 rounded-2xl shadow-lg border hover:shadow-xl transition-all duration-300 group">
+              <div className="flex items-center justify-center mb-4">
+                <div className="p-4 bg-purple-100 dark:bg-purple-900/20 rounded-full group-hover:scale-110 transition-transform duration-300">
+                  <FaBrain className="w-8 h-8 text-purple-600 dark:text-purple-400" />
                 </div>
-                <div className="flex items-center">
-                  <Rocket className="w-4 h-4 mr-2 text-muted-foreground" />
-                  Modern technology stack
+              </div>
+              <h3 className="text-xl font-bold text-foreground mb-3 text-center">Smart Learning</h3>
+              <p className="text-muted-foreground text-center leading-relaxed">
+                Organized content by semester and subject for structured learning and easy navigation.
+              </p>
+            </div>
+
+            {/* Innovation First */}
+            <div className="bg-card dark:bg-[oklch(0.205_0_0)] p-6 rounded-2xl shadow-lg border hover:shadow-xl transition-all duration-300 group">
+              <div className="flex items-center justify-center mb-4">
+                <div className="p-4 bg-orange-100 dark:bg-orange-900/20 rounded-full group-hover:scale-110 transition-transform duration-300">
+                  <FaLightbulb className="w-8 h-8 text-orange-600 dark:text-orange-400" />
                 </div>
-                <div className="flex items-center">
-                  <Library className="w-4 h-4 mr-2 text-muted-foreground" />
-                  Comprehensive curriculum coverage
+              </div>
+              <h3 className="text-xl font-bold text-foreground mb-3 text-center">Innovation First</h3>
+              <p className="text-muted-foreground text-center leading-relaxed">
+                Modern technology stack with cutting-edge features for enhanced learning experience.
+              </p>
+            </div>
+
+            {/* Comprehensive Resources */}
+            <div className="bg-card dark:bg-[oklch(0.205_0_0)] p-6 rounded-2xl shadow-lg border hover:shadow-xl transition-all duration-300 group">
+              <div className="flex items-center justify-center mb-4">
+                <div className="p-4 bg-red-100 dark:bg-red-900/20 rounded-full group-hover:scale-110 transition-transform duration-300">
+                  <FaGraduationCap className="w-8 h-8 text-red-600 dark:text-red-400" />
                 </div>
-                <div className="flex items-center">
-                  <RotateCcw className="w-4 h-4 mr-2 text-muted-foreground" />
-                  Continuous updates and improvements
+              </div>
+              <h3 className="text-xl font-bold text-foreground mb-3 text-center">Comprehensive Resources</h3>
+              <p className="text-muted-foreground text-center leading-relaxed">
+                Everything you need: notes, video lectures, practicals, PYQs, and exam preparation materials.
+              </p>
+            </div>
+
+            {/* Code Excellence */}
+            <div className="bg-card dark:bg-[oklch(0.205_0_0)] p-6 rounded-2xl shadow-lg border hover:shadow-xl transition-all duration-300 group">
+              <div className="flex items-center justify-center mb-4">
+                <div className="p-4 bg-teal-100 dark:bg-teal-900/20 rounded-full group-hover:scale-110 transition-transform duration-300">
+                  <BiCodeAlt className="w-8 h-8 text-teal-600 dark:text-teal-400" />
                 </div>
-                <div className="flex items-center">
-                  <Star className="w-4 h-4 mr-2 text-muted-foreground" />
-                  Community-driven development
+              </div>
+              <h3 className="text-xl font-bold text-foreground mb-3 text-center">Code Excellence</h3>
+              <p className="text-muted-foreground text-center leading-relaxed">
+                Working code examples, practical implementations, and hands-on lab tutorials for better understanding.
+              </p>
+            </div>
+          </div>
+
+          {/* Additional Features */}
+          <div className="mt-16 grid grid-cols-1 lg:grid-cols-2 gap-8">
+                         <div className="bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-950/20 dark:to-teal-950/20 p-8 rounded-2xl border">
+              <div className="flex items-center mb-6">
+                <FaRocket className="w-6 h-6 text-blue-600 dark:text-blue-400 mr-3" />
+                <h3 className="text-2xl font-bold text-foreground">Why Students Choose Ziora</h3>
+              </div>
+              <div className="space-y-4">
+                <div className="flex items-start">
+                  <MdVideoLibrary className="w-5 h-5 text-blue-600 dark:text-blue-400 mr-3 mt-1 flex-shrink-0" />
+                  <p className="text-muted-foreground">Rich video content with detailed explanations and visual learning</p>
+                </div>
+                <div className="flex items-start">
+                  <MdQuiz className="w-5 h-5 text-purple-600 dark:text-purple-400 mr-3 mt-1 flex-shrink-0" />
+                  <p className="text-muted-foreground">Exam-focused preparation with previous year questions and important topics</p>
+                </div>
+                <div className="flex items-start">
+                  <MdSchool className="w-5 h-5 text-green-600 dark:text-green-400 mr-3 mt-1 flex-shrink-0" />
+                  <p className="text-muted-foreground">University-aligned curriculum covering all major engineering branches</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-950/20 dark:to-teal-950/20 p-8 rounded-2xl border">
+              <div className="flex items-center mb-6">
+                <FaCode className="w-6 h-6 text-green-600 dark:text-green-400 mr-3" />
+                <h3 className="text-2xl font-bold text-foreground">Built for the Future</h3>
+              </div>
+              <div className="space-y-4">
+                <div className="flex items-start">
+                  <Star className="w-5 h-5 text-green-600 dark:text-green-400 mr-3 mt-1 flex-shrink-0" />
+                  <p className="text-muted-foreground">Open-source development with community contributions</p>
+                </div>
+                <div className="flex items-start">
+                  <Rocket className="w-5 h-5 text-teal-600 dark:text-teal-400 mr-3 mt-1 flex-shrink-0" />
+                  <p className="text-muted-foreground">Regular updates with latest curriculum changes and improvements</p>
+                </div>
+                <div className="flex items-start">
+                  <Heart className="w-5 h-5 text-red-600 dark:text-red-400 mr-3 mt-1 flex-shrink-0" />
+                  <p className="text-muted-foreground">Free access to all resources with no hidden charges or subscriptions</p>
                 </div>
               </div>
             </div>
