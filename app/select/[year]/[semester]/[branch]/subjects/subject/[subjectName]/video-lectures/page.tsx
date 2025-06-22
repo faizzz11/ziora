@@ -101,20 +101,20 @@ export default async function VideoLecturesPage({ params }: VideoLecturesPagePro
   const backUrl = `/select/${year}/${semester}/${branch}/subjects/subject/${subjectName}`;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white to-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-background to-secondary/10 dark:from-black dark:to-gray-950">
       {/* Breadcrumb */}
-      <div className="px-4 sm:px-6 lg:px-8 py-6 bg-white border-b border-gray-200">
+      <div className="px-4 sm:px-6 lg:px-8 py-6 bg-card dark:bg-[oklch(0.205_0_0)] border-b border-border">
         <div className="max-w-6xl mx-auto">
-          <nav className="flex items-center space-x-2 text-sm text-gray-600">
-            <Link href="/select" className="hover:text-gray-900 transition-colors font-medium">Academic Years</Link>
-            <ChevronRight className="w-4 h-4 text-gray-400" />
-            <Link href={`/select/${year}/${semester}/${branch}/subjects`} className="hover:text-gray-900 transition-colors font-medium">Subjects</Link>
-            <ChevronRight className="w-4 h-4 text-gray-400" />
-            <Link href={backUrl} className="hover:text-gray-900 transition-colors font-medium">
+          <nav className="flex items-center space-x-2 text-sm text-muted-foreground">
+            <Link href="/select" className="hover:text-foreground transition-colors font-medium">Academic Years</Link>
+            <ChevronRight className="w-4 h-4 text-muted-foreground" />
+            <Link href={`/select/${year}/${semester}/${branch}/subjects`} className="hover:text-foreground transition-colors font-medium">Subjects</Link>
+            <ChevronRight className="w-4 h-4 text-muted-foreground" />
+            <Link href={backUrl} className="hover:text-foreground transition-colors font-medium">
               {subject.name}
             </Link>
-            <ChevronRight className="w-4 h-4 text-gray-400" />
-            <span className="text-gray-900 font-semibold">Video Lectures</span>
+            <ChevronRight className="w-4 h-4 text-muted-foreground" />
+            <span className="text-foreground font-semibold">Video Lectures</span>
           </nav>
         </div>
       </div>

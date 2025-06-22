@@ -140,7 +140,7 @@ const AboutPage = () => {
                 from theoretical concepts to practical code examples, all organized by semester and subject for easy access.
               </p>
             </div>
-            <div className="bg-card dark:bg-gray-800 p-8 rounded-2xl shadow-lg border">
+            <div className="bg-card dark:bg-[oklch(0.205_0_0)] p-8 rounded-2xl shadow-lg border">
               <div className="flex items-center mb-4">
                 <Heart className="w-5 h-5 text-muted-foreground mr-2" />
                 <span className="font-semibold text-foreground">Built with passion</span>
@@ -321,13 +321,13 @@ const AboutPage = () => {
             Join thousands of engineering students who are already using Ziora to excel in their studies.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-gray-800 text-white hover:bg-gray-100 hover:text-black" asChild>
+            <Button size="lg" className="bg-[oklch(0.205_0_0)] text-white hover:bg-gray-100 hover:text-black" asChild>
               <Link href="/select">
                 <BookOpen className="w-5 h-5 mr-2" />
                 Browse Subjects
               </Link>
             </Button>
-            <Button size="lg" className="bg-gray-800 text-white hover:bg-gray-100 hover:text-black" asChild>
+            <Button size="lg" className="bg-[oklch(0.205_0_0)] text-white hover:bg-gray-100 hover:text-black" asChild>
               <Link href="https://github.com/kstubhieeee" target="_blank" rel="noopener noreferrer">
                 <Github className="w-5 h-5 mr-2" />
                 View on GitHub

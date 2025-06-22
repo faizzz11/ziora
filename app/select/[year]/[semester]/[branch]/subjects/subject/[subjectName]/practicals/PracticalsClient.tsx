@@ -193,14 +193,14 @@ const ExperimentsTab = ({
       )}
 
       {experiments.map((experiment) => (
-        <Card key={experiment.experimentNo} className="border-2 border-gray-200 shadow-lg">
-          <CardHeader className="bg-gray-50 border-b">
+        <Card key={experiment.experimentNo} className="border-2 border-border shadow-lg bg-card dark:bg-[oklch(0.205_0_0)]">
+          <CardHeader className="bg-secondary dark:bg-[oklch(0.205_0_0)] border-b border-border">
             <div className="flex items-center justify-between">
               <div className="flex-1">
                 {editingExperiment === experiment.experimentNo ? (
                   <div className="space-y-3">
                     <div>
-                      <label className="text-sm font-medium text-gray-700">Experiment No:</label>
+                      <label className="text-sm font-medium text-muted-foreground">Experiment No:</label>
                       <Input
                         type="number"
                         value={editExperimentData.experimentNo || ''}
@@ -213,7 +213,7 @@ const ExperimentsTab = ({
                       />
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-700">Title:</label>
+                      <label className="text-sm font-medium text-muted-foreground">Title:</label>
                       <Input
                         value={editExperimentData.title || ''}
                         onChange={(e) => setEditExperimentData({
@@ -227,17 +227,17 @@ const ExperimentsTab = ({
                   </div>
                 ) : (
                   <div>
-                    <CardTitle className="text-xl font-bold text-gray-900">
+                    <CardTitle className="text-xl font-bold text-gray-900 dark:text-white">
                       Experiment No: {experiment.experimentNo}
                     </CardTitle>
-                    <CardDescription className="text-lg font-semibold text-gray-700 mt-2">
+                    <CardDescription className="text-lg font-semibold text-gray-700 dark:text-gray-400 mt-2">
                       {experiment.title}
                     </CardDescription>
                   </div>
                 )}
               </div>
               <div className="flex items-center space-x-2">
-                <Badge className="bg-gray-100 text-gray-800 px-3 py-1">
+                <Badge variant="secondary" className="px-3 py-1">
                   Lab Manual
                 </Badge>
                 {isAdmin && (
@@ -288,7 +288,7 @@ const ExperimentsTab = ({
           <CardContent className="p-6 space-y-6">
             {/* Aim Section */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-3 border-b pb-2">
+              <h3 className="text-lg font-semibold text-foreground mb-3 border-b border-border pb-2">
                 📋 Aim:
               </h3>
               {editingExperiment === experiment.experimentNo ? (
@@ -302,13 +302,13 @@ const ExperimentsTab = ({
                   placeholder="Experiment Aim"
                 />
               ) : (
-                <p className="text-gray-700 leading-relaxed">{experiment.aim}</p>
+                <p className="text-muted-foreground leading-relaxed">{experiment.aim}</p>
               )}
             </div>
 
             {/* Theory Section */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-3 border-b pb-2">
+              <h3 className="text-lg font-semibold text-foreground mb-3 border-b border-border pb-2">
                 📖 Theory:
               </h3>
               {editingExperiment === experiment.experimentNo ? (
@@ -322,14 +322,14 @@ const ExperimentsTab = ({
                   placeholder="Theory"
                 />
               ) : (
-                <p className="text-gray-700 leading-relaxed">{experiment.theory}</p>
+                <p className="text-muted-foreground leading-relaxed">{experiment.theory}</p>
               )}
             </div>
 
             {/* Code Section */}
             <div>
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
+                <h3 className="text-lg font-semibold text-foreground border-b border-border pb-2">
                   💻 Code:
                 </h3>
                 {editingExperiment !== experiment.experimentNo && (
@@ -337,7 +337,7 @@ const ExperimentsTab = ({
                     onClick={() => copyToClipboard(experiment.code)}
                     variant="outline"
                     size="sm"
-                    className="flex items-center space-x-2 hover:bg-gray-50"
+                    className="flex items-center space-x-2 hover:bg-secondary"
                   >
                     <Copy className="h-4 w-4" />
                     <span>Copy Code</span>
@@ -355,7 +355,7 @@ const ExperimentsTab = ({
                   placeholder="Code"
                 />
               ) : (
-                <div className="bg-gray-900 rounded-lg p-4 overflow-x-auto">
+                <div className="bg-[oklch(0.205_0_0)] dark:bg-black rounded-lg p-4 overflow-x-auto">
                   <pre className="text-green-400 text-sm font-mono whitespace-pre-wrap">
                     {experiment.code}
                   </pre>
@@ -365,7 +365,7 @@ const ExperimentsTab = ({
 
             {/* Output Section */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-3 border-b pb-2">
+              <h3 className="text-lg font-semibold text-foreground mb-3 border-b border-border pb-2">
                 📊 Output:
               </h3>
               {editingExperiment === experiment.experimentNo ? (
@@ -379,8 +379,8 @@ const ExperimentsTab = ({
                   placeholder="Output"
                 />
               ) : (
-                <div className="bg-gray-100 rounded-lg p-4">
-                  <pre className="text-gray-800 text-sm font-mono whitespace-pre-wrap">
+                <div className="bg-secondary dark:bg-[oklch(0.205_0_0)] rounded-lg p-4">
+                  <pre className="text-foreground text-sm font-mono whitespace-pre-wrap">
                     {experiment.output}
                   </pre>
                 </div>
@@ -389,7 +389,7 @@ const ExperimentsTab = ({
 
             {/* Conclusion Section */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-3 border-b pb-2">
+              <h3 className="text-lg font-semibold text-foreground mb-3 border-b border-border pb-2">
                 🎯 Conclusion:
               </h3>
               {editingExperiment === experiment.experimentNo ? (
@@ -403,7 +403,7 @@ const ExperimentsTab = ({
                   placeholder="Conclusion"
                 />
               ) : (
-                <p className="text-gray-700 leading-relaxed">{experiment.conclusion}</p>
+                <p className="text-muted-foreground leading-relaxed">{experiment.conclusion}</p>
               )}
             </div>
           </CardContent>
@@ -453,14 +453,14 @@ const ExperimentVideosTab = ({
       )}
 
       {experiments.map((experiment) => (
-        <Card key={experiment.experimentNo} className="border-2 border-gray-200 shadow-lg">
-          <CardHeader className="bg-gray-50 border-b">
+        <Card key={experiment.experimentNo} className="border-2 border-border shadow-lg">
+          <CardHeader className="bg-secondary dark:bg-[oklch(0.205_0_0)] border-b">
             <div className="flex items-center justify-between">
               <div className="flex-1">
                 {editingVideo === experiment.experimentNo ? (
                   <div className="space-y-3">
                     <div>
-                      <label className="text-sm font-medium text-gray-700">Experiment No:</label>
+                      <label className="text-sm font-medium text-muted-foreground">Experiment No:</label>
                       <Input
                         type="number"
                         value={editVideoData.experimentNo || ''}
@@ -473,7 +473,7 @@ const ExperimentVideosTab = ({
                       />
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-700">Title:</label>
+                      <label className="text-sm font-medium text-muted-foreground">Title:</label>
                       <Input
                         value={editVideoData.title || ''}
                         onChange={(e) => setEditVideoData({
@@ -485,7 +485,7 @@ const ExperimentVideosTab = ({
                       />
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-700">Video URL:</label>
+                      <label className="text-sm font-medium text-muted-foreground">Video URL:</label>
                       <Input
                         value={editVideoData.videoUrl || ''}
                         onChange={(e) => setEditVideoData({
@@ -499,17 +499,17 @@ const ExperimentVideosTab = ({
                   </div>
                 ) : (
                   <div>
-                    <CardTitle className="text-xl font-bold text-gray-900">
+                    <CardTitle className="text-xl font-bold text-foreground">
                       Experiment No: {experiment.experimentNo}
                     </CardTitle>
-                    <CardDescription className="text-lg font-semibold text-gray-700 mt-2">
+                    <CardDescription className="text-lg font-semibold text-muted-foreground mt-2">
                       {experiment.title}
                     </CardDescription>
                   </div>
                 )}
               </div>
               <div className="flex items-center space-x-2">
-                <Badge className="bg-gray-100 text-gray-800 px-3 py-1 flex items-center space-x-1">
+                <Badge className="bg-secondary dark:bg-[oklch(0.205_0_0)] text-foreground px-3 py-1 flex items-center space-x-1">
                   <Play className="h-3 w-3" />
                   <span>Video</span>
                 </Badge>
@@ -831,31 +831,31 @@ export default function PracticalsClient({ experiments: initialExperiments, subj
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white to-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-background to-secondary/10 dark:from-black dark:to-gray-950">
       {/* Section Header */}
       <div className="text-center mb-12">
         <div className="flex justify-center mb-8">
-          <div className="p-6 rounded-3xl bg-gray-100">
-            <div className="w-12 h-12 flex items-center justify-center text-gray-700 text-2xl">📚</div>
+          <div className="p-6 rounded-3xl bg-secondary dark:bg-[oklch(0.205_0_0)]">
+            <div className="w-12 h-12 flex items-center justify-center text-foreground text-2xl">📚</div>
           </div>
         </div>
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
+        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground mb-6">
           Practicals Code & Lab Manual
         </h1>
-        <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+        <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
           Detailed study materials and comprehensive code & lab manuals for <span className="font-semibold">{subject.name}</span>
         </p>
       </div>
 
       {/* Tab Navigation */}
       <div className="flex justify-center mb-8">
-        <div className="inline-flex rounded-lg border border-gray-200 bg-gray-50 p-1">
+        <div className="inline-flex rounded-lg border border-border bg-secondary dark:bg-[oklch(0.205_0_0)] p-1">
           <button
             onClick={() => setActiveTab('experiments')}
             className={`px-6 py-3 rounded-md text-sm font-medium transition-all ${
               activeTab === 'experiments'
-                ? 'bg-white text-gray-900 shadow-sm border border-gray-200'
-                : 'text-gray-600 hover:text-gray-900'
+                ? 'bg-card dark:bg-[oklch(0.205_0_0)] text-foreground shadow-sm border border-border'
+                : 'text-muted-foreground hover:text-foreground'
             }`}
           >
             🧪 Experiments & Code
@@ -864,8 +864,8 @@ export default function PracticalsClient({ experiments: initialExperiments, subj
             onClick={() => setActiveTab('videos')}
             className={`px-6 py-3 rounded-md text-sm font-medium transition-all ${
               activeTab === 'videos'
-                ? 'bg-white text-gray-900 shadow-sm border border-gray-200'
-                : 'text-gray-600 hover:text-gray-900'
+                ? 'bg-card dark:bg-[oklch(0.205_0_0)] text-foreground shadow-sm border border-border'
+                : 'text-muted-foreground hover:text-foreground'
             }`}
           >
             🎥 Experiment Videos
@@ -909,8 +909,8 @@ export default function PracticalsClient({ experiments: initialExperiments, subj
         ) : (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">🔬</div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No Experiments Available</h3>
-            <p className="text-gray-600 mb-4">
+            <h3 className="text-xl font-semibold text-foreground mb-2">No Experiments Available</h3>
+            <p className="text-muted-foreground mb-4">
               Experiments for this subject are not yet available.
             </p>
             <Button
@@ -927,11 +927,11 @@ export default function PracticalsClient({ experiments: initialExperiments, subj
       {/* Delete Confirmation Modal */}
       {deleteModal.isOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          <div className="bg-card dark:bg-[oklch(0.205_0_0)] rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 className="text-lg font-semibold text-foreground mb-4">
               Delete {deleteModal.type === 'experiment' ? 'Experiment' : 'Video'}
             </h3>
-            <p className="text-gray-600 mb-6">
+            <p className="text-muted-foreground mb-6">
               Are you sure you want to delete "{deleteModal.title}"? This action cannot be undone.
             </p>
             <div className="flex justify-end space-x-3">

@@ -169,41 +169,41 @@ const SubjectsPage = async ({ params }: SubjectsPageProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-background to-secondary/10 dark:from-black dark:to-gray-950 py-12">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12">
-          <Badge variant="secondary" className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-gray-100 to-gray-200 rounded-full text-sm font-medium text-gray-700 mb-6 border-0">
+          <Badge variant="secondary" className="inline-flex items-center px-4 py-2 bg-secondary rounded-full text-sm font-medium text-muted-foreground mb-6 border-0">
             <BranchIcon className="w-4 h-4 mr-2" />
             {selectedBranch.name} - {selectedYear.name} Semester {selectedSemester.number}
           </Badge>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent mb-4">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
             Your Subjects
           </h1>
-          <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
             Select a subject to access comprehensive study materials, notes, and resources.
           </p>
         </div>
 
         {/* Breadcrumb */}
         <div className="flex items-center justify-center mb-8 flex-wrap">
-          <Link href="/select" className="text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors">
+          <Link href="/select" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
             Academic Years
           </Link>
-          <ChevronRight className="w-4 h-4 mx-2 text-gray-400" />
-          <Link href={`/select/${year}`} className="text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors">
+          <ChevronRight className="w-4 h-4 mx-2 text-muted-foreground" />
+          <Link href={`/select/${year}`} className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
             {selectedYear.name}
           </Link>
-          <ChevronRight className="w-4 h-4 mx-2 text-gray-400" />
+          <ChevronRight className="w-4 h-4 mx-2 text-muted-foreground" />
           {year !== 'FE' ? (
             <>
-              <Link href={`/select/${year}/${semester}`} className="text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors">
+              <Link href={`/select/${year}/${semester}`} className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
                 Semester {selectedSemester.number}
               </Link>
-              <ChevronRight className="w-4 h-4 mx-2 text-gray-400" />
+              <ChevronRight className="w-4 h-4 mx-2 text-muted-foreground" />
             </>
           ) : null}
-          <span className="text-sm font-medium text-gray-900">
+          <span className="text-sm font-medium text-foreground">
             {selectedBranch.shortName} Subjects
           </span>
         </div>
@@ -216,7 +216,7 @@ const SubjectsPage = async ({ params }: SubjectsPageProps) => {
               href={`/select/${year}/${semester}/${branch}/subjects/subject/${subject.id}`}
               className="group h-full"
             >
-              <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 group-hover:border-gray-200 group-hover:-translate-y-2 h-full flex flex-col">
+              <div className="bg-card dark:bg-[oklch(0.205_0_0)] rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-border group-hover:border-primary/50 group-hover:-translate-y-2 h-full flex flex-col">
                 {/* Subject Icon */}
                 <div className="text-center mb-6">
                   <div className={cn(
@@ -229,12 +229,12 @@ const SubjectsPage = async ({ params }: SubjectsPageProps) => {
                 </div>
                 
                 {/* Subject Name */}
-                <h3 className="text-xl font-bold text-gray-900 mb-3 text-center">
+                <h3 className="text-xl font-bold text-foreground mb-3 text-center">
                   {subject.name}
                 </h3>
                 
                 {/* Description */}
-                <p className="text-gray-600 mb-6 text-center line-clamp-3 flex-grow">
+                <p className="text-muted-foreground mb-6 text-center line-clamp-3 flex-grow">
                   {subject.description}
                 </p>
                 
@@ -252,7 +252,7 @@ const SubjectsPage = async ({ params }: SubjectsPageProps) => {
                 
                 {/* Action Button */}
                 <div className="text-center">
-                  <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-gray-900 to-gray-800 text-white rounded-full font-medium group-hover:from-gray-800 group-hover:to-gray-700 transition-all duration-300 shadow-md group-hover:shadow-lg">
+                  <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-gray-900 to-gray-800 dark:from-gray-700 dark:to-gray-600 text-white rounded-full font-medium group-hover:from-gray-800 group-hover:to-gray-700 dark:group-hover:from-gray-600 dark:group-hover:to-gray-500 transition-all duration-300 shadow-md group-hover:shadow-lg">
                     <Play className="w-4 h-4 mr-2" />
                     Start Learning
                     <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
@@ -265,12 +265,12 @@ const SubjectsPage = async ({ params }: SubjectsPageProps) => {
 
         {/* Branch Info Card */}
         <div className="mt-12 max-w-2xl mx-auto">
-          <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl p-6 border border-gray-200">
+          <div className="bg-secondary dark:bg-[oklch(0.205_0_0)] rounded-2xl p-6 border border-border">
             <div className="text-center">
-              <h4 className="text-lg font-semibold text-gray-900 mb-2">
+              <h4 className="text-lg font-semibold text-foreground mb-2">
                 {selectedBranch.name}
               </h4>
-              <p className="text-gray-600">
+              <p className="text-muted-foreground">
                 Semester {selectedSemester.number} curriculum with {semesterSubjects.length} subjects and comprehensive study materials.
               </p>
             </div>
@@ -281,14 +281,14 @@ const SubjectsPage = async ({ params }: SubjectsPageProps) => {
         <div className="flex justify-center gap-4 mt-12">
           {year !== 'FE' ? (
             <Link href={`/select/${year}/${semester}`}>
-              <button className="inline-flex items-center px-6 py-3 text-sm font-medium text-gray-600 bg-gradient-to-r from-gray-100 to-gray-200 rounded-full hover:from-gray-200 hover:to-gray-300 transition-all duration-300 border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-md">
+              <button className="inline-flex items-center px-6 py-3 text-sm font-medium text-muted-foreground bg-secondary rounded-full hover:bg-secondary/80 transition-all duration-300 border border-border hover:border-primary/50 shadow-sm hover:shadow-md">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Branches
               </button>
             </Link>
           ) : (
             <Link href={`/select/${year}`}>
-              <button className="inline-flex items-center px-6 py-3 text-sm font-medium text-gray-600 bg-gradient-to-r from-gray-100 to-gray-200 rounded-full hover:from-gray-200 hover:to-gray-300 transition-all duration-300 border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-md">
+              <button className="inline-flex items-center px-6 py-3 text-sm font-medium text-muted-foreground bg-secondary rounded-full hover:bg-secondary/80 transition-all duration-300 border border-border hover:border-primary/50 shadow-sm hover:shadow-md">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Semesters
               </button>
@@ -296,7 +296,7 @@ const SubjectsPage = async ({ params }: SubjectsPageProps) => {
           )}
           
           <Link href="/">
-            <button className="inline-flex items-center px-6 py-3 text-sm font-medium text-gray-600 bg-gradient-to-r from-gray-100 to-gray-200 rounded-full hover:from-gray-200 hover:to-gray-300 transition-all duration-300 border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-md">
+            <button className="inline-flex items-center px-6 py-3 text-sm font-medium text-muted-foreground bg-secondary rounded-full hover:bg-secondary/80 transition-all duration-300 border border-border hover:border-primary/50 shadow-sm hover:shadow-md">
               <Home className="w-4 h-4 mr-2" />
               Home
             </button>

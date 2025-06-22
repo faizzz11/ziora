@@ -257,25 +257,25 @@ export default function VivaQuestionsClient({ subject, vivaData, subjectName, ye
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case 'Basic': return 'bg-green-100 text-green-800';
-      case 'Intermediate': return 'bg-yellow-100 text-yellow-800';
-      case 'Advanced': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'Basic': return 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-100';
+      case 'Intermediate': return 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-100';
+      case 'Advanced': return 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-100';
+      default: return 'bg-secondary dark:bg-[oklch(0.205_0_0)] text-foreground';
     }
   };
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case 'Fundamentals': return 'bg-blue-100 text-blue-800';
-      case 'OOP Concepts': return 'bg-purple-100 text-purple-800';
-      case 'Advanced Concepts': return 'bg-indigo-100 text-indigo-800';
-      case 'Design Patterns': return 'bg-pink-100 text-pink-800';
-      case 'Memory Management': return 'bg-orange-100 text-orange-800';
-      case 'Error Handling': return 'bg-cyan-100 text-cyan-800';
+      case 'Fundamentals': return 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100';
+      case 'OOP Concepts': return 'bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-100';
+      case 'Advanced Concepts': return 'bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-100';
+      case 'Design Patterns': return 'bg-pink-100 dark:bg-pink-900 text-pink-800 dark:text-pink-100';
+      case 'Memory Management': return 'bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-100';
+      case 'Error Handling': return 'bg-cyan-100 dark:bg-cyan-900 text-cyan-800 dark:text-cyan-100';
       default: 
         return customCategories.includes(category) 
-          ? 'bg-emerald-100 text-emerald-800' 
-          : 'bg-gray-100 text-gray-800';
+          ? 'bg-emerald-100 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-100' 
+          : 'bg-secondary dark:bg-[oklch(0.205_0_0)] text-foreground';
     }
   };
 
@@ -286,26 +286,26 @@ export default function VivaQuestionsClient({ subject, vivaData, subjectName, ye
       {/* Header Section */}
       <div className="text-center mb-12">
         <div className="flex items-center justify-center space-x-4 mb-6">
-          <div className="p-4 rounded-2xl bg-gradient-to-r from-gray-500 to-gray-900">
-            <MessageCircle className="w-8 h-8 text-white" />
+          <div className="p-4 rounded-2xl bg-gradient-to-r from-primary/20 to-primary/40 dark:from-primary/30 dark:to-primary/60">
+            <MessageCircle className="w-8 h-8 text-primary" />
           </div>
         </div>
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
           Viva Questions
         </h1>
-        <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed mb-8">
-          Comprehensive collection of viva voce questions and answers for <span className="font-semibold">{subject.name}</span>
+        <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed mb-8">
+          Comprehensive collection of viva voce questions and answers for <span className="font-semibold text-foreground">{subject.name}</span>
         </p>
         
         {/* Stats */}
         <div className="flex items-center justify-center gap-4 flex-wrap mb-8">
-          <Badge className="bg-gray-100 text-gray-800 px-4 py-2 text-sm font-medium">
+          <Badge className="bg-secondary dark:bg-[oklch(0.205_0_0)] text-foreground px-4 py-2 text-sm font-medium">
             {vivaQuestions.length} Questions
           </Badge>
-          <Badge className="bg-gray-100 text-gray-800 px-4 py-2 text-sm font-medium">
+          <Badge className="bg-secondary dark:bg-[oklch(0.205_0_0)] text-foreground px-4 py-2 text-sm font-medium">
             {categories.length} Categories
           </Badge>
-          <Badge className="bg-gray-100 text-gray-800 px-4 py-2 text-sm font-medium">
+          <Badge className="bg-secondary dark:bg-[oklch(0.205_0_0)] text-foreground px-4 py-2 text-sm font-medium">
             Multiple Difficulty Levels
           </Badge>
         </div>
@@ -314,7 +314,7 @@ export default function VivaQuestionsClient({ subject, vivaData, subjectName, ye
         {isAdmin && (
           <Button
             onClick={handleAddQuestion}
-            className="bg-gray-900 text-white hover:bg-gray-800 px-6 py-3 rounded-full"
+            className="bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 px-6 py-3 rounded-full"
           >
             <Plus className="w-4 h-4 mr-2" />
             Add New Question
@@ -327,13 +327,13 @@ export default function VivaQuestionsClient({ subject, vivaData, subjectName, ye
         <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
           {/* Search */}
           <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <Input
               type="text"
               placeholder="Search questions..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
+              className="pl-10 bg-background dark:bg-[oklch(0.205_0_0)] border-border"
             />
           </div>
           
@@ -342,7 +342,7 @@ export default function VivaQuestionsClient({ subject, vivaData, subjectName, ye
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+              className="px-4 py-2 border border-border rounded-lg bg-background dark:bg-[oklch(0.205_0_0)] text-foreground focus:ring-2 focus:ring-primary focus:border-transparent"
             >
               {allCategories.map(category => (
                 <option key={category} value={category}>{category}</option>
@@ -352,7 +352,7 @@ export default function VivaQuestionsClient({ subject, vivaData, subjectName, ye
             <select
               value={selectedDifficulty}
               onChange={(e) => setSelectedDifficulty(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+              className="px-4 py-2 border border-border rounded-lg bg-background dark:bg-[oklch(0.205_0_0)] text-foreground focus:ring-2 focus:ring-primary focus:border-transparent"
             >
               {allDifficulties.map(difficulty => (
                 <option key={difficulty} value={difficulty}>{difficulty}</option>
@@ -362,7 +362,7 @@ export default function VivaQuestionsClient({ subject, vivaData, subjectName, ye
         </div>
         
         {/* Results count */}
-        <p className="text-sm text-gray-600 mt-4">
+        <p className="text-sm text-muted-foreground mt-4">
           Showing {filteredQuestions.length} of {vivaQuestions.length} questions
         </p>
       </div>
@@ -370,7 +370,7 @@ export default function VivaQuestionsClient({ subject, vivaData, subjectName, ye
       {/* Questions Grid */}
       <div className="space-y-6">
         {filteredQuestions.map((question, index) => (
-          <Card key={question.id} className="bg-white border border-gray-200 hover:shadow-lg transition-shadow">
+          <Card key={question.id} className="bg-card dark:bg-[oklch(0.205_0_0)] border border-border hover:shadow-lg transition-shadow">
             <CardHeader className="pb-4">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
@@ -384,7 +384,7 @@ export default function VivaQuestionsClient({ subject, vivaData, subjectName, ye
                       />
                     </div>
                   ) : (
-                    <CardTitle className="text-lg font-semibold text-gray-900 mb-2">
+                    <CardTitle className="text-lg font-semibold text-foreground mb-2">
                       Q{index + 1}. {question.question}
                     </CardTitle>
                   )}
@@ -509,8 +509,8 @@ export default function VivaQuestionsClient({ subject, vivaData, subjectName, ye
                   )}
                 </div>
               ) : (
-                <div className="prose prose-gray max-w-none">
-                  <p className="text-gray-700 leading-relaxed">{question.answer}</p>
+                <div className="prose prose-gray dark:prose-invert max-w-none">
+                  <p className="text-muted-foreground leading-relaxed">{question.answer}</p>
                 </div>
               )}
             </CardContent>
@@ -521,23 +521,23 @@ export default function VivaQuestionsClient({ subject, vivaData, subjectName, ye
       {/* No results message */}
       {filteredQuestions.length === 0 && (
         <div className="text-center py-12">
-          <MessageCircle className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">No questions found</h3>
-          <p className="text-gray-600">Try adjusting your search terms or filters.</p>
+          <MessageCircle className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+          <h3 className="text-xl font-semibold text-foreground mb-2">No questions found</h3>
+          <p className="text-muted-foreground">Try adjusting your search terms or filters.</p>
         </div>
       )}
 
       {/* Bottom Actions */}
       <div className="flex justify-center gap-4 mt-12">
         <Link href={backUrl}>
-          <Button variant="outline" className="px-6 py-3 rounded-full hover:bg-gray-50 transition-all duration-300">
+          <Button variant="outline" className="px-6 py-3 rounded-full hover:bg-secondary dark:hover:bg-[oklch(0.205_0_0)] transition-all duration-300">
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Subject
           </Button>
         </Link>
         
         <Link href="/">
-          <Button variant="outline" className="px-6 py-3 rounded-full hover:bg-gray-50 transition-all duration-300">
+          <Button variant="outline" className="px-6 py-3 rounded-full hover:bg-secondary dark:hover:bg-[oklch(0.205_0_0)] transition-all duration-300">
             <Home className="w-4 h-4 mr-2" />
             Home
           </Button>
