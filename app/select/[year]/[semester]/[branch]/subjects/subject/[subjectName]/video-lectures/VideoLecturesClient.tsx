@@ -1309,8 +1309,8 @@ export default function VideoLecturesClient({ subject, subjectVideos, subjectNam
                                     onClick={() => handleTopicChange(topic)}
                                     className={`w-full text-left p-3 rounded-lg transition-colors ${
                                       currentTopic?.id === topic.id 
-                                        ? 'bg-gray-900 text-white' 
-                                        : 'bg-white border border-gray-200 hover:bg-gray-50'
+                                        ? 'bg-gray-900 dark:bg-gray-100 text-white dark:text-black' 
+                                        : 'bg-white dark:bg-[oklch(0.225_0_0)] border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-[oklch(0.245_0_0)] text-black dark:text-white'
                                     }`}
                                   >
                                     <div className="flex items-center space-x-3">
