@@ -34,110 +34,110 @@ async function fetchSyllabusContent(year: string, semester: string, branch: stri
     return {
       syllabus: {
         subjectName: subject.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
-        totalHours: 45,
-        modules: [
-          {
-            moduleNo: "1",
-            title: "Introduction and Fundamentals",
-            hours: 12,
-            topics: [
-              "Basic concepts and terminology",
-              "Historical background and evolution", 
-              "Fundamental principles and theories",
-              "Applications and real-world examples"
-            ]
-          },
-          {
-            moduleNo: "2", 
-            title: "Core Principles and Methods",
-            hours: 15,
-            topics: [
-              "Theoretical framework and models",
-              "Key methodologies and approaches",
-              "Problem-solving techniques", 
-              "Case studies and analysis"
-            ]
-          },
-          {
-            moduleNo: "3",
-            title: "Advanced Topics and Applications", 
-            hours: 18,
-            topics: [
-              "Advanced concepts and theories",
-              "Modern applications and trends",
-              "Industry best practices",
-              "Future directions and research areas"
-            ]
-          }
+    totalHours: 45, 
+    modules: [
+      {
+        moduleNo: "1",
+        title: "Introduction and Fundamentals",
+        hours: 12,
+        topics: [
+          "Basic concepts and terminology",
+          "Historical background and evolution", 
+          "Fundamental principles and theories",
+          "Applications and real-world examples"
         ]
+      },
+      {
+        moduleNo: "2", 
+        title: "Core Principles and Methods",
+        hours: 15,
+        topics: [
+          "Theoretical framework and models",
+          "Key methodologies and approaches",
+          "Problem-solving techniques", 
+          "Case studies and analysis"
+        ]
+      },
+      {
+        moduleNo: "3",
+        title: "Advanced Topics and Applications", 
+        hours: 18,
+        topics: [
+          "Advanced concepts and theories",
+          "Modern applications and trends",
+          "Industry best practices",
+          "Future directions and research areas"
+        ]
+      }
+    ]
       },
       impQuestions: {
         subjectName: subject.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
-        modules: [
+    modules: [
+      {
+        moduleNo: "1",
+        title: "Introduction and Fundamentals", 
+        questions: [
           {
-            moduleNo: "1",
-            title: "Introduction and Fundamentals", 
-            questions: [
-              {
-                question: "Explain the fundamental concepts and their significance in the field.",
-                frequency: 1,
-                repetition: "Most Repeated"
-              },
-              {
-                question: "Discuss the historical evolution and key milestones.",
-                frequency: 2, 
-                repetition: "2nd Most Repeated"
-              },
-              {
-                question: "What are the basic principles and how do they apply in practice?",
-                frequency: 3,
-                repetition: "3rd Most Repeated"
-              }
-            ]
+            question: "Explain the fundamental concepts and their significance in the field.",
+            frequency: 1,
+            repetition: "Most Repeated"
           },
           {
-            moduleNo: "2",
-            title: "Core Principles and Methods",
-            questions: [
-              {
-                question: "Describe the theoretical framework and its components.",
-                frequency: 1,
-                repetition: "Most Repeated"
-              },
-              {
-                question: "Compare different methodologies and their effectiveness.",
-                frequency: 2,
-                repetition: "2nd Most Repeated" 
-              },
-              {
-                question: "Analyze the problem-solving techniques with examples.",
-                frequency: 4,
-                repetition: "One Time Repeated"
-              }
-            ]
+            question: "Discuss the historical evolution and key milestones.",
+            frequency: 2, 
+            repetition: "2nd Most Repeated"
           },
           {
-            moduleNo: "3", 
-            title: "Advanced Topics and Applications",
-            questions: [
-              {
-                question: "Evaluate the modern applications and their impact.",
-                frequency: 1,
-                repetition: "Most Repeated"
-              },
-              {
-                question: "What are the current industry best practices?",
-                frequency: 3,
-                repetition: "3rd Most Repeated"
-              },
-              {
-                question: "Discuss future trends and research opportunities.",
-                frequency: 4,
-                repetition: "One Time Repeated"
-              }
-            ]
+            question: "What are the basic principles and how do they apply in practice?",
+            frequency: 3,
+            repetition: "3rd Most Repeated"
           }
         ]
+      },
+      {
+        moduleNo: "2",
+        title: "Core Principles and Methods",
+        questions: [
+          {
+            question: "Describe the theoretical framework and its components.",
+            frequency: 1,
+            repetition: "Most Repeated"
+          },
+          {
+            question: "Compare different methodologies and their effectiveness.",
+            frequency: 2,
+            repetition: "2nd Most Repeated" 
+          },
+          {
+            question: "Analyze the problem-solving techniques with examples.",
+            frequency: 4,
+            repetition: "One Time Repeated"
+          }
+        ]
+      },
+      {
+        moduleNo: "3", 
+        title: "Advanced Topics and Applications",
+        questions: [
+          {
+            question: "Evaluate the modern applications and their impact.",
+            frequency: 1,
+            repetition: "Most Repeated"
+          },
+          {
+            question: "What are the current industry best practices?",
+            frequency: 3,
+            repetition: "3rd Most Repeated"
+          },
+          {
+            question: "Discuss future trends and research opportunities.",
+            frequency: 4,
+            repetition: "One Time Repeated"
+          }
+        ]
+      }
+    ]
       }
     };
   }

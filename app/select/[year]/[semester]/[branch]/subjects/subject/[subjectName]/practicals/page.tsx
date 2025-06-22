@@ -29,7 +29,7 @@ async function fetchPracticalsContent(year: string, semester: string, branch: st
     
     const data = await response.json();
     return data.content;
-  } catch (error) {
+      } catch (error) {
     console.error('Error fetching practicals content:', error);
     // Return default structure if fetch fails
     return {
@@ -99,7 +99,7 @@ export default async function PracticalsPage({ params }: PracticalsPageProps) {
             <span className="text-gray-900 font-semibold">Practicals Code & Lab Manual</span>
           </nav>
         </div>
-      </div>
+            </div>
 
       <PracticalsClient 
         experiments={experiments}
@@ -110,21 +110,21 @@ export default async function PracticalsPage({ params }: PracticalsPageProps) {
         branch={branch}
       />
 
-      {/* Bottom Actions */}
-      <div className="flex justify-center gap-4 mt-12">
-        <Link href={backUrl}>
-          <Button variant="outline" className="px-6 py-3 rounded-full hover:bg-gray-50 transition-all duration-300">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Subject
-          </Button>
-        </Link>
-        
-        <Link href="/">
-          <Button variant="outline" className="px-6 py-3 rounded-full hover:bg-gray-50 transition-all duration-300">
-            <Home className="w-4 h-4 mr-2" />
-            Home
-          </Button>
-        </Link>
+        {/* Bottom Actions */}
+        <div className="flex justify-center gap-4 mt-12">
+          <Link href={backUrl}>
+            <Button variant="outline" className="px-6 py-3 rounded-full hover:bg-gray-50 transition-all duration-300">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Subject
+            </Button>
+                  </Link>
+          
+          <Link href="/">
+            <Button variant="outline" className="px-6 py-3 rounded-full hover:bg-gray-50 transition-all duration-300">
+              <Home className="w-4 h-4 mr-2" />
+              Home
+            </Button>
+                  </Link>
       </div>
     </div>
   );

@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Edit, Trash2, Save, X } from "lucide-react";
+import { checkAdminStatus } from '@/lib/admin-utils';
 
 interface Module {
   moduleNo: string;
@@ -194,17 +195,9 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
   const [isAdmin, setIsAdmin] = useState(false);
   
   useEffect(() => {
-    // Check for admin status from localStorage
-    const adminData = localStorage.getItem('admin');
-    const userData = localStorage.getItem('user');
-    
-    if (adminData) {
-      const admin = JSON.parse(adminData);
-      setIsAdmin(admin.role === 'admin' || admin.isAdmin === true);
-    } else if (userData) {
-      const user = JSON.parse(userData);
-      setIsAdmin(user.role === 'admin' || user.isAdmin === true);
-    }
+    // Use admin utility to check status properly
+    const { isAdmin: adminStatus } = checkAdminStatus();
+    setIsAdmin(adminStatus);
   }, []);
   
   // Syllabus states

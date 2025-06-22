@@ -7,7 +7,7 @@ export default function Bento() {
         </p>
         <div className="mt-10 grid gap-4 sm:mt-16 lg:grid-cols-3 lg:grid-rows-2">
           <div className="relative lg:row-span-2">
-            <div className="absolute inset-px rounded-lg bg-white dark:bg-gray-800 lg:rounded-l-4xl"></div>
+            <div className="absolute inset-px rounded-lg bg-white dark:bg-gray-900 lg:rounded-l-4xl"></div>
             <div className="relative flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-lg)+1px)] lg:rounded-l-[calc(2rem+1px)]">
               <div className="px-8 pt-8 pb-3 sm:px-10 sm:pt-10 sm:pb-0">
                 <p className="mt-2 text-lg font-medium tracking-tight text-gray-950 dark:text-white max-lg:text-center">
@@ -18,7 +18,7 @@ export default function Bento() {
                 </p>
               </div>
               <div className="@container relative min-h-120 w-full grow max-lg:mx-auto max-lg:max-w-sm">
-                <div className="absolute inset-x-10 top-10 bottom-0 overflow-hidden rounded-t-[10cqw] border-x-[3cqw] border-t-[3cqw] border-gray-950 shadow-2xl">
+                <div className="absolute inset-x-10 top-10 bottom-0 overflow-hidden rounded-t-[10cqw] border-x-[3cqw] border-t-[3cqw] border-gray-950 shadow-2xl dark:bg-white">
                   <img
                     className=" object-cover object-top"
                     src="mobile.png"
@@ -30,7 +30,7 @@ export default function Bento() {
             <div className="pointer-events-none absolute inset-px rounded-lg shadow-sm ring-1 ring-black/5 dark:ring-white/10 lg:rounded-l-4xl"></div>
           </div>
           <div className="relative max-lg:row-start-1">
-            <div className="absolute inset-px rounded-lg bg-white dark:bg-gray-800 max-lg:rounded-t-4xl"></div>
+            <div className="absolute inset-px rounded-lg bg-white dark:bg-gray-900 max-lg:rounded-t-4xl"></div>
             <div className="relative flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-lg)+1px)] max-lg:rounded-t-[calc(2rem+1px)]">
               <div className="px-8 pt-8 sm:px-10 sm:pt-10">
                 <p className="mt-2 text-lg font-medium tracking-tight text-gray-950 dark:text-white max-lg:text-center">Notes</p>
@@ -49,7 +49,7 @@ export default function Bento() {
             <div className="pointer-events-none absolute inset-px rounded-lg shadow-sm ring-1 ring-black/5 dark:ring-white/10 max-lg:rounded-t-4xl"></div>
           </div>
           <div className="relative max-lg:row-start-3 lg:col-start-2 lg:row-start-2">
-            <div className="absolute inset-px rounded-lg bg-white dark:bg-gray-800"></div>
+            <div className="absolute inset-px rounded-lg bg-white dark:bg-gray-900"></div>
             <div className="relative flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-lg)+1px)]">
               <div className="px-8 pt-8 sm:px-10 sm:pt-10">
                 <p className="mt-2 text-lg font-medium tracking-tight text-gray-950 dark:text-white max-lg:text-center">Video Lectures</p>
@@ -68,7 +68,7 @@ export default function Bento() {
             <div className="pointer-events-none absolute inset-px rounded-lg shadow-sm ring-1 ring-black/5 dark:ring-white/10"></div>
           </div>
           <div className="relative lg:row-span-2">
-            <div className="absolute inset-px rounded-lg bg-white dark:bg-gray-800 max-lg:rounded-b-4xl lg:rounded-r-4xl"></div>
+            <div className="absolute inset-px rounded-lg bg-white dark:bg-gray-900 max-lg:rounded-b-4xl lg:rounded-r-4xl"></div>
             <div className="relative flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-lg)+1px)] max-lg:rounded-b-[calc(2rem+1px)] lg:rounded-r-[calc(2rem+1px)]">
               <div className="px-8 pt-8 pb-3 sm:px-10 sm:pt-10 sm:pb-0">
                 <p className="mt-2 text-lg font-medium tracking-tight text-gray-950 dark:text-white max-lg:text-center">

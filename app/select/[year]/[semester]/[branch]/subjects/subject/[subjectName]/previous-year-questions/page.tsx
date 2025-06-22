@@ -22,13 +22,13 @@ async function fetchPYQContent(year: string, semester: string, branch: string, s
       { cache: 'no-store' }
     );
     
-    if (!response.ok) {
+        if (!response.ok) {
       throw new Error('Failed to fetch PYQ content');
-    }
+        }
     
-    const data = await response.json();
+        const data = await response.json();
     return data.content;
-  } catch (error) {
+      } catch (error) {
     console.error('Error fetching PYQ content:', error);
     // Return default structure if fetch fails
     return {

@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { motion } from 'framer-motion';
+import { clearAllSessions } from '@/lib/admin-utils';
 
 interface UserData {
   name: string;
@@ -65,14 +66,18 @@ const Navbar = () => {
         method: 'POST',
       });
       
-      // Clear local storage
-      localStorage.removeItem('user');
+      // Clear ALL sessions using the utility function
+      clearAllSessions();
       setUser(null);
       
       // Redirect to home page
       window.location.href = '/';
     } catch (error) {
       console.error('Logout error:', error);
+      // Even if API fails, clear local sessions
+      clearAllSessions();
+      setUser(null);
+      window.location.href = '/';
     }
   };
 

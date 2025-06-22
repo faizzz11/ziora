@@ -32,49 +32,49 @@ async function fetchVideoLecturesContent(year: string, semester: string, branch:
     console.error('Error fetching video lectures content:', error);
     // Return default structure if fetch fails
     return {
-      modules: [
-        {
-          id: "module-1",
-          name: "Introduction and Fundamentals",
-          topics: [
-            {
-              id: "topic-1-1",
-              title: "Course Overview and Objectives",
-              videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-              duration: "15:30",
-              notes: "This introductory lecture covers the fundamental concepts and learning objectives of the course."
-            },
-            {
-              id: "topic-1-2", 
-              title: "Basic Concepts and Terminology",
-              videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-              duration: "22:45",
-              notes: "Learn the essential terminology and foundational concepts that will be used throughout the course."
-            }
-          ]
-        },
-        {
-          id: "module-2",
-          name: "Core Principles and Theory",
-          topics: [
-            {
-              id: "topic-2-1",
-              title: "Theoretical Framework",
-              videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-              duration: "28:15",
-              notes: "Deep dive into the theoretical foundations and frameworks underlying the subject matter."
-            },
-            {
-              id: "topic-2-2",
-              title: "Advanced Concepts",
-              videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ", 
-              duration: "35:20",
-              notes: "Explore advanced concepts and their practical applications in real-world scenarios."
-            }
-          ]
-        }
-      ]
-    };
+    modules: [
+      {
+        id: "module-1",
+        name: "Introduction and Fundamentals",
+        topics: [
+          {
+            id: "topic-1-1",
+            title: "Course Overview and Objectives",
+            videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+            duration: "15:30",
+            notes: "This introductory lecture covers the fundamental concepts and learning objectives of the course."
+          },
+          {
+            id: "topic-1-2", 
+            title: "Basic Concepts and Terminology",
+            videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+            duration: "22:45",
+            notes: "Learn the essential terminology and foundational concepts that will be used throughout the course."
+          }
+        ]
+      },
+      {
+        id: "module-2",
+        name: "Core Principles and Theory",
+        topics: [
+          {
+            id: "topic-2-1",
+            title: "Theoretical Framework",
+            videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+            duration: "28:15",
+            notes: "Deep dive into the theoretical foundations and frameworks underlying the subject matter."
+          },
+          {
+            id: "topic-2-2",
+            title: "Advanced Concepts",
+            videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ", 
+            duration: "35:20",
+            notes: "Explore advanced concepts and their practical applications in real-world scenarios."
+          }
+        ]
+      }
+    ]
+  };
   }
 }
 

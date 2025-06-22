@@ -13,5 +13,13 @@ export async function POST() {
     sameSite: 'lax'
   });
 
+  // Clear the admin session cookie
+  response.cookies.set('admin_session', '', {
+    httpOnly: true,
+    expires: new Date(0),
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax'
+  });
+
   return response;
 } 
