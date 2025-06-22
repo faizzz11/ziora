@@ -181,7 +181,7 @@ function FAQ() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.3 }}
-                    className="max-w-md mx-auto mt-16 p-8 rounded-xl text-center bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
+                    className="max-w-md mx-auto mt-16 p-8 rounded-xl text-center bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700"
                 >
                     <div className="inline-flex items-center justify-center p-3 rounded-full bg-gray-100 dark:bg-gray-700 mb-6">
                         <Mail className="h-6 w-6 text-gray-600 dark:text-gray-300" />

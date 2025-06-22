@@ -444,7 +444,7 @@ const Icons = {
 
 const PlatformInAction = () => {
   return (
-    <section className="py-24 sm:py-32 bg-white dark:bg-gray-900">
+    <section className="py-24 sm:py-32 bg-white dark:bg-black">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center mb-16">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-6">
@@ -466,7 +466,7 @@ const PlatformInAction = () => {
                 <ActivityNotification {...item} key={idx} />
               ))}
             </AnimatedList>
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-white dark:from-gray-900"></div>
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/4 "></div>
           </div>
         </div>
       </div>
