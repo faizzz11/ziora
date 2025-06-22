@@ -40,7 +40,7 @@ const AVATARS = [
 
 const Hero = () => {
   return (
-    <section className="bg-background dark:bg-gray-950 min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
+    <section className="bg-background dark:bg-black min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto text-center">
         {/* Main Slogan */}
         <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-foreground mb-6 leading-tight">

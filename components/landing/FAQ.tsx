@@ -24,11 +24,11 @@ function FAQItem({ question, answer, index }: FAQItemProps) {
                 ease: "easeOut",
             }}
             className={cn(
-                "group rounded-lg border-[0.5px] border-gray-200 dark:border-gray-700",
+                "group rounded-lg border-[0.5px] border-gray-200 dark:border-black",
                 "transition-all duration-200 ease-in-out",
                 isOpen
-                    ? "bg-white dark:bg-gray-800/50 shadow-sm"
-                    : "hover:bg-gray-50 dark:hover:bg-gray-800/30"
+                    ? "bg-white dark:bg-[oklch(0.205_0_0)] shadow-sm"
+                    : "hover:bg-gray-50 dark:hover:bg-[oklch(0.205_0_0)]"
             )}
         >
             <button
@@ -181,9 +181,9 @@ function FAQ() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.3 }}
-                    className="max-w-md mx-auto mt-16 p-8 rounded-xl text-center bg-white dark:bg-[oklch(0.205_0_0)] border border-gray-200 dark:border-gray-700"
+                    className="max-w-md mx-auto mt-16 p-8 rounded-xl text-center bg-white dark:bg-[oklch(0.205_0_0)] border border-gray-200 dark:border-black"
                 >
-                    <div className="inline-flex items-center justify-center p-3 rounded-full bg-gray-100 dark:bg-gray-700 mb-6">
+                    <div className="inline-flex items-center justify-center p-3 rounded-full bg-gray-100 dark:bg-black mb-6">
                         <Mail className="h-6 w-6 text-gray-600 dark:text-gray-300" />
                     </div>
                     <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">

@@ -55,7 +55,7 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="bg-white dark:bg-[oklch(0.205_0_0)] border-t border-gray-200 dark:border-gray-700">
+    <footer className="bg-white dark:bg-[oklch(0.205_0_0)] border-t border-gray-200 dark:border-black">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Main Footer Content */}
         <div className="py-16">
@@ -113,7 +113,7 @@ const Footer = () => {
         </div>
 
         {/* Newsletter Section */}
-        <div className="border-t border-gray-200 dark:border-gray-700 py-8">
+        <div className="border-t border-gray-200 dark:border-black py-8">
           <div className="md:flex md:items-center md:justify-between">
             <div className="md:flex-1">
               <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
@@ -128,7 +128,7 @@ const Footer = () => {
                 <input
                   type="email"
                   placeholder="Enter your email"
-                  className="px-4 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-l-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-400"
+                  className="px-4 py-2 text-sm border border-gray-300 dark:border-black rounded-l-lg bg-white dark:bg-black text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-400"
                 />
                 <button className="px-6 py-2 text-sm font-medium text-white bg-black dark:bg-white dark:text-black rounded-r-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors duration-200">
                   Subscribe
@@ -139,7 +139,7 @@ const Footer = () => {
         </div>
 
         {/* Bottom Footer */}
-        <div className="border-t border-gray-200 dark:border-gray-700 py-6">
+        <div className="border-t border-gray-200 dark:border-black py-6">
           <div className="md:flex md:items-center md:justify-between">
             <div className="flex space-x-6 md:order-2">
               {socialLinks.map((social) => {
