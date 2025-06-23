@@ -16,18 +16,43 @@ interface NotesPageProps {
 // Fetch notes content from MongoDB based on URL parameters
 async function fetchNotesContent(year: string, semester: string, branch: string, subject: string) {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-    const response = await fetch(
-      `${baseUrl}/api/content?year=${year}&semester=${semester}&branch=${branch}&subject=${subject}&contentType=notes`,
-      { cache: 'no-store' }
-    );
+    // For FE (First Year Engineering), use 'FE' as branch regardless of URL branch parameter
+    const actualBranch = year === 'FE' ? 'FE' : branch;
     
-    if (!response.ok) {
-      throw new Error('Failed to fetch notes content');
-    }
+    // Import MongoDB client for direct database access during SSR
+    const clientPromise = (await import('@/lib/mongodb')).default;
+    const client = await clientPromise;
+    const db = client.db('ziora');
+    const collection = db.collection('academic_content');
+
+    // Create the query path
+    const queryPath = `${year}.sem-${semester}.${actualBranch}.${subject}.notes`;
     
-    const data = await response.json();
-    return data.content;
+    // Find the document and get the specific content
+    const result = await collection.findOne({}, { projection: { [queryPath]: 1 } });
+    
+    // Extract the nested content
+    const content = result && getNestedValue(result, queryPath.split('.'));
+    
+    return content || {
+      modules: [
+        {
+          id: "module-1",
+          name: "Introduction and Fundamentals",
+          pdfUrl: "https://drive.google.com/file/d/1rlg-623P2ktK6_n6jIS7zYC4zOYGV2ys/preview",
+          relatedVideoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+          topics: [
+            {
+              id: "topic-1-1",
+              title: "Course Overview and Objectives", 
+              videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+              duration: "15:30",
+              notes: "Introduction to the course structure and learning objectives."
+            }
+          ]
+        }
+      ]
+    };
   } catch (error) {
     console.error('Error fetching notes content:', error);
     // Return default structure if fetch fails
@@ -53,12 +78,19 @@ async function fetchNotesContent(year: string, semester: string, branch: string,
   }
 }
 
+// Helper function to get nested value from object
+function getNestedValue(obj: any, path: string[]): any {
+  return path.reduce((current, key) => {
+    return current && current[key] !== undefined ? current[key] : undefined;
+  }, obj);
+}
+
 export default async function NotesPage({ params }: NotesPageProps) {
   const { year, semester, branch, subjectName } = await params;
   
   // Get subject info from branch subjects data
   const { branches } = branchSubjectsData;
-  const branchKey = year === 'first-year' ? 'first-year' : branch;
+  const branchKey = year === 'FE' ? 'FE' : branch;
   const selectedBranchData = (branches as any)[branchKey];
   const semesterSubjects = selectedBranchData?.semesters[semester] || [];
   const subject = semesterSubjects.find((s: any) => s.id === subjectName) || {

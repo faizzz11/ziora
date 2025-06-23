@@ -200,7 +200,7 @@ const ForgotPasswordPage = () => {
   const renderEmailStep = () => (
     <form onSubmit={handleRequestOTP} className="space-y-6">
       <div className="space-y-2">
-        <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+        <Label htmlFor="email" className="text-sm font-medium text-gray-700 dark:text-gray-300">
           Email Address <span className="text-red-500">*</span>
         </Label>
         <div className="relative">
@@ -459,9 +459,9 @@ const ForgotPasswordPage = () => {
 
   if (currentStep === 'success') {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-gray-50 dark:bg-black flex items-center justify-center px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
-          <Card className="bg-white rounded-2xl p-8 border border-gray-200 shadow-xl">
+          <Card className="bg-white dark:bg-[oklch(0.205_0_0)] rounded-2xl p-8 border border-gray-200 dark:border-gray-800 shadow-xl">
             {renderSuccessStep()}
           </Card>
         </div>
@@ -470,27 +470,27 @@ const ForgotPasswordPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-black flex items-center justify-center px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         {/* Header */}
         <div className="text-center">
           <Link href="/" className="inline-block">
-            <h1 className="text-4xl font-bold text-gray-900 mb-2 hover:text-gray-700 transition-colors">
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
               Ziora
             </h1>
           </Link>
-          <p className="text-lg text-gray-600">
+          <p className="text-lg text-gray-600 dark:text-gray-400">
             Secure password recovery
           </p>
         </div>
 
         {/* Reset Password Card */}
-        <Card className="bg-white rounded-2xl p-8 border border-gray-200 shadow-xl">
+        <Card className="bg-white dark:bg-[oklch(0.205_0_0)] rounded-2xl p-8 border border-gray-200 dark:border-gray-800 shadow-xl">
           <CardHeader className="text-center mb-8 p-0">
-            <CardTitle className="text-2xl font-bold text-gray-900 mb-2">
+            <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
               {getStepTitle()}
             </CardTitle>
-            <CardDescription className="text-gray-600">
+            <CardDescription className="text-gray-600 dark:text-gray-400">
               {getStepDescription()}
             </CardDescription>
           </CardHeader>
@@ -504,7 +504,7 @@ const ForgotPasswordPage = () => {
             <div className="mt-6 text-center">
               <Link 
                 href="/login" 
-                className="inline-flex items-center text-sm font-medium text-gray-600 hover:text-gray-800 transition-colors"
+                className="inline-flex items-center text-sm font-medium text-gray-600 hover:text-gray-800 transition-colors dark:text-gray-300 dark:hover:text-gray-100"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Login

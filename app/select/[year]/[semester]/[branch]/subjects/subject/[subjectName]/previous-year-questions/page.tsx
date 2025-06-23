@@ -15,19 +15,45 @@ interface PYQPageProps {
 
 // Fetch PYQ content from MongoDB based on URL parameters
 async function fetchPYQContent(year: string, semester: string, branch: string, subject: string) {
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-    const response = await fetch(
-      `${baseUrl}/api/content?year=${year}&semester=${semester}&branch=${branch}&subject=${subject}&contentType=pyq`,
-      { cache: 'no-store' }
-    );
-    
-        if (!response.ok) {
-      throw new Error('Failed to fetch PYQ content');
-        }
-    
-        const data = await response.json();
-    return data.content;
+    try {
+        // For FE (First Year Engineering), use 'FE' as branch regardless of URL branch parameter
+        const actualBranch = year === 'FE' ? 'FE' : branch;
+        
+        // Import MongoDB client for direct database access during SSR
+        const clientPromise = (await import('@/lib/mongodb')).default;
+        const client = await clientPromise;
+        const db = client.db('ziora');
+        const collection = db.collection('academic_content');
+
+        // Create the query path
+        const queryPath = `${year}.sem-${semester}.${actualBranch}.${subject}.pyq`;
+        
+        // Find the document and get the specific content
+        const result = await collection.findOne({}, { projection: { [queryPath]: 1 } });
+        
+        // Extract the nested content
+        const content = result && getNestedValue(result, queryPath.split('.'));
+        
+        return content || {
+          questions: [
+            {
+              id: "q1",
+              question: "Sample question for this subject",
+              solution: "Sample solution and explanation",
+              year: "2023",
+              marks: 5,
+              difficulty: "Medium"
+            },
+            {
+              id: "q2", 
+              question: "Another sample question",
+              solution: "Detailed solution approach",
+              year: "2023",
+              marks: 3,
+              difficulty: "Easy"
+            }
+          ]
+        };
       } catch (error) {
     console.error('Error fetching PYQ content:', error);
     // Return default structure if fetch fails
@@ -58,12 +84,19 @@ async function fetchPYQContent(year: string, semester: string, branch: string, s
   }
 }
 
+// Helper function to get nested value from object
+function getNestedValue(obj: any, path: string[]): any {
+  return path.reduce((current, key) => {
+    return current && current[key] !== undefined ? current[key] : undefined;
+  }, obj);
+}
+
 export default async function PreviousYearQuestionsPage({ params }: PYQPageProps) {
   const { year, semester, branch, subjectName } = await params;
 
   // Get subject info from branch subjects data
   const { branches } = branchSubjectsData;
-  const branchKey = year === 'first-year' ? 'first-year' : branch;
+  const branchKey = year === 'FE' ? 'FE' : branch;
   const selectedBranchData = (branches as any)[branchKey];
   const semesterSubjects = selectedBranchData?.semesters[semester] || [];
   const subject = semesterSubjects.find((s: any) => s.id === subjectName) || {

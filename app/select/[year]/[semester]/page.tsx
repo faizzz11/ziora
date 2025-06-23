@@ -22,10 +22,10 @@ import { Badge } from '@/components/ui/badge';
 import academicData from '@/data/academic-years.json';
 
 interface SemesterPageProps {
-  params: {
+  params: Promise<{
     year: string;
     semester: string;
-  };
+  }>;
 }
 
 // Define branch icon mapping
@@ -105,11 +105,12 @@ const branches = [
   }
 ];
 
-const SemesterBranchPage = ({ params }: SemesterPageProps) => {
+const SemesterBranchPage = async ({ params }: SemesterPageProps) => {
+  const { year, semester } = await params;
   const { academicYears } = academicData;
   
   // Find the selected year
-  const selectedYear = academicYears.find(year => year.id === params.year);
+  const selectedYear = academicYears.find(yearItem => yearItem.id === year);
   
   // If year not found, show 404
   if (!selectedYear) {
@@ -118,7 +119,7 @@ const SemesterBranchPage = ({ params }: SemesterPageProps) => {
 
   // Find the selected semester
   const selectedSemester = selectedYear.semesters.find(
-    semester => semester.number.toString() === params.semester
+    semesterItem => semesterItem.number.toString() === semester
   );
 
   if (!selectedSemester) {
@@ -126,7 +127,7 @@ const SemesterBranchPage = ({ params }: SemesterPageProps) => {
   }
 
   // For first year, redirect directly to subjects (no branch selection)
-  if (params.year === 'FE') {
+  if (year === 'FE') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background to-secondary/10 dark:from-black dark:to-gray-950 py-12">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -146,7 +147,7 @@ const SemesterBranchPage = ({ params }: SemesterPageProps) => {
 
           {/* Direct to Subjects Button */}
           <div className="text-center mb-12">
-            <Link href={`/select/${params.year}/${params.semester}/general/subjects`}>
+            <Link href={`/select/${year}/${semester}/general/subjects`}>
               <button className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-gray-900 to-gray-800 dark:from-gray-700 dark:to-gray-600 text-white rounded-full font-medium hover:from-gray-800 hover:to-gray-700 dark:hover:from-gray-600 dark:hover:to-gray-500 transition-all duration-300 text-lg shadow-lg hover:shadow-xl">
                 <BookOpen className="w-5 h-5 mr-3" />
                 View All Subjects
@@ -174,7 +175,7 @@ const SemesterBranchPage = ({ params }: SemesterPageProps) => {
 
           {/* Bottom Actions */}
           <div className="flex justify-center gap-4 mt-12">
-            <Link href={`/select/${params.year}`}>
+            <Link href={`/select/${year}`}>
               <button className="inline-flex items-center px-6 py-3 text-sm font-medium text-muted-foreground bg-secondary rounded-full hover:bg-secondary/80 transition-all duration-300 border border-border hover:border-primary/50 shadow-sm hover:shadow-md">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Semesters
@@ -217,7 +218,7 @@ const SemesterBranchPage = ({ params }: SemesterPageProps) => {
             Academic Years
           </Link>
           <ChevronRight className="w-4 h-4 mx-2 text-muted-foreground" />
-          <Link href={`/select/${params.year}`} className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+          <Link href={`/select/${year}`} className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
             {selectedYear.name} Semesters
           </Link>
           <ChevronRight className="w-4 h-4 mx-2 text-muted-foreground" />
@@ -234,7 +235,7 @@ const SemesterBranchPage = ({ params }: SemesterPageProps) => {
             return (
               <Link 
                 key={branch.id} 
-                href={`/select/${params.year}/${params.semester}/${branch.id}/subjects`}
+                href={`/select/${year}/${semester}/${branch.id}/subjects`}
                 className="group h-full"
               >
                 <div className="bg-card dark:bg-[oklch(0.205_0_0)] rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-border group-hover:border-primary/50 group-hover:-translate-y-2 h-full flex flex-col">
@@ -297,7 +298,7 @@ const SemesterBranchPage = ({ params }: SemesterPageProps) => {
 
         {/* Bottom Actions */}
         <div className="flex justify-center gap-4 mt-12">
-          <Link href={`/select/${params.year}`}>
+          <Link href={`/select/${year}`}>
             <button className="inline-flex items-center px-6 py-3 text-sm font-medium text-muted-foreground bg-secondary rounded-full hover:bg-secondary/80 transition-all duration-300 border border-border hover:border-primary/50 shadow-sm hover:shadow-md">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Semesters

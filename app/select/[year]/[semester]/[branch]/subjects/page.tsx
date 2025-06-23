@@ -141,9 +141,11 @@ const SubjectsPage = async ({ params }: SubjectsPageProps) => {
     notFound();
   }
 
-  // Get branch display info
-  const selectedBranch = (branches as any)[branch] || branches.general;
-  const { icon: BranchIcon, gradient: branchGradient } = getBranchIcon(branch);
+  // Get branch display info for FE or regular branches
+  const selectedBranch = year === 'FE' 
+    ? { name: 'First Year Engineering', shortName: 'FE' }
+    : ((branches as any)[branch] || branches.general);
+  const { icon: BranchIcon, gradient: branchGradient } = getBranchIcon(year === 'FE' ? 'general' : branch);
 
   // Generate unique gradient for each subject
   const getSubjectGradient = (index: number) => {

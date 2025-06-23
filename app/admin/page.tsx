@@ -317,27 +317,27 @@ const AdminLogin = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-black flex items-center justify-center px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         {/* Header */}
         <div className="text-center">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
             Ziora Admin
           </h1>
-          <p className="text-lg text-gray-600">
+          <p className="text-lg text-gray-600 dark:text-gray-400">
             Sign in to access the admin dashboard
           </p>
         </div>
 
         {/* Login Card */}
-        <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-xl">
+        <div className="bg-white dark:bg-[oklch(0.205_0_0)] rounded-2xl p-8 border border-gray-200 dark:border-gray-800 shadow-xl">
           <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
               {step === 'credentials' && 'Administrator Login'}
               {step === 'otp' && 'Two-Factor Authentication'}
               {step === 'success' && 'Access Granted'}
             </h2>
-            <p className="text-gray-600">
+            <p className="text-gray-600 dark:text-gray-400">
               {step === 'credentials' && 'Enter your admin credentials to continue'}
               {step === 'otp' && 'Complete the verification process'}
               {step === 'success' && 'Successfully authenticated'}

@@ -1,64 +1,64 @@
 {
   "branches": {
-    "first-year": {
+    "FE": {
       "name": "First Year (All Branches)",
       "semesters": {
         "1": [
           {
-            "id": "eng-maths-1",
-            "name": "Engineering Mathematics 1",
-            "code": "EM1",
+            "id": "mathematics-1",
+            "name": "Mathematics-1",
+            "code": "MATH1",
             "credits": 4,
             "description": "Differential calculus, integral calculus, and matrices"
           },
           {
-            "id": "eng-physics-1",
-            "name": "Engineering Physics 1",
-            "code": "EP1",
+            "id": "physics-1",
+            "name": "Physics-1",
+            "code": "PHY1",
             "credits": 4,
             "description": "Mechanics, wave motion, and thermodynamics"
           },
           {
-            "id": "eng-mechanics",
-            "name": "Engineering Mechanics",
-            "code": "EME",
+            "id": "chemistry-1",
+            "name": "Chemistry-1",
+            "code": "CHEM1",
             "credits": 4,
-            "description": "Statics, dynamics, and strength of materials"
+            "description": "Atomic structure, chemical bonding, and thermochemistry"
           },
           {
             "id": "bee",
-            "name": "Basic Electrical Engineering",
+            "name": "BEE",
             "code": "BEE",
             "credits": 4,
             "description": "DC circuits, AC circuits, and electrical machines"
           },
           {
-            "id": "eng-chemistry-1",
-            "name": "Engineering Chemistry 1",
-            "code": "EC1",
+            "id": "mechanics",
+            "name": "Mechanics",
+            "code": "MECH",
             "credits": 4,
-            "description": "Atomic structure, chemical bonding, and thermochemistry"
+            "description": "Statics, dynamics, and strength of materials"
           }
         ],
         "2": [
           {
-            "id": "eng-maths-2",
-            "name": "Engineering Mathematics 2",
-            "code": "EM2",
+            "id": "mathematics-2",
+            "name": "Mathematics-2",
+            "code": "MATH2",
             "credits": 4,
             "description": "Differential equations, Laplace transforms, and vector calculus"
           },
           {
-            "id": "eng-physics-2",
-            "name": "Engineering Physics 2",
-            "code": "EP2",
+            "id": "physics-2",
+            "name": "Physics-2",
+            "code": "PHY2",
             "credits": 4,
             "description": "Electromagnetism, optics, and modern physics"
           },
           {
-            "id": "eng-chemistry-2",
-            "name": "Engineering Chemistry 2",
-            "code": "EC2",
+            "id": "chemistry-2",
+            "name": "Chemistry-2",
+            "code": "CHEM2",
             "credits": 4,
             "description": "Electrochemistry, corrosion, and polymer chemistry"
           },
@@ -71,17 +71,10 @@
           },
           {
             "id": "c-programming",
-            "name": "C Programming",
+            "name": "C-programming",
             "code": "CP",
             "credits": 4,
             "description": "Programming fundamentals, data structures in C"
-          },
-          {
-            "id": "pce",
-            "name": "Professional Communication and Ethics",
-            "code": "PCE",
-            "credits": 2,
-            "description": "Communication skills and professional ethics"
           }
         ]
       }

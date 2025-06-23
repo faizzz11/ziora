@@ -1,4 +1,6 @@
-import React from 'react';
+"use client";
+
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { Mail, Phone, MapPin, Send, MessageCircle, Clock, Users } from 'lucide-react';
 import { FaPhone, FaEnvelope, FaLocationArrow, FaPaperPlane } from 'react-icons/fa';
@@ -8,9 +10,106 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import Navbar from '@/components/animate-ui/Navbar';
 
 const ContactPage = () => {
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    subject: '',
+    message: ''
+  });
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  const [errors, setErrors] = useState<{[key: string]: string}>({});
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    // Clear specific field error when user starts typing
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: '' }));
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors: {[key: string]: string} = {};
+
+    if (!formData.firstName.trim()) {
+      newErrors.firstName = 'First name is required';
+    }
+
+    if (!formData.lastName.trim()) {
+      newErrors.lastName = 'Last name is required';
+    }
+
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = 'Please enter a valid email address';
+    }
+
+    if (!formData.subject.trim()) {
+      newErrors.subject = 'Subject is required';
+    }
+
+    if (!formData.message.trim()) {
+      newErrors.message = 'Message is required';
+    } else if (formData.message.length < 10) {
+      newErrors.message = 'Message must be at least 10 characters long';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+
+    setIsLoading(true);
+    setErrors({});
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to send message');
+      }
+
+      setSuccessMessage('Thank you for your message! We will get back to you soon.');
+      
+      // Clear form
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        subject: '',
+        message: ''
+      });
+
+    } catch (error) {
+      setErrors({ 
+        general: error instanceof Error ? error.message : 'Failed to send message. Please try again.' 
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const contactInfo = [
     {
       icon: FaPhone,
@@ -151,7 +250,25 @@ const ContactPage = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="px-0">
-                <form className="space-y-6">
+                {/* Success Message */}
+                {successMessage && (
+                  <Alert className="mb-6 border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950">
+                    <AlertDescription className="text-green-800 dark:text-green-200">
+                      {successMessage}
+                    </AlertDescription>
+                  </Alert>
+                )}
+
+                {/* General Error */}
+                {errors.general && (
+                  <Alert className="mb-6 border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950">
+                    <AlertDescription className="text-red-800 dark:text-red-200">
+                      {errors.general}
+                    </AlertDescription>
+                  </Alert>
+                )}
+
+                <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label htmlFor="firstName" className="block text-sm font-medium text-foreground mb-2">
@@ -162,7 +279,14 @@ const ContactPage = () => {
                         type="text"
                         placeholder="Your first name"
                         className="w-full"
+                        value={formData.firstName}
+                        onChange={(e) => handleInputChange('firstName', e.target.value)}
                       />
+                      {errors.firstName && (
+                        <Alert className="mt-2">
+                          <AlertDescription>{errors.firstName}</AlertDescription>
+                        </Alert>
+                      )}
                     </div>
                     <div>
                       <label htmlFor="lastName" className="block text-sm font-medium text-foreground mb-2">
@@ -173,7 +297,14 @@ const ContactPage = () => {
                         type="text"
                         placeholder="Your last name"
                         className="w-full"
+                        value={formData.lastName}
+                        onChange={(e) => handleInputChange('lastName', e.target.value)}
                       />
+                      {errors.lastName && (
+                        <Alert className="mt-2">
+                          <AlertDescription>{errors.lastName}</AlertDescription>
+                        </Alert>
+                      )}
                     </div>
                   </div>
                   
@@ -186,7 +317,14 @@ const ContactPage = () => {
                       type="email"
                       placeholder="your.email@example.com"
                       className="w-full"
+                      value={formData.email}
+                      onChange={(e) => handleInputChange('email', e.target.value)}
                     />
+                    {errors.email && (
+                      <Alert className="mt-2">
+                        <AlertDescription>{errors.email}</AlertDescription>
+                      </Alert>
+                    )}
                   </div>
 
                   <div>
@@ -198,7 +336,14 @@ const ContactPage = () => {
                       type="text"
                       placeholder="What is your message about?"
                       className="w-full"
+                      value={formData.subject}
+                      onChange={(e) => handleInputChange('subject', e.target.value)}
                     />
+                    {errors.subject && (
+                      <Alert className="mt-2">
+                        <AlertDescription>{errors.subject}</AlertDescription>
+                      </Alert>
+                    )}
                   </div>
 
                   <div>
@@ -209,12 +354,19 @@ const ContactPage = () => {
                       id="message"
                       placeholder="Tell us more about your query or feedback..."
                       className="w-full min-h-[120px]"
+                      value={formData.message}
+                      onChange={(e) => handleInputChange('message', e.target.value)}
                     />
+                    {errors.message && (
+                      <Alert className="mt-2">
+                        <AlertDescription>{errors.message}</AlertDescription>
+                      </Alert>
+                    )}
                   </div>
 
-                  <Button type="submit" className="w-full" size="lg">
+                  <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
                     <Send className="w-4 h-4 mr-2" />
-                    Send Message
+                    {isLoading ? 'Sending...' : 'Send Message'}
                   </Button>
                 </form>
               </CardContent>

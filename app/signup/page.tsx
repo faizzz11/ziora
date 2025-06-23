@@ -179,9 +179,9 @@ const SignupPage = () => {
 
   if (successMessage) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-gray-50 dark:bg-black flex items-center justify-center px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
-          <Card className="bg-white rounded-2xl p-8 border border-gray-200 shadow-xl">
+          <Card className="bg-white dark:bg-[oklch(0.205_0_0)] rounded-2xl p-8 border border-gray-200 dark:border-gray-800 shadow-xl">
             <div className="text-center space-y-6">
               <div className="flex justify-center">
                 <div className="rounded-full bg-green-100 p-3">
@@ -207,27 +207,27 @@ const SignupPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
+    <div className="min-h-screen bg-gray-50 dark:bg-black flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
       <div className="max-w-2xl w-full space-y-8">
         {/* Header */}
         <div className="text-center">
           <Link href="/" className="inline-block">
-            <h1 className="text-4xl font-bold text-gray-900 mb-2 hover:text-gray-700 transition-colors">
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
               Ziora
             </h1>
           </Link>
-          <p className="text-lg text-gray-600">
+          <p className="text-lg text-gray-600 dark:text-gray-400">
             Join thousands of students learning smarter
           </p>
         </div>
 
         {/* Signup Card */}
-        <Card className="bg-white rounded-2xl p-8 border border-gray-200 shadow-xl">
+        <Card className="bg-white dark:bg-[oklch(0.205_0_0)] rounded-2xl p-8 border border-gray-200 dark:border-gray-800 shadow-xl">
           <CardHeader className="text-center mb-8 p-0">
-            <CardTitle className="text-2xl font-bold text-gray-900 mb-2">
+            <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
               Create Your Account
             </CardTitle>
-            <CardDescription className="text-gray-600">
+            <CardDescription className="text-gray-600 dark:text-gray-400">
               Fill in your details to get started with your learning journey
             </CardDescription>
           </CardHeader>
@@ -236,14 +236,14 @@ const SignupPage = () => {
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Personal Information Section */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">
                   Personal Information
                 </h3>
                 
                 {/* Name and Age Row */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name" className="text-sm font-medium text-gray-700">
+                    <Label htmlFor="name" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       Full Name <span className="text-red-500">*</span>
                     </Label>
                     <div className="relative">
@@ -262,7 +262,7 @@ const SignupPage = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="age" className="text-sm font-medium text-gray-700">
+                    <Label htmlFor="age" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       Age <span className="text-red-500">*</span>
                     </Label>
                     <div className="relative">
@@ -286,14 +286,14 @@ const SignupPage = () => {
 
               {/* Academic Information Section */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">
                   Academic Information
                 </h3>
                 
                 {/* Study Year and Stream Row */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-gray-700">
+                    <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       Currently Studying in <span className="text-red-500">*</span>
                     </Label>
                     <Select value={formData.studyingYear} onValueChange={(value) => handleInputChange('studyingYear', value)}>
@@ -312,7 +312,7 @@ const SignupPage = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-gray-700">
+                    <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       Stream/Field <span className="text-red-500">*</span>
                     </Label>
                     <Select value={formData.stream} onValueChange={(value) => handleInputChange('stream', value)}>
@@ -333,7 +333,7 @@ const SignupPage = () => {
 
                 {/* College Name */}
                 <div className="space-y-2">
-                  <Label htmlFor="collegeName" className="text-sm font-medium text-gray-700">
+                  <Label htmlFor="collegeName" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     College/University Name <span className="text-red-500">*</span>
                   </Label>
                   <div className="relative">
@@ -354,14 +354,14 @@ const SignupPage = () => {
 
               {/* Account Information Section */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
+                <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2 dark:text-white dark:border-gray-700">
                   Account Information
                 </h3>
                 
                 {/* Username and Email Row */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="username" className="text-sm font-medium text-gray-700">
+                    <Label htmlFor="username" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       Username <span className="text-red-500">*</span>
                     </Label>
                     <div className="relative">
@@ -380,7 +380,7 @@ const SignupPage = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+                    <Label htmlFor="email" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       Email Address <span className="text-red-500">*</span>
                     </Label>
                     <div className="relative">
@@ -402,7 +402,7 @@ const SignupPage = () => {
                 {/* Password and Confirm Password Row */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="password" className="text-sm font-medium text-gray-700">
+                    <Label htmlFor="password" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       Password <span className="text-red-500">*</span>
                     </Label>
                     <div className="relative">
@@ -428,7 +428,7 @@ const SignupPage = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">
+                    <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       Confirm Password <span className="text-red-500">*</span>
                     </Label>
                     <div className="relative">
@@ -482,9 +482,9 @@ const SignupPage = () => {
 
               {/* Login Link */}
               <div className="text-center">
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600 dark:text-gray-500">
                   Already have an account?{' '}
-                  <Link href="/login" className="font-medium text-black hover:text-gray-700 transition-colors">
+                  <Link href="/login" className="font-medium text-black hover:text-gray-700 transition-colors dark:text-gray-200 dark:hover:text-gray-600">
                     Sign in here
                   </Link>
                 </p>

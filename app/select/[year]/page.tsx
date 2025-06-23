@@ -16,16 +16,17 @@ import { Badge } from '@/components/ui/badge';
 import academicData from '@/data/academic-years.json';
 
 interface SemesterPageProps {
-  params: {
+  params: Promise<{
     year: string;
-  };
+  }>;
 }
 
-const SemesterSelectionPage = ({ params }: SemesterPageProps) => {
+const SemesterSelectionPage = async ({ params }: SemesterPageProps) => {
+  const { year } = await params;
   const { academicYears } = academicData;
   
   // Find the selected year
-  const selectedYear = academicYears.find(year => year.id === params.year);
+  const selectedYear = academicYears.find(yearItem => yearItem.id === year);
   
   // If year not found, show 404
   if (!selectedYear) {
@@ -76,7 +77,7 @@ const SemesterSelectionPage = ({ params }: SemesterPageProps) => {
           {selectedYear.semesters.map((semester) => (
             <Link 
               key={semester.id} 
-              href={`/select/${params.year}/${semester.number}`}
+              href={year === 'FE' ? `/select/${year}/${semester.number}/general/subjects` : `/select/${year}/${semester.number}`}
               className="group h-full"
             >
               <div className="bg-card dark:bg-[oklch(0.205_0_0)] rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-border group-hover:border-primary/50 group-hover:-translate-y-2 h-full flex flex-col">
