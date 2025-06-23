@@ -1,9 +1,11 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { ChevronDown, Mail } from "lucide-react";
 import { cn } from "@/lib/utils";
+
 
 interface FAQItemProps {
     question: string;
@@ -13,6 +15,7 @@ interface FAQItemProps {
 
 function FAQItem({ question, answer, index }: FAQItemProps) {
     const [isOpen, setIsOpen] = useState(false);
+
 
     return (
         <motion.div
@@ -119,6 +122,7 @@ function FAQItem({ question, answer, index }: FAQItemProps) {
 }
 
 function FAQ() {
+    const router = useRouter();
     const faqs: Omit<FAQItemProps, "index">[] = [
         {
             question: "What study materials are available on Ziora?",
@@ -193,6 +197,7 @@ function FAQ() {
                         Our support team is here to help you succeed in your learning journey
                     </p>
                     <button
+                        onClick={() => router.push('/contact')}
                         type="button"
                         className={cn(
                             "px-6 py-3 text-sm rounded-lg w-full",

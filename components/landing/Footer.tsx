@@ -48,10 +48,10 @@ const Footer = () => {
   ];
 
   const socialLinks = [
-    { icon: Twitter, href: "#", label: "Twitter" },
-    { icon: Instagram, href: "#", label: "Instagram" },
-    { icon: Linkedin, href: "#", label: "LinkedIn" },
-    { icon: Github, href: "#", label: "GitHub" },
+    { icon: Twitter, href: "https://x.com/karan_052", label: "Twitter" },
+    { icon: Instagram, href: "https://www.instagram.com/faiz_moulavi11/", label: "Instagram" },
+    { icon: Linkedin, href: "https://www.linkedin.com/in/kstubhie/", label: "LinkedIn" },
+    { icon: Github, href: "https://github.com/kstubhie", label: "GitHub" },
   ];
 
   return (
@@ -76,15 +76,15 @@ const Footer = () => {
               <div className="space-y-3">
                 <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
                   <Mail className="h-4 w-4 mr-3 text-gray-400" />
-                  support@ziora.com
+                  ziora.education@gmail.com
                 </div>
                 <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
                   <Phone className="h-4 w-4 mr-3 text-gray-400" />
-                  +1 (555) 123-4567
+                  +91 9136261589
                 </div>
                 <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
                   <MapPin className="h-4 w-4 mr-3 text-gray-400" />
-                  San Francisco, CA
+                  Mumbai, Maharashtra, India
                 </div>
               </div>
             </div>
