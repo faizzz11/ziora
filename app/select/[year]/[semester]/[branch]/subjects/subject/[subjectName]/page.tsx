@@ -413,7 +413,7 @@ export default function SubjectPage({ params }: SubjectPageProps) {
 
   // Get subject info from branch subjects data
   const { branches } = branchSubjectsData;
-  const branchKey = resolvedParams.year === 'first-year' ? 'first-year' : resolvedParams.branch;
+  const branchKey = resolvedParams.year === 'FE' ? 'FE' : resolvedParams.branch;
   const selectedBranchData = (branches as any)[branchKey];
   const semesterSubjects = selectedBranchData?.semesters[resolvedParams.semester] || [];
   const subject = semesterSubjects.find((s: any) => s.id === resolvedParams.subjectName);

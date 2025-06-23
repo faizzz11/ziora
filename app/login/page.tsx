@@ -91,10 +91,10 @@ const LoginPage = () => {
   };
 
   if (successMessage) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full space-y-8">
-          <Card className="bg-white rounded-2xl p-8 border border-gray-200 shadow-xl">
+      return (
+    <div className="min-h-screen bg-gray-50 dark:bg-black flex items-center justify-center px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        <Card className="bg-white dark:bg-[oklch(0.205_0_0)] rounded-2xl p-8 border border-gray-200 dark:border-gray-800 shadow-xl">
             <div className="text-center space-y-6">
               <div className="flex justify-center">
                 <div className="rounded-full bg-green-100 p-3">
@@ -120,27 +120,27 @@ const LoginPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-black flex items-center justify-center px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         {/* Header */}
         <div className="text-center">
           <Link href="/" className="inline-block">
-            <h1 className="text-4xl font-bold text-gray-900 mb-2 hover:text-gray-700 transition-colors">
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
               Ziora
             </h1>
           </Link>
-          <p className="text-lg text-gray-600">
+          <p className="text-lg text-gray-600 dark:text-gray-400">
             Welcome back! Sign in to your account
           </p>
         </div>
 
         {/* Login Card */}
-        <Card className="bg-white rounded-2xl p-8 border border-gray-200 shadow-xl">
+        <Card className="bg-white dark:bg-[oklch(0.205_0_0)] rounded-2xl p-8 border border-gray-200 dark:border-gray-800 shadow-xl">
           <CardHeader className="text-center mb-8 p-0">
-            <CardTitle className="text-2xl font-bold text-gray-900 mb-2">
+            <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
               Sign In
             </CardTitle>
-            <CardDescription className="text-gray-600">
+            <CardDescription className="text-gray-600 dark:text-gray-400">
               Enter your credentials to access your account
             </CardDescription>
           </CardHeader>
@@ -149,7 +149,7 @@ const LoginPage = () => {
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Username/Email Field */}
               <div className="space-y-2">
-                <Label htmlFor="usernameOrEmail" className="text-sm font-medium text-gray-700">
+                <Label htmlFor="usernameOrEmail" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   Username or Email <span className="text-red-500">*</span>
                 </Label>
                 <div className="relative">
@@ -169,7 +169,7 @@ const LoginPage = () => {
 
               {/* Password Field */}
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-sm font-medium text-gray-700">
+                <Label htmlFor="password" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   Password <span className="text-red-500">*</span>
                 </Label>
                 <div className="relative">
@@ -195,10 +195,10 @@ const LoginPage = () => {
               </div>
 
               {/* Forgot Password Link */}
-              <div className="flex justify-end">
+              <div className="flex justify-end dark:text-gray-50">
                 <Link 
                   href="/forgot-password" 
-                  className="text-sm font-medium text-black hover:text-gray-700 transition-colors"
+                  className="text-sm font-medium text-black hover:text-gray-700 transition-colors dark:text-gray-300"
                 >
                   Forgot password?
                 </Link>
@@ -231,11 +231,11 @@ const LoginPage = () => {
 
               {/* Divider */}
               <div className="relative">
-                <div className="absolute inset-0 flex items-center">
+                <div className="absolute inset-0 flex items-center ">
                   <div className="w-full border-t border-gray-300" />
                 </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">Don't have an account?</span>
+                <div className="relative flex justify-center text-sm ">
+                  <span className="px-2 bg-white text-gray-500 dark:bg-[oklch(0.205_0_0)] dark:text-gray-300">Don't have an account?</span>
                 </div>
               </div>
 

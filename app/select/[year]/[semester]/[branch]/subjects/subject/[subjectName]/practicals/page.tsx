@@ -17,18 +17,48 @@ interface PracticalsPageProps {
 // Fetch practicals content from MongoDB based on URL parameters
 async function fetchPracticalsContent(year: string, semester: string, branch: string, subject: string) {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-    const response = await fetch(
-      `${baseUrl}/api/content?year=${year}&semester=${semester}&branch=${branch}&subject=${subject}&contentType=practicals`,
-      { cache: 'no-store' }
-    );
+    // For FE (First Year Engineering), use 'FE' as branch regardless of URL branch parameter
+    const actualBranch = year === 'FE' ? 'FE' : branch;
     
-    if (!response.ok) {
-      throw new Error('Failed to fetch practicals content');
-    }
+    // Import MongoDB client for direct database access during SSR
+    const clientPromise = (await import('@/lib/mongodb')).default;
+    const client = await clientPromise;
+    const db = client.db('ziora');
+    const collection = db.collection('academic_content');
+
+    // Create the query path
+    const queryPath = `${year}.sem-${semester}.${actualBranch}.${subject}.practicals`;
     
-    const data = await response.json();
-    return data.content;
+    // Find the document and get the specific content
+    const result = await collection.findOne({}, { projection: { [queryPath]: 1 } });
+    
+    // Extract the nested content
+    const content = result && getNestedValue(result, queryPath.split('.'));
+    
+    return content || {
+      experiments: [
+        {
+          experimentNo: 1,
+          title: "Introduction to Lab Equipment",
+          aim: "To familiarize students with basic lab equipment and safety procedures",
+          theory: "Basic laboratory safety and equipment introduction...",
+          code: "// Sample code will be provided here",
+          output: "Expected output and observations",
+          conclusion: "Understanding of basic lab procedures achieved",
+          videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+        },
+        {
+          experimentNo: 2,
+          title: "Basic Programming Concepts",
+          aim: "To understand fundamental programming concepts",
+          theory: "Programming fundamentals and basic concepts...",
+          code: "// Sample code implementation",
+          output: "Program execution results",
+          conclusion: "Basic programming concepts demonstrated",
+          videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+        }
+      ]
+    };
       } catch (error) {
     console.error('Error fetching practicals content:', error);
     // Return default structure if fetch fails
@@ -59,12 +89,19 @@ async function fetchPracticalsContent(year: string, semester: string, branch: st
   }
 }
 
+// Helper function to get nested value from object
+function getNestedValue(obj: any, path: string[]): any {
+  return path.reduce((current, key) => {
+    return current && current[key] !== undefined ? current[key] : undefined;
+  }, obj);
+}
+
 export default async function PracticalsPage({ params }: PracticalsPageProps) {
   const { year, semester, branch, subjectName } = await params;
   
   // Get subject info from branch subjects data
   const { branches } = branchSubjectsData;
-  const branchKey = year === 'first-year' ? 'first-year' : branch;
+  const branchKey = year === 'FE' ? 'FE' : branch;
   const selectedBranchData = (branches as any)[branchKey];
   const semesterSubjects = selectedBranchData?.semesters[semester] || [];
   const subject = semesterSubjects.find((s: any) => s.id === subjectName) || {
@@ -78,7 +115,7 @@ export default async function PracticalsPage({ params }: PracticalsPageProps) {
 
   // Fetch dynamic practicals content based on URL parameters
   const practicalsData = await fetchPracticalsContent(year, semester, branch, subjectName);
-  const experiments = practicalsData.experiments || [];
+  const experiments = practicalsData?.experiments || [];
 
   const backUrl = `/select/${year}/${semester}/${branch}/subjects/subject/${subjectName}`;
 
