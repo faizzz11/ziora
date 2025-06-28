@@ -56,7 +56,7 @@ const Hero = () => {
         
         {/* CTA Button */}
         <Link href="/select">
-        <button className="inline-flex items-center justify-center px-8 py-4 sm:px-10 sm:py-5 text-lg sm:text-xl font-semibold text-white bg-black dark:bg-white dark:text-black rounded-full hover:bg-gray-800 dark:hover:bg-gray-100 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl mb-8">
+        <button className="inline-flex items-center justify-center px-8 py-4 sm:px-10 sm:py-5 text-lg sm:text-xl font-semibold cursor-pointer text-white bg-black dark:bg-white dark:text-black rounded-full hover:bg-gray-800 dark:hover:bg-gray-100 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl mb-8">
           Start with your journey
           <svg 
             className="ml-3 w-5 h-5 sm:w-6 sm:h-6" 
@@ -76,7 +76,7 @@ const Hero = () => {
         
         {/* Avatar Group */}
         <div className="flex justify-center">
-          <AvatarGroup className="h-32 -space-x-3">
+          <AvatarGroup className="h-32 -space-x-3 cursor-pointer">
             {AVATARS.map((avatar, index) => (
               <Avatar key={index} className="size-12 border-3 border-background">
                 <AvatarImage src={avatar.src} />
