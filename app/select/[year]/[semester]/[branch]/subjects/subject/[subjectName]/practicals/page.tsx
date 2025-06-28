@@ -36,55 +36,13 @@ async function fetchPracticalsContent(year: string, semester: string, branch: st
     const content = result && getNestedValue(result, queryPath.split('.'));
     
     return content || {
-      experiments: [
-        {
-          experimentNo: 1,
-          title: "Introduction to Lab Equipment",
-          aim: "To familiarize students with basic lab equipment and safety procedures",
-          theory: "Basic laboratory safety and equipment introduction...",
-          code: "// Sample code will be provided here",
-          output: "Expected output and observations",
-          conclusion: "Understanding of basic lab procedures achieved",
-          videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ"
-        },
-        {
-          experimentNo: 2,
-          title: "Basic Programming Concepts",
-          aim: "To understand fundamental programming concepts",
-          theory: "Programming fundamentals and basic concepts...",
-          code: "// Sample code implementation",
-          output: "Program execution results",
-          conclusion: "Basic programming concepts demonstrated",
-          videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ"
-        }
-      ]
+      experiments: []
     };
-      } catch (error) {
+  } catch (error) {
     console.error('Error fetching practicals content:', error);
-    // Return default structure if fetch fails
+    // Return empty structure if fetch fails
     return {
-      experiments: [
-        {
-          experimentNo: 1,
-          title: "Introduction to Lab Equipment",
-          aim: "To familiarize students with basic lab equipment and safety procedures",
-          theory: "Basic laboratory safety and equipment introduction...",
-          code: "// Sample code will be provided here",
-          output: "Expected output and observations",
-          conclusion: "Understanding of basic lab procedures achieved",
-          videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ"
-        },
-        {
-          experimentNo: 2,
-          title: "Basic Programming Concepts",
-          aim: "To understand fundamental programming concepts",
-          theory: "Programming fundamentals and basic concepts...",
-          code: "// Sample code implementation",
-          output: "Program execution results",
-          conclusion: "Basic programming concepts demonstrated",
-          videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ"
-        }
-      ]
+      experiments: []
     };
   }
 }

@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Copy, Play, Plus, Edit, Trash2, Save, X } from "lucide-react";
+import { Copy, Play, Plus, Edit, Trash2, Save, X, FlaskConical } from "lucide-react";
 
 interface Experiment {
   experimentNo: number;
@@ -835,8 +835,10 @@ export default function PracticalsClient({ experiments: initialExperiments, subj
       {/* Section Header */}
       <div className="text-center mb-12">
         <div className="flex justify-center mb-8">
-          <div className="p-6 rounded-3xl bg-secondary dark:bg-[oklch(0.205_0_0)]">
-            <div className="w-12 h-12 flex items-center justify-center text-foreground text-2xl">📚</div>
+          <div className="p-6 mt-10 rounded-3xl bg-secondary dark:bg-[oklch(0.205_0_0)]">
+            <div className="w-12 h-12 flex items-center justify-center text-foreground text-2xl">
+              <FlaskConical className="h-6 w-6" />
+            </div>
           </div>
         </div>
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground mb-6">
@@ -913,13 +915,15 @@ export default function PracticalsClient({ experiments: initialExperiments, subj
             <p className="text-muted-foreground mb-4">
               Experiments for this subject are not yet available.
             </p>
-            <Button
-              onClick={handleAddExperiment}
-              className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg flex items-center space-x-2 mx-auto"
-            >
-              <Plus className="h-4 w-4" />
-              <span>Add First Experiment</span>
-            </Button>
+            {isAdmin && (
+              <Button
+                onClick={handleAddExperiment}
+                className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg flex items-center space-x-2 mx-auto"
+              >
+                <Plus className="h-4 w-4" />
+                <span>Add First Experiment</span>
+              </Button>
+            )}
           </div>
         )}
       </div>
