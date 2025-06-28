@@ -735,14 +735,53 @@ export default function VideoLecturesClient({ subject, subjectVideos, subjectNam
     }
   }, [currentTopic, isAdmin, modules, year, semester, branch, subjectName]);
 
-  const handleAddModule = () => {
+  const handleAddModule = async () => {
     const newModuleId = `module-${Date.now()}`;
     const newModule: Module = {
       id: newModuleId,
       name: `New Module ${modules.length + 1}`,
       topics: []
     };
-    setModules(prev => [...prev, newModule]);
+
+    try {
+      // Update local state first
+      const updatedModules = [...modules, newModule];
+      setModules(updatedModules);
+
+      // Save to API
+      await updateVideoInAPI(year, semester, branch, subjectName, { modules: updatedModules });
+      
+      // Show success toast
+      const toast = document.createElement('div');
+      toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300';
+      toast.textContent = '✅ Module added successfully!';
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => {
+          document.body.removeChild(toast);
+        }, 300);
+      }, 3000);
+
+    } catch (error) {
+      console.error('Failed to add module:', error);
+      // Revert changes on error
+      setModules(modules);
+      
+      // Show error toast
+      const toast = document.createElement('div');
+      toast.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300';
+      toast.textContent = '❌ Failed to add module!';
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => {
+          document.body.removeChild(toast);
+        }, 300);
+      }, 3000);
+    }
   };
 
   const handleAddVideo = async (moduleId: string) => {
@@ -810,13 +849,51 @@ export default function VideoLecturesClient({ subject, subjectVideos, subjectNam
     setEditModuleName(currentName);
   };
 
-  const handleSaveModuleName = (moduleId: string) => {
+  const handleSaveModuleName = async (moduleId: string) => {
     if (editModuleName.trim()) {
-      setModules(prev => prev.map(module => 
-        module.id === moduleId 
-          ? { ...module, name: editModuleName.trim() }
-          : module
-      ));
+      try {
+        // Update local state first
+        const updatedModules = modules.map(module => 
+          module.id === moduleId 
+            ? { ...module, name: editModuleName.trim() }
+            : module
+        );
+        setModules(updatedModules);
+
+        // Save to API
+        await updateVideoInAPI(year, semester, branch, subjectName, { modules: updatedModules });
+        
+        // Show success toast
+        const toast = document.createElement('div');
+        toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300';
+        toast.textContent = '✅ Module name updated successfully!';
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+          toast.style.opacity = '0';
+          setTimeout(() => {
+            document.body.removeChild(toast);
+          }, 300);
+        }, 3000);
+
+      } catch (error) {
+        console.error('Failed to update module name:', error);
+        // Revert changes on error
+        setModules(modules);
+        
+        // Show error toast
+        const toast = document.createElement('div');
+        toast.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300';
+        toast.textContent = '❌ Failed to update module name!';
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+          toast.style.opacity = '0';
+          setTimeout(() => {
+            document.body.removeChild(toast);
+          }, 300);
+        }, 3000);
+      }
     }
     setEditingModule(null);
     setEditModuleName('');
@@ -837,18 +914,56 @@ export default function VideoLecturesClient({ subject, subjectVideos, subjectNam
     });
   };
 
-  const confirmDeleteModule = (moduleId: string) => {
-    setModules(prev => prev.filter(module => module.id !== moduleId));
-    
-    // If we're deleting the currently selected module, clear selection
-    if (selectedModule === moduleId) {
-      setSelectedModule('');
-      setCurrentTopic(null);
-    }
-    
-    // If the current topic belongs to the deleted module, clear it
-    if (currentTopic && modules.find(m => m.id === moduleId)?.topics.some(t => t.id === currentTopic.id)) {
-      setCurrentTopic(null);
+  const confirmDeleteModule = async (moduleId: string) => {
+    try {
+      // Update local state first
+      const updatedModules = modules.filter(module => module.id !== moduleId);
+      setModules(updatedModules);
+      
+      // If we're deleting the currently selected module, clear selection
+      if (selectedModule === moduleId) {
+        setSelectedModule('');
+        setCurrentTopic(null);
+      }
+      
+      // If the current topic belongs to the deleted module, clear it
+      if (currentTopic && modules.find(m => m.id === moduleId)?.topics.some(t => t.id === currentTopic.id)) {
+        setCurrentTopic(null);
+      }
+
+      // Save to API
+      await deleteVideoFromAPI(year, semester, branch, subjectName, { modules: updatedModules });
+      
+      // Show success toast
+      const toast = document.createElement('div');
+      toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300';
+      toast.textContent = '✅ Module deleted successfully!';
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => {
+          document.body.removeChild(toast);
+        }, 300);
+      }, 3000);
+
+    } catch (error) {
+      console.error('Failed to delete module:', error);
+      // Revert changes on error
+      setModules(modules);
+      
+      // Show error toast
+      const toast = document.createElement('div');
+      toast.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300';
+      toast.textContent = '❌ Failed to delete module!';
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => {
+          document.body.removeChild(toast);
+        }, 300);
+      }, 3000);
     }
     
     setDeleteModal({ isOpen: false, type: null, id: '', title: '' });
@@ -1191,7 +1306,7 @@ export default function VideoLecturesClient({ subject, subjectVideos, subjectNam
                                   type="text"
                                   value={editModuleName}
                                   onChange={(e) => setEditModuleName(e.target.value)}
-                                  className="w-full p-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                  className="w-full p-2 text-sm border border-border bg-background text-foreground rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                   placeholder="Module name"
                                   autoFocus
                                 />
@@ -1223,7 +1338,7 @@ export default function VideoLecturesClient({ subject, subjectVideos, subjectNam
                                     onClick={() => handleEditModule(module.id, module.name)}
                                     size="sm"
                                     variant="outline"
-                                    className="h-8 w-8 p-0"
+                                    className="h-8 w-8 p-0 hover:text-blue-700 hover:bg-blue-50"
                                   >
                                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -1249,35 +1364,35 @@ export default function VideoLecturesClient({ subject, subjectVideos, subjectNam
                           {module.topics.map((topic) => (
                             <div key={topic.id} className="space-y-2">
                               {editingVideo === topic.id ? (
-                                <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+                                <div className="p-3 bg-secondary dark:bg-[oklch(0.225_0_0)] rounded-lg border border-border">
                                   <div className="space-y-3">
                                     <div>
-                                      <label className="block text-xs font-medium text-gray-700 mb-1">Video Title</label>
+                                      <label className="block text-xs font-medium text-foreground mb-1">Video Title</label>
                                       <input
                                         type="text"
                                         value={editVideoData.title}
                                         onChange={(e) => setEditVideoData(prev => ({ ...prev, title: e.target.value }))}
-                                        className="w-full p-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        className="w-full p-2 text-sm border border-border bg-background text-foreground rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         placeholder="Video title"
                                       />
                                     </div>
                                     <div>
-                                      <label className="block text-xs font-medium text-gray-700 mb-1">YouTube URL</label>
+                                      <label className="block text-xs font-medium text-foreground mb-1">YouTube URL</label>
                                       <input
                                         type="text"
                                         value={editVideoData.videoUrl}
                                         onChange={(e) => setEditVideoData(prev => ({ ...prev, videoUrl: e.target.value }))}
-                                        className="w-full p-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        className="w-full p-2 text-sm border border-border bg-background text-foreground rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         placeholder="https://www.youtube.com/embed/..."
                                       />
                                     </div>
 
                                     <div>
-                                      <label className="block text-xs font-medium text-gray-700 mb-1">Notes</label>
+                                      <label className="block text-xs font-medium text-foreground mb-1">Notes</label>
                                       <textarea
                                         value={editVideoData.notes}
                                         onChange={(e) => setEditVideoData(prev => ({ ...prev, notes: e.target.value }))}
-                                        className="w-full p-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                                        className="w-full p-2 text-sm border border-border bg-background text-foreground rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                                         placeholder="Video description..."
                                         rows={2}
                                       />
@@ -1334,7 +1449,7 @@ export default function VideoLecturesClient({ subject, subjectVideos, subjectNam
                                         }}
                                         size="sm"
                                         variant="outline"
-                                        className="h-6 w-6 p-0 bg-white border-gray-300"
+                                        className="h-6 w-6 p-0 bg-background dark:bg-[oklch(0.205_0_0)] border-border  text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20"
                                       >
                                         <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -1347,7 +1462,7 @@ export default function VideoLecturesClient({ subject, subjectVideos, subjectNam
                                         }}
                                         size="sm"
                                         variant="outline"
-                                        className="h-6 w-6 p-0 bg-white border-gray-300 text-red-600 hover:text-red-700 hover:bg-red-50"
+                                        className="h-6 w-6 p-0 bg-background dark:bg-[oklch(0.205_0_0)] border-border text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
                                       >
                                         <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -1367,7 +1482,7 @@ export default function VideoLecturesClient({ subject, subjectVideos, subjectNam
                             onClick={() => handleAddVideo(module.id)}
                             variant="outline"
                             size="sm"
-                            className="w-full mt-2 border-dashed border-gray-300 text-gray-600 hover:text-gray-900 hover:border-gray-400"
+                            className="w-full mt-2 border-dashed border-border text-muted-foreground hover:text-foreground hover:border-foreground"
                           >
                             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -1385,7 +1500,7 @@ export default function VideoLecturesClient({ subject, subjectVideos, subjectNam
                   <Button
                     onClick={handleAddModule}
                     variant="outline"
-                    className="w-full mt-4 border-dashed border-gray-300 text-gray-600 hover:text-gray-900 hover:border-gray-400"
+                    className="w-full mt-4 border-dashed border-border text-muted-foreground hover:text-foreground hover:border-foreground"
                   >
                     <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
