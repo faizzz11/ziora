@@ -364,7 +364,7 @@ const ContactPage = () => {
                     )}
                   </div>
 
-                  <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
+                  <Button type="submit" className="w-full cursor-pointer" size="lg" disabled={isLoading}>
                     <Send className="w-4 h-4 mr-2" />
                     {isLoading ? 'Sending...' : 'Send Message'}
                   </Button>

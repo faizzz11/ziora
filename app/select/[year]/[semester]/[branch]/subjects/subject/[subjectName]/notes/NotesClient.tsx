@@ -896,7 +896,7 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
               variant="outline" 
               onClick={handlePreviousModule}
               disabled={!previousModule}
-              className="flex items-center space-x-2"
+              className="flex items-center space-x-2 cursor-pointer"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -914,7 +914,7 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
               variant="outline" 
               onClick={handleNextModule}
               disabled={!nextModule}
-              className="flex items-center space-x-2"
+              className="flex items-center space-x-2 cursor-pointer"
             >
               <span>Next Module</span>
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -928,7 +928,7 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
               <Button 
                 variant="outline" 
                 onClick={() => window.open(currentModule.relatedVideoLink, '_blank')}
-                className="flex items-center space-x-2"
+                className="flex items-center space-x- cursor-pointer"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.586a1 1 0 00.707-.293l2.414-2.414a1 1 0 01.707-.293H15" />
@@ -940,7 +940,7 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
             <Button 
               onClick={handleDownloadPdf}
               disabled={!currentModule?.pdfUrl}
-              className="bg-gradient-to-r from-gray-900 to-gray-800 dark:from-gray-700 dark:to-gray-600 text-white hover:from-gray-800 hover:to-gray-700 dark:hover:from-gray-600 dark:hover:to-gray-500"
+              className="cursor-pointer bg-gradient-to-r from-gray-900 to-gray-800 dark:from-gray-700 dark:to-gray-600 text-white hover:from-gray-800 hover:to-gray-700 dark:hover:from-gray-600 dark:hover:to-gray-500"
             >
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a4 4 0 01-4-4V5a4 4 0 014-4h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a4 4 0 01-4 4z" />
@@ -1117,7 +1117,7 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
                     <div key={module.id}>
                       <button
                         onClick={() => setSelectedModule(selectedModule === module.id ? '' : module.id)}
-                        className="w-full text-left p-3 bg-secondary dark:bg-[oklch(0.205_0_0)] hover:bg-muted dark:hover:bg-[oklch(0.225_0_0)] rounded-lg transition-colors"
+                        className="cursor-pointer w-full text-left p-3 bg-secondary dark:bg-[oklch(0.205_0_0)] hover:bg-muted dark:hover:bg-[oklch(0.225_0_0)] rounded-lg transition-colors"
                       >
                         <div className="flex items-center justify-between">
                           <span className="font-medium text-foreground">{module.name}</span>
@@ -1228,7 +1228,7 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
                                          onClick={() => handleModuleChange(module)}
                                          size="sm"
                                          variant="outline"
-                                         className="justify-start h-8 text-xs"
+                                         className="justify-start h-8 text-xs cursor-pointer"
                                        >
                                          <svg className="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a4 4 0 01-4-4V5a4 4 0 014-4h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a4 4 0 01-4 4z" />
@@ -1253,7 +1253,7 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
                                          onClick={() => window.open(module.relatedVideoLink, '_blank')}
                                          size="sm"
                                          variant="outline"
-                                         className="justify-start h-8 text-xs"
+                                         className="justify-start h-8 text-xs cursor-pointer"
                                        >
                                          <svg className="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.586a1 1 0 00.707-.293l2.414-2.414a1 1 0 01.707-.293H15" />
@@ -1277,7 +1277,7 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
                                        onClick={() => handleModuleChange(module)}
                                        size="sm"
                                        variant="outline"
-                                       className="justify-start h-8 text-xs"
+                                       className="justify-start h-8 text-xs cursor-pointer"
                                      >
                                        <svg className="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -1300,7 +1300,7 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
                     <Button
                       onClick={handleAddModule}
                       variant="outline"
-                      className="w-full mt-4 border-dashed border-border text-muted-foreground hover:text-foreground hover:border-muted-foreground"
+                      className="cursor-pointer w-full mt-4 border-dashed border-border text-muted-foreground hover:text-foreground hover:border-muted-foreground"
                     >
                       <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />

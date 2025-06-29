@@ -37,7 +37,7 @@ function FAQItem({ question, answer, index }: FAQItemProps) {
             <button
                 type="button"
                 onClick={() => setIsOpen(!isOpen)}
-                className="w-full px-6 py-4 flex items-center justify-between gap-4"
+                className="w-full px-6 py-4 flex items-center justify-between gap-4 cursor-pointer"
             >
                 <h3
                     className={cn(
@@ -200,7 +200,7 @@ function FAQ() {
                         onClick={() => router.push('/contact')}
                         type="button"
                         className={cn(
-                            "px-6 py-3 text-sm rounded-lg w-full",
+                            "px-6 py-3 text-sm rounded-lg w-full cursor-pointer",
                             "bg-black dark:bg-white text-white dark:text-black",
                             "hover:bg-gray-800 dark:hover:bg-gray-100",
                             "transition-colors duration-200",
