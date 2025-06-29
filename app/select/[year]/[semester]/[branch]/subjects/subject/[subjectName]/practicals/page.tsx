@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { ChevronRight, ArrowLeft, Home } from 'lucide-react';
+import { ChevronRight, ArrowLeft, Home, BookOpen } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import branchSubjectsData from '@/data/branch-subjects.json';
 import PracticalsClient from './PracticalsClient';
@@ -66,7 +66,7 @@ export default async function PracticalsPage({ params }: PracticalsPageProps) {
     id: subjectName,
     name: subjectName.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
     description: `Study materials for ${subjectName}`,
-    icon: '📚',
+    icon: BookOpen,
     code: 'N/A',
     credits: 3
   };

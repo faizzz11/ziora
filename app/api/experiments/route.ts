@@ -1,38 +1,64 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
-
-const experimentsFilePath = path.join(process.cwd(), 'data', 'experiments.json');
+import clientPromise from '@/lib/mongodb';
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const subjectName = searchParams.get('subject');
+    const year = searchParams.get('year');
+    const semester = searchParams.get('semester');
+    const branch = searchParams.get('branch');
+    const subject = searchParams.get('subject');
     
-    const fileContents = fs.readFileSync(experimentsFilePath, 'utf8');
-    const experimentsData = JSON.parse(fileContents);
-    
-    if (subjectName) {
-      return NextResponse.json(experimentsData[subjectName] || []);
+    if (!year || !semester || !branch || !subject) {
+      return NextResponse.json({ error: 'Missing required parameters' }, { status: 400 });
     }
+
+    const client = await clientPromise;
+    const db = client.db('ziora');
+    const collection = db.collection('academic_content');
+
+    // For FE (First Year Engineering), use 'FE' as branch regardless of URL branch parameter
+    const actualBranch = year === 'FE' ? 'FE' : branch;
+    const queryPath = `${year}.sem-${semester}.${actualBranch}.${subject}.practicals`;
     
-    return NextResponse.json(experimentsData);
+    const result = await collection.findOne({}, { projection: { [queryPath]: 1 } });
+    const content = result && getNestedValue(result, queryPath.split('.'));
+    
+    return NextResponse.json(content?.experiments || []);
   } catch (error) {
     console.error('Error reading experiments:', error);
     return NextResponse.json({ error: 'Failed to read experiments' }, { status: 500 });
   }
 }
 
+// Helper function to get nested value from object
+function getNestedValue(obj: any, path: string[]): any {
+  return path.reduce((current, key) => {
+    return current && current[key] !== undefined ? current[key] : undefined;
+  }, obj);
+}
+
 export async function POST(request: NextRequest) {
   try {
-    const { subject, experiments } = await request.json();
+    const { year, semester, branch, subject, experiments } = await request.json();
     
-    const fileContents = fs.readFileSync(experimentsFilePath, 'utf8');
-    const experimentsData = JSON.parse(fileContents);
+    if (!year || !semester || !branch || !subject) {
+      return NextResponse.json({ error: 'Missing required parameters' }, { status: 400 });
+    }
+
+    const client = await clientPromise;
+    const db = client.db('ziora');
+    const collection = db.collection('academic_content');
+
+    // For FE (First Year Engineering), use 'FE' as branch regardless of URL branch parameter
+    const actualBranch = year === 'FE' ? 'FE' : branch;
+    const updatePath = `${year}.sem-${semester}.${actualBranch}.${subject}.practicals.experiments`;
     
-    experimentsData[subject] = experiments;
-    
-    fs.writeFileSync(experimentsFilePath, JSON.stringify(experimentsData, null, 2));
+    await collection.updateOne(
+      {},
+      { $set: { [updatePath]: experiments } },
+      { upsert: true }
+    );
     
     return NextResponse.json({ success: true, message: 'Experiments updated successfully' });
   } catch (error) {
@@ -43,23 +69,25 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    const { subject, experimentNo, experimentData } = await request.json();
+    const { year, semester, branch, subject, experiments } = await request.json();
     
-    const fileContents = fs.readFileSync(experimentsFilePath, 'utf8');
-    const experimentsData = JSON.parse(fileContents);
-    
-    if (experimentsData[subject]) {
-      const experimentIndex = experimentsData[subject].findIndex((exp: any) => exp.experimentNo === experimentNo);
-      if (experimentIndex !== -1) {
-        experimentsData[subject][experimentIndex] = { ...experimentsData[subject][experimentIndex], ...experimentData };
-      } else {
-        experimentsData[subject].push(experimentData);
-      }
-    } else {
-      experimentsData[subject] = [experimentData];
+    if (!year || !semester || !branch || !subject) {
+      return NextResponse.json({ error: 'Missing required parameters' }, { status: 400 });
     }
+
+    const client = await clientPromise;
+    const db = client.db('ziora');
+    const collection = db.collection('academic_content');
+
+    // For FE (First Year Engineering), use 'FE' as branch regardless of URL branch parameter
+    const actualBranch = year === 'FE' ? 'FE' : branch;
+    const updatePath = `${year}.sem-${semester}.${actualBranch}.${subject}.practicals.experiments`;
     
-    fs.writeFileSync(experimentsFilePath, JSON.stringify(experimentsData, null, 2));
+    await collection.updateOne(
+      {},
+      { $set: { [updatePath]: experiments } },
+      { upsert: true }
+    );
     
     return NextResponse.json({ success: true, message: 'Experiment updated successfully' });
   } catch (error) {
@@ -70,16 +98,25 @@ export async function PUT(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    const { subject, experimentNo } = await request.json();
+    const { year, semester, branch, subject, experiments } = await request.json();
     
-    const fileContents = fs.readFileSync(experimentsFilePath, 'utf8');
-    const experimentsData = JSON.parse(fileContents);
-    
-    if (experimentsData[subject]) {
-      experimentsData[subject] = experimentsData[subject].filter((exp: any) => exp.experimentNo !== experimentNo);
+    if (!year || !semester || !branch || !subject) {
+      return NextResponse.json({ error: 'Missing required parameters' }, { status: 400 });
     }
+
+    const client = await clientPromise;
+    const db = client.db('ziora');
+    const collection = db.collection('academic_content');
+
+    // For FE (First Year Engineering), use 'FE' as branch regardless of URL branch parameter
+    const actualBranch = year === 'FE' ? 'FE' : branch;
+    const updatePath = `${year}.sem-${semester}.${actualBranch}.${subject}.practicals.experiments`;
     
-    fs.writeFileSync(experimentsFilePath, JSON.stringify(experimentsData, null, 2));
+    await collection.updateOne(
+      {},
+      { $set: { [updatePath]: experiments } },
+      { upsert: true }
+    );
     
     return NextResponse.json({ success: true, message: 'Experiment deleted successfully' });
   } catch (error) {

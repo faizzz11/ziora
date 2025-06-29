@@ -1,19 +1,30 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeHighlight from 'rehype-highlight';
+import 'highlight.js/styles/github-dark.css';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Copy, Play, Plus, Edit, Trash2, Save, X, FlaskConical } from "lucide-react";
+import { Copy, Play, Plus, Edit, Trash2, Save, X, FlaskConical, ClipboardList, BookOpen, Code, BarChart3, Target, Video, Microscope } from "lucide-react";
+
+interface CodeFile {
+  name: string;
+  code: string;
+}
 
 interface Experiment {
   experimentNo: number;
   title: string;
   aim: string;
   theory: string;
-  code: string;
+  codeFiles: CodeFile[];
   output: string;
   conclusion: string;
   videoUrl: string;
@@ -27,6 +38,53 @@ interface PracticalsClientProps {
   semester: string;
   branch: string;
 }
+
+// Helper function to detect programming language from file extension
+const getLanguageFromFileName = (fileName: string): string => {
+  const extension = fileName.split('.').pop()?.toLowerCase();
+  switch (extension) {
+    case 'py':
+      return 'python';
+    case 'java':
+      return 'java';
+    case 'js':
+      return 'javascript';
+    case 'ts':
+      return 'typescript';
+    case 'html':
+      return 'html';
+    case 'css':
+      return 'css';
+    case 'cpp':
+    case 'cc':
+    case 'cxx':
+      return 'cpp';
+    case 'c':
+      return 'c';
+    case 'php':
+      return 'php';
+    case 'rb':
+      return 'ruby';
+    case 'go':
+      return 'go';
+    case 'rs':
+      return 'rust';
+    case 'sql':
+      return 'sql';
+    case 'json':
+      return 'json';
+    case 'xml':
+      return 'xml';
+    case 'yaml':
+    case 'yml':
+      return 'yaml';
+    case 'sh':
+    case 'bash':
+      return 'bash';
+    default:
+      return 'text';
+  }
+};
 
 // API helper functions
 const saveExperimentsToAPI = async (year: string, semester: string, branch: string, subjectName: string, experiments: Experiment[]) => {
@@ -177,8 +235,19 @@ const ExperimentsTab = ({
   onCancelEdit: () => void;
   isAdmin: boolean;
 }) => {
+  const [selectedExperiment, setSelectedExperiment] = React.useState<number>(0);
+
+  // Set first experiment as selected when experiments change
+  React.useEffect(() => {
+    if (experiments.length > 0 && !experiments.find(e => e.experimentNo === selectedExperiment)) {
+      setSelectedExperiment(experiments[0].experimentNo);
+    }
+  }, [experiments, selectedExperiment]);
+
+  const currentExperiment = experiments.find(e => e.experimentNo === selectedExperiment);
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Add New Experiment Button - Only show for admins */}
       {isAdmin && (
         <div className="flex justify-end mb-6">
@@ -192,12 +261,34 @@ const ExperimentsTab = ({
         </div>
       )}
 
-      {experiments.map((experiment) => (
-        <Card key={experiment.experimentNo} className="border-2 border-border shadow-lg bg-card dark:bg-[oklch(0.205_0_0)]">
+      {/* Experiment Tabs */}
+      {experiments.length > 0 && (
+        <div className="border-b border-border">
+          <div className="flex space-x-1 overflow-x-auto">
+            {experiments.map((experiment) => (
+              <button
+                key={experiment.experimentNo}
+                onClick={() => setSelectedExperiment(experiment.experimentNo)}
+                className={`px-4 py-2 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
+                  selectedExperiment === experiment.experimentNo
+                    ? 'border-primary text-primary bg-primary/5'
+                    : 'border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground'
+                }`}
+              >
+                Exp {experiment.experimentNo}: {experiment.title.length > 20 ? experiment.title.substring(0, 20) + '...' : experiment.title}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Current Experiment Content */}
+      {currentExperiment && (
+        <Card className="border-2 border-border shadow-lg bg-card dark:bg-[oklch(0.205_0_0)]">
           <CardHeader className="bg-secondary dark:bg-[oklch(0.205_0_0)] border-b border-border">
             <div className="flex items-center justify-between">
               <div className="flex-1">
-                {editingExperiment === experiment.experimentNo ? (
+                {editingExperiment === currentExperiment.experimentNo ? (
                   <div className="space-y-3">
                     <div>
                       <label className="text-sm font-medium text-muted-foreground">Experiment No:</label>
@@ -228,10 +319,10 @@ const ExperimentsTab = ({
                 ) : (
                   <div>
                     <CardTitle className="text-xl font-bold text-gray-900 dark:text-white">
-                      Experiment No: {experiment.experimentNo}
+                      Experiment No: {currentExperiment.experimentNo}
                     </CardTitle>
                     <CardDescription className="text-lg font-semibold text-gray-700 dark:text-gray-400 mt-2">
-                      {experiment.title}
+                      {currentExperiment.title}
                     </CardDescription>
                   </div>
                 )}
@@ -241,10 +332,10 @@ const ExperimentsTab = ({
                   Lab Manual
                 </Badge>
                 {isAdmin && (
-                  editingExperiment === experiment.experimentNo ? (
+                  editingExperiment === currentExperiment.experimentNo ? (
                     <div className="flex space-x-2">
                       <Button
-                        onClick={() => onSaveExperiment(experiment.experimentNo)}
+                        onClick={() => onSaveExperiment(currentExperiment.experimentNo)}
                         size="sm"
                         className="bg-green-600 hover:bg-green-700 text-white"
                       >
@@ -262,7 +353,7 @@ const ExperimentsTab = ({
                     isAdmin && (
                       <div className="flex space-x-2">
                         <Button
-                          onClick={() => onEditExperiment(experiment)}
+                          onClick={() => onEditExperiment(currentExperiment)}
                           size="sm"
                           variant="outline"
                           className="hover:bg-blue-50"
@@ -270,7 +361,7 @@ const ExperimentsTab = ({
                           <Edit className="h-4 w-4" />
                         </Button>
                         <Button
-                          onClick={() => onDeleteExperiment(experiment.experimentNo)}
+                          onClick={() => onDeleteExperiment(currentExperiment.experimentNo)}
                           size="sm"
                           variant="outline"
                           className="hover:bg-red-50 text-red-600"
@@ -288,10 +379,11 @@ const ExperimentsTab = ({
           <CardContent className="p-6 space-y-6">
             {/* Aim Section */}
             <div>
-              <h3 className="text-lg font-semibold text-foreground mb-3 border-b border-border pb-2">
-                📋 Aim:
+              <h3 className="text-lg font-semibold text-foreground mb-3 border-b border-border pb-2 flex items-center gap-2">
+                <ClipboardList className="h-5 w-5" />
+                Aim:
               </h3>
-              {editingExperiment === experiment.experimentNo ? (
+              {editingExperiment === currentExperiment.experimentNo ? (
                 <Textarea
                   value={editExperimentData.aim || ''}
                   onChange={(e) => setEditExperimentData({
@@ -302,16 +394,17 @@ const ExperimentsTab = ({
                   placeholder="Experiment Aim"
                 />
               ) : (
-                <p className="text-muted-foreground leading-relaxed">{experiment.aim}</p>
+                <p className="text-muted-foreground leading-relaxed">{currentExperiment.aim}</p>
               )}
             </div>
 
             {/* Theory Section */}
             <div>
-              <h3 className="text-lg font-semibold text-foreground mb-3 border-b border-border pb-2">
-                📖 Theory:
+              <h3 className="text-lg font-semibold text-foreground mb-3 border-b border-border pb-2 flex items-center gap-2">
+                <BookOpen className="h-5 w-5" />
+                Theory:
               </h3>
-              {editingExperiment === experiment.experimentNo ? (
+              {editingExperiment === currentExperiment.experimentNo ? (
                 <Textarea
                   value={editExperimentData.theory || ''}
                   onChange={(e) => setEditExperimentData({
@@ -319,56 +412,185 @@ const ExperimentsTab = ({
                     theory: e.target.value
                   })}
                   className="min-h-[120px]"
-                  placeholder="Theory"
+                  placeholder="Theory (supports Markdown)"
                 />
               ) : (
-                <p className="text-muted-foreground leading-relaxed">{experiment.theory}</p>
+                <div className="text-muted-foreground leading-relaxed markdown-content">
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    rehypePlugins={[rehypeHighlight]}
+                    components={{
+                      h1: ({children}) => <h1 className="text-2xl font-bold text-foreground mb-4 mt-6">{children}</h1>,
+                      h2: ({children}) => <h2 className="text-xl font-semibold text-foreground mb-3 mt-5">{children}</h2>,
+                      h3: ({children}) => <h3 className="text-lg font-medium text-foreground mb-2 mt-4">{children}</h3>,
+                      p: ({children}) => <p className="mb-4 text-muted-foreground leading-relaxed">{children}</p>,
+                      ul: ({children}) => <ul className="list-disc list-outside mb-4 space-y-2 text-muted-foreground pl-6">{children}</ul>,
+                      ol: ({children}) => <ol className="list-decimal list-outside mb-4 space-y-2 text-muted-foreground pl-6">{children}</ol>,
+                      li: ({children}) => <li className="pl-2">{children}</li>,
+                      strong: ({children}) => <strong className="font-semibold text-foreground">{children}</strong>,
+                      em: ({children}) => <em className="italic">{children}</em>,
+                      code: ({children, className}) => {
+                        const isInline = !className;
+                        return isInline 
+                          ? <code className="bg-secondary dark:bg-[oklch(0.269_0_0)] px-2 py-1 rounded text-sm font-mono text-foreground">{children}</code>
+                          : <code className={className}>{children}</code>;
+                      },
+                      pre: ({children}) => <pre className="bg-secondary dark:bg-[oklch(0.269_0_0)] p-4 rounded-lg overflow-x-auto mb-4 text-sm">{children}</pre>,
+                      blockquote: ({children}) => <blockquote className="border-l-4 border-border pl-4 italic text-muted-foreground mb-4">{children}</blockquote>,
+                      a: ({children, href}) => <a href={href} className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">{children}</a>,
+                      table: ({children}) => <div className="overflow-x-auto mb-4"><table className="min-w-full border-collapse border border-border">{children}</table></div>,
+                      thead: ({children}) => <thead className="bg-secondary dark:bg-[oklch(0.269_0_0)]">{children}</thead>,
+                      tbody: ({children}) => <tbody>{children}</tbody>,
+                      tr: ({children}) => <tr className="border-b border-border">{children}</tr>,
+                      th: ({children}) => <th className="border border-border px-4 py-2 text-left font-semibold text-foreground">{children}</th>,
+                      td: ({children}) => <td className="border border-border px-4 py-2 text-muted-foreground">{children}</td>,
+                    }}
+                  >
+                    {currentExperiment.theory}
+                  </ReactMarkdown>
+                </div>
               )}
             </div>
 
             {/* Code Section */}
             <div>
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-lg font-semibold text-foreground border-b border-border pb-2">
-                  💻 Code:
+                <h3 className="text-lg font-semibold text-foreground border-b border-border pb-2 flex items-center gap-2">
+                  <Code className="h-5 w-5" />
+                  Code:
                 </h3>
-                {editingExperiment !== experiment.experimentNo && (
+                {editingExperiment !== currentExperiment.experimentNo && currentExperiment.codeFiles && currentExperiment.codeFiles.length > 0 && (
                   <Button
-                    onClick={() => copyToClipboard(experiment.code)}
+                    onClick={() => copyToClipboard(currentExperiment.codeFiles.map(cf => `// ${cf.name}\n${cf.code}`).join('\n\n'))}
                     variant="outline"
                     size="sm"
                     className="flex items-center space-x-2 hover:bg-secondary"
                   >
                     <Copy className="h-4 w-4" />
-                    <span>Copy Code</span>
+                    <span>Copy All Code</span>
                   </Button>
                 )}
               </div>
-              {editingExperiment === experiment.experimentNo ? (
-                <Textarea
-                  value={editExperimentData.code || ''}
-                  onChange={(e) => setEditExperimentData({
-                    ...editExperimentData,
-                    code: e.target.value
-                  })}
-                  className="min-h-[200px] font-mono text-sm"
-                  placeholder="Code"
-                />
+              {editingExperiment === currentExperiment.experimentNo ? (
+                <div className="space-y-4">
+                  {editExperimentData.codeFiles?.map((codeFile, index) => (
+                    <div key={index} className="border border-border rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <Input
+                          value={codeFile.name}
+                          onChange={(e) => {
+                            const newCodeFiles = [...(editExperimentData.codeFiles || [])];
+                            newCodeFiles[index].name = e.target.value;
+                            setEditExperimentData({
+                              ...editExperimentData,
+                              codeFiles: newCodeFiles
+                            });
+                          }}
+                          placeholder="Code file name (e.g., main.py, index.html)"
+                          className="flex-1 mr-2"
+                        />
+                        <Button
+                          onClick={() => {
+                            const newCodeFiles = [...(editExperimentData.codeFiles || [])];
+                            newCodeFiles.splice(index, 1);
+                            setEditExperimentData({
+                              ...editExperimentData,
+                              codeFiles: newCodeFiles
+                            });
+                          }}
+                          variant="outline"
+                          size="sm"
+                          className="text-red-600 hover:bg-red-50"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      <Textarea
+                        value={codeFile.code}
+                        onChange={(e) => {
+                          const newCodeFiles = [...(editExperimentData.codeFiles || [])];
+                          newCodeFiles[index].code = e.target.value;
+                          setEditExperimentData({
+                            ...editExperimentData,
+                            codeFiles: newCodeFiles
+                          });
+                        }}
+                        className="min-h-[200px] font-mono text-sm"
+                        placeholder="Code content"
+                      />
+                    </div>
+                  ))}
+                  <Button
+                    onClick={() => {
+                      const newCodeFiles = [...(editExperimentData.codeFiles || [])];
+                      newCodeFiles.push({ name: `file${newCodeFiles.length + 1}.txt`, code: '' });
+                      setEditExperimentData({
+                        ...editExperimentData,
+                        codeFiles: newCodeFiles
+                      });
+                    }}
+                    variant="outline"
+                    className="w-full"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Code File
+                  </Button>
+                </div>
               ) : (
-                <div className="bg-[oklch(0.205_0_0)] dark:bg-black rounded-lg p-4 overflow-x-auto">
-                  <pre className="text-green-400 text-sm font-mono whitespace-pre-wrap">
-                    {experiment.code}
-                  </pre>
+                <div className="space-y-4">
+                  {(currentExperiment.codeFiles || []).map((codeFile, index) => (
+                    <div key={index} className="border border-border rounded-lg overflow-hidden">
+                      <div className="bg-secondary dark:bg-[oklch(0.269_0_0)] px-4 py-2 border-b border-border">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium text-foreground">{codeFile.name}</span>
+                          <Button
+                            onClick={() => copyToClipboard(codeFile.code)}
+                            variant="outline"
+                            size="sm"
+                            className="text-xs"
+                          >
+                            <Copy className="h-3 w-3 mr-1" />
+                            Copy
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="bg-[oklch(0.205_0_0)] dark:bg-black overflow-x-auto">
+                        <SyntaxHighlighter
+                          language={getLanguageFromFileName(codeFile.name)}
+                          style={oneDark}
+                          customStyle={{
+                            margin: 0,
+                            borderRadius: 0,
+                            background: 'transparent',
+                            fontSize: '14px',
+                            lineHeight: '1.5',
+                            padding: '16px'
+                          }}
+                          showLineNumbers={true}
+                          wrapLines={false}
+                          codeTagProps={{
+                            style: {
+                              background: 'transparent',
+                              fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Inconsolata, "Roboto Mono", monospace'
+                            }
+                          }}
+                        >
+                          {codeFile.code}
+                        </SyntaxHighlighter>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
 
             {/* Output Section */}
             <div>
-              <h3 className="text-lg font-semibold text-foreground mb-3 border-b border-border pb-2">
-                📊 Output:
+              <h3 className="text-lg font-semibold text-foreground mb-3 border-b border-border pb-2 flex items-center gap-2">
+                <BarChart3 className="h-5 w-5" />
+                Output:
               </h3>
-              {editingExperiment === experiment.experimentNo ? (
+              {editingExperiment === currentExperiment.experimentNo ? (
                 <Textarea
                   value={editExperimentData.output || ''}
                   onChange={(e) => setEditExperimentData({
@@ -376,23 +598,53 @@ const ExperimentsTab = ({
                     output: e.target.value
                   })}
                   className="min-h-[100px] font-mono text-sm"
-                  placeholder="Output"
+                  placeholder="Output (supports Markdown)"
                 />
               ) : (
-                <div className="bg-secondary dark:bg-[oklch(0.205_0_0)] rounded-lg p-4">
-                  <pre className="text-foreground text-sm font-mono whitespace-pre-wrap">
-                    {experiment.output}
-                  </pre>
+                <div className="bg-secondary dark:bg-[oklch(0.205_0_0)] rounded-lg p-4 markdown-content">
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    rehypePlugins={[rehypeHighlight]}
+                    components={{
+                      h1: ({children}) => <h1 className="text-2xl font-bold text-foreground mb-4 mt-6">{children}</h1>,
+                      h2: ({children}) => <h2 className="text-xl font-semibold text-foreground mb-3 mt-5">{children}</h2>,
+                      h3: ({children}) => <h3 className="text-lg font-medium text-foreground mb-2 mt-4">{children}</h3>,
+                      p: ({children}) => <p className="mb-4 text-foreground leading-relaxed">{children}</p>,
+                      ul: ({children}) => <ul className="list-disc list-outside mb-4 space-y-2 text-foreground pl-6">{children}</ul>,
+                      ol: ({children}) => <ol className="list-decimal list-outside mb-4 space-y-2 text-foreground pl-6">{children}</ol>,
+                      li: ({children}) => <li className="pl-2">{children}</li>,
+                      strong: ({children}) => <strong className="font-semibold text-foreground">{children}</strong>,
+                      em: ({children}) => <em className="italic">{children}</em>,
+                      code: ({children, className}) => {
+                        const isInline = !className;
+                        return isInline 
+                          ? <code className="bg-background dark:bg-[oklch(0.145_0_0)] px-2 py-1 rounded text-sm font-mono text-green-400">{children}</code>
+                          : <code className={className}>{children}</code>;
+                      },
+                      pre: ({children}) => <pre className="bg-background dark:bg-[oklch(0.145_0_0)] p-4 rounded-lg overflow-x-auto mb-4 text-sm">{children}</pre>,
+                      blockquote: ({children}) => <blockquote className="border-l-4 border-border pl-4 italic text-foreground mb-4">{children}</blockquote>,
+                      a: ({children, href}) => <a href={href} className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">{children}</a>,
+                      table: ({children}) => <div className="overflow-x-auto mb-4"><table className="min-w-full border-collapse border border-border bg-background dark:bg-[oklch(0.145_0_0)] rounded-lg">{children}</table></div>,
+                      thead: ({children}) => <thead className="bg-border dark:bg-[oklch(0.269_0_0)]">{children}</thead>,
+                      tbody: ({children}) => <tbody>{children}</tbody>,
+                      tr: ({children}) => <tr className="border-b border-border">{children}</tr>,
+                      th: ({children}) => <th className="border border-border px-4 py-2 text-left font-semibold text-foreground">{children}</th>,
+                      td: ({children}) => <td className="border border-border px-4 py-2 text-foreground">{children}</td>,
+                    }}
+                  >
+                    {currentExperiment.output}
+                  </ReactMarkdown>
                 </div>
               )}
             </div>
 
             {/* Conclusion Section */}
             <div>
-              <h3 className="text-lg font-semibold text-foreground mb-3 border-b border-border pb-2">
-                🎯 Conclusion:
+              <h3 className="text-lg font-semibold text-foreground mb-3 border-b border-border pb-2 flex items-center gap-2">
+                <Target className="h-5 w-5" />
+                Conclusion:
               </h3>
-              {editingExperiment === experiment.experimentNo ? (
+              {editingExperiment === currentExperiment.experimentNo ? (
                 <Textarea
                   value={editExperimentData.conclusion || ''}
                   onChange={(e) => setEditExperimentData({
@@ -403,12 +655,12 @@ const ExperimentsTab = ({
                   placeholder="Conclusion"
                 />
               ) : (
-                <p className="text-muted-foreground leading-relaxed">{experiment.conclusion}</p>
+                <p className="text-muted-foreground leading-relaxed">{currentExperiment.conclusion}</p>
               )}
             </div>
           </CardContent>
         </Card>
-      ))}
+      )}
     </div>
   );
 };
@@ -437,8 +689,19 @@ const ExperimentVideosTab = ({
   onCancelVideoEdit: () => void;
   isAdmin: boolean;
 }) => {
+  const [selectedVideoExperiment, setSelectedVideoExperiment] = React.useState<number>(0);
+
+  // Set first experiment as selected when experiments change
+  React.useEffect(() => {
+    if (experiments.length > 0 && !experiments.find(e => e.experimentNo === selectedVideoExperiment)) {
+      setSelectedVideoExperiment(experiments[0].experimentNo);
+    }
+  }, [experiments, selectedVideoExperiment]);
+
+  const currentVideoExperiment = experiments.find(e => e.experimentNo === selectedVideoExperiment);
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Add New Video Button - Only show for admins */}
       {isAdmin && (
         <div className="flex justify-end mb-6">
@@ -452,12 +715,34 @@ const ExperimentVideosTab = ({
         </div>
       )}
 
-      {experiments.map((experiment) => (
-        <Card key={experiment.experimentNo} className="border-2 border-border shadow-lg">
+      {/* Video Experiment Tabs */}
+      {experiments.length > 0 && (
+        <div className="border-b border-border">
+          <div className="flex space-x-1 overflow-x-auto">
+            {experiments.map((experiment) => (
+              <button
+                key={experiment.experimentNo}
+                onClick={() => setSelectedVideoExperiment(experiment.experimentNo)}
+                className={`px-4 py-2 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
+                  selectedVideoExperiment === experiment.experimentNo
+                    ? 'border-primary text-primary bg-primary/5'
+                    : 'border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground'
+                }`}
+              >
+                Exp {experiment.experimentNo}: {experiment.title.length > 20 ? experiment.title.substring(0, 20) + '...' : experiment.title}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Current Video Experiment Content */}
+      {currentVideoExperiment && (
+        <Card className="border-2 border-border shadow-lg">
           <CardHeader className="bg-secondary dark:bg-[oklch(0.205_0_0)] border-b">
             <div className="flex items-center justify-between">
               <div className="flex-1">
-                {editingVideo === experiment.experimentNo ? (
+                {editingVideo === currentVideoExperiment.experimentNo ? (
                   <div className="space-y-3">
                     <div>
                       <label className="text-sm font-medium text-muted-foreground">Experiment No:</label>
@@ -500,10 +785,10 @@ const ExperimentVideosTab = ({
                 ) : (
                   <div>
                     <CardTitle className="text-xl font-bold text-foreground">
-                      Experiment No: {experiment.experimentNo}
+                      Experiment No: {currentVideoExperiment.experimentNo}
                     </CardTitle>
                     <CardDescription className="text-lg font-semibold text-muted-foreground mt-2">
-                      {experiment.title}
+                      {currentVideoExperiment.title}
                     </CardDescription>
                   </div>
                 )}
@@ -513,10 +798,10 @@ const ExperimentVideosTab = ({
                   <Play className="h-3 w-3" />
                   <span>Video</span>
                 </Badge>
-                {editingVideo === experiment.experimentNo ? (
+                {editingVideo === currentVideoExperiment.experimentNo ? (
                   <div className="flex space-x-2">
                     <Button
-                      onClick={() => onSaveVideo(experiment.experimentNo)}
+                      onClick={() => onSaveVideo(currentVideoExperiment.experimentNo)}
                       size="sm"
                       className="bg-green-600 hover:bg-green-700 text-white"
                     >
@@ -534,7 +819,7 @@ const ExperimentVideosTab = ({
                   isAdmin && (
                     <div className="flex space-x-2">
                       <Button
-                        onClick={() => onEditVideo(experiment)}
+                        onClick={() => onEditVideo(currentVideoExperiment)}
                         size="sm"
                         variant="outline"
                         className="hover:bg-blue-50"
@@ -542,7 +827,7 @@ const ExperimentVideosTab = ({
                         <Edit className="h-4 w-4" />
                       </Button>
                       <Button
-                        onClick={() => onDeleteVideo(experiment.experimentNo)}
+                        onClick={() => onDeleteVideo(currentVideoExperiment.experimentNo)}
                         size="sm"
                         variant="outline"
                         className="hover:bg-red-50 text-red-600"
@@ -559,8 +844,8 @@ const ExperimentVideosTab = ({
           <CardContent className="p-6">
             <div className="aspect-video w-4/5 mx-auto">
               <iframe
-                src={experiment.videoUrl}
-                title={`${experiment.title} - Video Tutorial`}
+                src={currentVideoExperiment.videoUrl}
+                title={`${currentVideoExperiment.title} - Video Tutorial`}
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
@@ -569,7 +854,7 @@ const ExperimentVideosTab = ({
             </div>
           </CardContent>
         </Card>
-      ))}
+      )}
     </div>
   );
 };
@@ -617,7 +902,7 @@ export default function PracticalsClient({ experiments: initialExperiments, subj
       title: `New Experiment ${newExperimentNo}`,
       aim: "New experiment aim",
       theory: "New experiment theory",
-      code: "// New experiment code",
+      codeFiles: [{ name: "main.py", code: "# New experiment code" }],
       output: "New experiment output",
       conclusion: "New experiment conclusion",
       videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ"
@@ -628,7 +913,10 @@ export default function PracticalsClient({ experiments: initialExperiments, subj
 
   const handleEditExperiment = (experiment: Experiment) => {
     setEditingExperiment(experiment.experimentNo);
-    setEditExperimentData(experiment);
+    setEditExperimentData({
+      ...experiment,
+      codeFiles: experiment.codeFiles || [{ name: "main.py", code: "" }]
+    });
   };
 
   const handleSaveExperiment = async (experimentNo: number) => {
@@ -739,7 +1027,8 @@ export default function PracticalsClient({ experiments: initialExperiments, subj
     setEditVideoData({
       experimentNo: experiment.experimentNo,
       title: experiment.title,
-      videoUrl: experiment.videoUrl
+      videoUrl: experiment.videoUrl,
+      codeFiles: experiment.codeFiles || [{ name: "main.py", code: "" }]
     });
   };
 
@@ -817,7 +1106,7 @@ export default function PracticalsClient({ experiments: initialExperiments, subj
       title: `New Video ${newExperimentNo}`,
       aim: "New video experiment aim",
       theory: "New video experiment theory",
-      code: "// New video experiment code",
+      codeFiles: [{ name: "main.py", code: "# New video experiment code" }],
       output: "New video experiment output",
       conclusion: "New video experiment conclusion",
       videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ"
@@ -854,23 +1143,25 @@ export default function PracticalsClient({ experiments: initialExperiments, subj
         <div className="inline-flex rounded-lg border border-border bg-secondary dark:bg-[oklch(0.205_0_0)] p-1">
           <button
             onClick={() => setActiveTab('experiments')}
-            className={`px-6 py-3 rounded-md text-sm font-medium transition-all ${
+            className={`px-6 py-3 rounded-md text-sm font-medium transition-all flex items-center gap-2 ${
               activeTab === 'experiments'
                 ? 'bg-card dark:bg-[oklch(0.205_0_0)] text-foreground shadow-sm border border-border'
                 : 'text-muted-foreground hover:text-foreground'
             }`}
           >
-            🧪 Experiments & Code
+            <FlaskConical className="h-4 w-4" />
+            Experiments & Code
           </button>
           <button
             onClick={() => setActiveTab('videos')}
-            className={`px-6 py-3 rounded-md text-sm font-medium transition-all ${
+            className={`px-6 py-3 rounded-md text-sm font-medium transition-all flex items-center gap-2 ${
               activeTab === 'videos'
                 ? 'bg-card dark:bg-[oklch(0.205_0_0)] text-foreground shadow-sm border border-border'
                 : 'text-muted-foreground hover:text-foreground'
             }`}
           >
-            🎥 Experiment Videos
+            <Video className="h-4 w-4" />
+            Experiment Videos
           </button>
         </div>
       </div>
@@ -910,7 +1201,9 @@ export default function PracticalsClient({ experiments: initialExperiments, subj
           </>
         ) : (
           <div className="text-center py-12">
-            <div className="text-6xl mb-4">🔬</div>
+            <div className="flex justify-center mb-4">
+              <Microscope className="h-16 w-16 text-muted-foreground" />
+            </div>
             <h3 className="text-xl font-semibold text-foreground mb-2">No Experiments Available</h3>
             <p className="text-muted-foreground mb-4">
               Experiments for this subject are not yet available.
