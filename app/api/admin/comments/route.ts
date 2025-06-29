@@ -251,10 +251,42 @@ export async function DELETE(req: Request) {
 function formatTimestamp(timestamp: Date | string): string {
   if (!timestamp) return 'Unknown time';
   
-  const date = new Date(timestamp);
+  let date: Date;
+  
+  // Handle custom timestamp formats from your database
+  if (typeof timestamp === 'string') {
+    // Parse custom formats like "22/06/2025, 00:46:48" or "6/29/2025, 7:26:23 PM"
+    try {
+      // Try to parse the custom format
+      if (timestamp.includes(',')) {
+        const [datePart, timePart] = timestamp.split(', ');
+        const [day, month, year] = datePart.split('/');
+        
+        // Create ISO format: YYYY-MM-DD HH:mm:ss
+        let timeFormatted = timePart;
+        if (timePart.includes('PM')) {
+          timeFormatted = convertTo24Hour(timePart);
+        } else if (timePart.includes('AM')) {
+          timeFormatted = convertTo24Hour(timePart);
+        }
+        
+        const isoString = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}T${timeFormatted}`;
+        date = new Date(isoString);
+      } else {
+        // Fallback to standard parsing
+        date = new Date(timestamp);
+      }
+    } catch (error) {
+      console.warn('Failed to parse timestamp:', timestamp);
+      return timestamp; // Return original if parsing fails
+    }
+  } else {
+    date = new Date(timestamp);
+  }
   
   if (isNaN(date.getTime())) {
-    return 'Unknown time';
+    console.warn('Invalid date after parsing:', timestamp);
+    return typeof timestamp === 'string' ? timestamp : 'Unknown time';
   }
   
   const now = Date.now();
@@ -271,4 +303,24 @@ function formatTimestamp(timestamp: Date | string): string {
   if (diffInDays < 30) return `${diffInDays} day${diffInDays === 1 ? '' : 's'} ago`;
   
   return date.toLocaleDateString();
+}
+
+// Helper function to convert 12-hour time to 24-hour time
+function convertTo24Hour(timeStr: string): string {
+  const isPM = timeStr.includes('PM');
+  const isAM = timeStr.includes('AM');
+  
+  if (!isPM && !isAM) return timeStr; // Already 24-hour format
+  
+  let cleanTime = timeStr.replace(/\s*(AM|PM)/i, '');
+  const [hours, minutes, seconds] = cleanTime.split(':');
+  let hour24 = parseInt(hours);
+  
+  if (isPM && hour24 !== 12) {
+    hour24 += 12;
+  } else if (isAM && hour24 === 12) {
+    hour24 = 0;
+  }
+  
+  return `${hour24.toString().padStart(2, '0')}:${minutes}${seconds ? ':' + seconds : ':00'}`;
 } 
