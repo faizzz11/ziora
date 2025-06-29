@@ -36,6 +36,18 @@ export async function POST(req: Request) {
       );
     }
 
+    // Update login count and last active time
+    await usersCollection.updateOne(
+      { _id: user._id },
+      {
+        $inc: { loginCount: 1 }, // Increment login count
+        $set: { 
+          updatedAt: new Date(), // Update last active time
+          lastLoginAt: new Date()
+        }
+      }
+    );
+
     // Remove password from response
     const { password: _, ...userWithoutPassword } = user;
 

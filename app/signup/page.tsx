@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import Link from 'next/link';
+import PageTracker from '@/components/PageTracker';
 
 const SignupPage = () => {
   const [formData, setFormData] = useState({
@@ -208,6 +209,7 @@ const SignupPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-black flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
+      <PageTracker pageName="Signup" />
       <div className="max-w-2xl w-full space-y-8">
         {/* Header */}
         <div className="text-center">

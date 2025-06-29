@@ -265,7 +265,7 @@ const ExperimentsTab = ({
       {experiments.length > 0 && (
         <div className="border-b border-border">
           <div className="flex space-x-1 overflow-x-auto">
-            {experiments.map((experiment) => (
+      {experiments.map((experiment) => (
               <button
                 key={experiment.experimentNo}
                 onClick={() => setSelectedExperiment(experiment.experimentNo)}
@@ -505,17 +505,17 @@ const ExperimentsTab = ({
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
-                      <Textarea
+                <Textarea
                         value={codeFile.code}
                         onChange={(e) => {
                           const newCodeFiles = [...(editExperimentData.codeFiles || [])];
                           newCodeFiles[index].code = e.target.value;
                           setEditExperimentData({
-                            ...editExperimentData,
+                    ...editExperimentData,
                             codeFiles: newCodeFiles
                           });
                         }}
-                        className="min-h-[200px] font-mono text-sm"
+                  className="min-h-[200px] font-mono text-sm"
                         placeholder="Code content"
                       />
                     </div>
@@ -719,7 +719,7 @@ const ExperimentVideosTab = ({
       {experiments.length > 0 && (
         <div className="border-b border-border">
           <div className="flex space-x-1 overflow-x-auto">
-            {experiments.map((experiment) => (
+      {experiments.map((experiment) => (
               <button
                 key={experiment.experimentNo}
                 onClick={() => setSelectedVideoExperiment(experiment.experimentNo)}

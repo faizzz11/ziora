@@ -4,6 +4,7 @@ import { ChevronRight, ArrowLeft, Home, BookOpen } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import branchSubjectsData from '@/data/branch-subjects.json';
 import PracticalsClient from './PracticalsClient';
+import PageTracker from '@/components/PageTracker';
 
 interface PracticalsPageProps {
   params: Promise<{
@@ -79,6 +80,7 @@ export default async function PracticalsPage({ params }: PracticalsPageProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-secondary/10 dark:from-black dark:to-gray-950">
+      <PageTracker pageName={`Practicals - ${subject.name}`} />
       {/* Breadcrumb */}
       <div className="px-4 sm:px-6 lg:px-8 py-6 bg-card dark:bg-[oklch(0.205_0_0)] border-b border-border">
         <div className="max-w-6xl mx-auto">

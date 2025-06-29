@@ -410,43 +410,75 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
   };
 
   // Memoized comment handlers to prevent re-renders
-  const handleCommentSubmit = useCallback((e: React.FormEvent) => {
+  const handleCommentSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentModule || !newComment.trim()) return;
 
-    const newCommentObj: Comment = {
-      id: `comment-${Date.now()}`,
-      author: currentUser?.name || 'Anonymous User',
-      content: newComment.trim(),
-      timestamp: new Date().toLocaleString(),
-      userId: currentUser?.id,
-      replies: [],
-      likes: 0,
-      dislikes: 0,
-      likedBy: [],
-      dislikedBy: []
-    };
-
-    const updatedModules = modules.map(module => {
-      if (module.id === currentModule.id) {
-        return { ...module, comments: [...module.comments, newCommentObj] };
-      }
-      return module;
-    });
-
-    setModules(updatedModules);
-    setCurrentModule(updatedModules.find(m => m.id === currentModule.id) || currentModule);
-    setNewComment('');
-
-    // Save to API
-    updateNotesInAPI(year, semester, branch, subjectName, { modules: updatedModules })
-      .catch(error => {
-        console.error('Error saving comment:', error);
-        // Revert changes on error
-        setModules(modules);
-        setCurrentModule(currentModule);
+    try {
+      // Save comment to MongoDB first
+      const response = await fetch('/api/content/comments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          author: currentUser?.name || 'Anonymous User',
+          content: newComment.trim(),
+          subject: subject.name,
+          module: currentModule.name,
+          type: 'notes',
+          contentId: currentModule.id,
+          year,
+          semester,
+          branch,
+          userId: currentUser?.id,
+          userEmail: `${currentUser?.name || 'Anonymous'}`
+        }),
       });
-  }, [currentModule, newComment, currentUser, modules, year, semester, branch, subjectName]);
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Create local comment object with MongoDB ID
+        const newCommentObj: Comment = {
+          id: result.comment.id,
+          author: result.comment.author,
+          content: result.comment.content,
+          timestamp: result.comment.timestamp,
+          userId: result.comment.userId,
+          replies: [],
+          likes: 0,
+          dislikes: 0,
+          likedBy: [],
+          dislikedBy: []
+        };
+
+        // Update local state
+        const updatedModules = modules.map(module => {
+          if (module.id === currentModule.id) {
+            return { ...module, comments: [...module.comments, newCommentObj] };
+          }
+          return module;
+        });
+
+        setModules(updatedModules);
+        setCurrentModule(updatedModules.find(m => m.id === currentModule.id) || currentModule);
+        setNewComment('');
+
+        // Also save to the existing notes API for backward compatibility
+        updateNotesInAPI(year, semester, branch, subjectName, { modules: updatedModules })
+          .catch(error => {
+            console.error('Error updating notes API:', error);
+          });
+      } else {
+        console.error('Error saving comment to MongoDB:', result.error);
+        alert('Failed to save comment. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error saving comment:', error);
+      alert('Failed to save comment. Please try again.');
+    }
+  }, [currentModule, newComment, currentUser, modules, year, semester, branch, subjectName, subject.name]);
 
   const handleReplySubmit = useCallback((e: React.FormEvent, parentCommentId: string) => {
     e.preventDefault();

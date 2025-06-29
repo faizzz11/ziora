@@ -64,4 +64,48 @@ export function clearAllSessions(): void {
   } catch (error) {
     console.error('Error clearing sessions:', error);
   }
+}
+
+// User Management API Functions
+export async function fetchAllUsers() {
+  try {
+    const response = await fetch('/api/admin/users');
+    const data = await response.json();
+    
+    if (data.success) {
+      return { success: true, users: data.users };
+    } else {
+      return { success: false, error: data.error || 'Failed to fetch users' };
+    }
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    return { success: false, error: 'Error fetching users' };
+  }
+}
+
+export async function updateUserStatus(userId: string, action: 'suspend' | 'activate' | 'delete') {
+  try {
+    if (action === 'delete') {
+      const response = await fetch(`/api/admin/users/${userId}`, {
+        method: 'DELETE',
+      });
+      
+      const data = await response.json();
+      return data;
+    } else {
+      const response = await fetch(`/api/admin/users/${userId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ action }),
+      });
+      
+      const data = await response.json();
+      return data;
+    }
+  } catch (error) {
+    console.error(`Error ${action}ing user:`, error);
+    return { success: false, error: `Error performing ${action} action` };
+  }
 } 

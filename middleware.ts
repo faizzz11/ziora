@@ -6,7 +6,7 @@ export function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
 
   // Define public paths that don't require authentication
-  const isPublicPath = path === '/login' || path === '/signup' || path === '/';
+  const isPublicPath = path === '/login' || path === '/signup' || path === '/' || path === '/suspended';
 
   // Check if user is authenticated by looking for user data in cookies
   const isAuthenticated = request.cookies.has('user');
@@ -26,5 +26,5 @@ export function middleware(request: NextRequest) {
 
 // Configure which paths the middleware should run on
 export const config = {
-  matcher: ['/select/:path*', '/login', '/signup']
+  matcher: ['/select/:path*', '/login', '/signup', '/', '/contact', '/about']
 }; 

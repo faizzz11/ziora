@@ -12,6 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import Navbar from '@/components/animate-ui/Navbar';
+import PageTracker from '@/components/PageTracker';
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -154,6 +155,7 @@ const ContactPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-secondary/10 dark:from-black dark:to-gray-950">
+      <PageTracker pageName="Contact" />
       <Navbar />
       
       {/* Hero Section */}

@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Navbar from '@/components/animate-ui/Navbar';
+import PageTracker from '@/components/PageTracker';
 
 const AboutPage = () => {
   const founders = [
@@ -76,6 +77,7 @@ const AboutPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-secondary/10 dark:from-black dark:to-gray-950">
+      <PageTracker pageName="About" />
       <Navbar />
       {/* Hero Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 import VivaQuestionsClient from './VivaQuestionsClient';
 import branchSubjectsData from '@/data/branch-subjects.json';
+import PageTracker from '@/components/PageTracker';
 
 interface VivaQuestionsPageProps {
   params: Promise<{
@@ -136,6 +137,7 @@ export default async function VivaQuestionsPage({ params }: VivaQuestionsPagePro
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-secondary/10 dark:from-black dark:to-gray-950">
+      <PageTracker pageName={`Viva Questions - ${subject.name}`} />
       {/* Breadcrumb */}
       <div className="px-4 sm:px-6 lg:px-8 py-6 bg-card dark:bg-[oklch(0.205_0_0)] border-b border-border">
         <div className="max-w-6xl mx-auto">

@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import Link from 'next/link';
+import PageTracker from '@/components/PageTracker';
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -121,6 +122,7 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-black flex items-center justify-center px-4 sm:px-6 lg:px-8">
+      <PageTracker pageName="Login" />
       <div className="max-w-md w-full space-y-8">
         {/* Header */}
         <div className="text-center">
