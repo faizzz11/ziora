@@ -4,51 +4,52 @@ import { hash } from 'bcryptjs';
 
 export async function GET() {
   try {
-    // Connect to MongoDB
     const client = await clientPromise;
     const db = client.db("ziora");
     const usersCollection = db.collection("users");
 
-    // Fetch all users (excluding passwords)
-    const users = await usersCollection.find(
-      {},
-      {
-        projection: {
-          password: 0 // Exclude password field
-        }
-      }
-    ).sort({ createdAt: -1 }).toArray();
+    // Get all users
+    const users = await usersCollection.find({}).toArray();
 
-    // Transform data to match the expected interface
-    const transformedUsers = users.map(user => {
-      // Ensure proper date conversion from MongoDB BSON to JavaScript Date
-      const updatedAt = user.updatedAt ? new Date(user.updatedAt) : null;
-      const createdAt = user.createdAt ? new Date(user.createdAt) : null;
-      const lastLoginAt = user.lastLoginAt ? new Date(user.lastLoginAt) : null;
+    // Calculate statistics
+    const totalUsers = users.length;
+    const activeUsers = users.filter(user => user.status !== 'suspended' && user.status !== 'deleted').length;
+    const suspendedUsers = users.filter(user => user.status === 'suspended').length;
+    
+    // Calculate new users this week (assuming createdAt field exists)
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    const newUsersThisWeek = users.filter(user => 
+      user.createdAt && new Date(user.createdAt) > oneWeekAgo
+    ).length;
 
-      return {
-        id: user._id.toString(),
-        name: user.name,
-        email: user.email,
-        username: user.username,
-        status: determineUserStatus(user),
-        lastActive: formatLastActive(updatedAt || lastLoginAt || createdAt),
-        joinDate: formatJoinDate(createdAt),
-        avatar: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(user.name)}`,
-        stats: {
-          loginCount: user.loginCount || 0,
-          contentViews: user.contentViews || 0
-        },
-        branch: user.stream,
-        year: user.studyingYear,
-        age: user.age,
-        collegeName: user.collegeName
-      };
-    });
+    // Transform users for the table view
+    const transformedUsers = users.map(user => ({
+      id: user._id.toString(),
+      name: user.name || 'Unknown',
+      email: user.email,
+      username: user.username || '',
+      status: determineUserStatus(user),
+      joinDate: formatJoinDate(user.createdAt),
+      lastActive: formatLastActive(user.lastLoginAt || user.updatedAt),
+      role: user.role || 'user',
+      loginCount: user.loginCount || 0,
+      contentViews: user.contentViews || 0,
+      age: user.age || null,
+      branch: user.stream || user.branch || '',
+      year: user.studyingYear ? user.studyingYear.replace(/\D/g, '') : '', // Extract number from "4th Year"
+      collegeName: user.collegeName || ''
+    }));
 
     return NextResponse.json({
       success: true,
-      users: transformedUsers
+      users: transformedUsers,
+      statistics: {
+        total: totalUsers,
+        active: activeUsers,
+        suspended: suspendedUsers,
+        newThisWeek: newUsersThisWeek
+      }
     });
 
   } catch (error) {
@@ -60,7 +61,76 @@ export async function GET() {
   }
 }
 
+export async function PATCH(req: Request) {
+  try {
+    const { userId, action } = await req.json();
 
+    if (!userId || !action) {
+      return NextResponse.json(
+        { success: false, error: 'User ID and action are required' },
+        { status: 400 }
+      );
+    }
+
+    const client = await clientPromise;
+    const db = client.db("ziora");
+    const usersCollection = db.collection("users");
+
+    let updateData: any = {};
+
+    switch (action) {
+      case 'suspend':
+        updateData = { 
+          status: 'suspended', 
+          suspendedAt: new Date(),
+          suspendedBy: 'admin' // You might want to get this from session
+        };
+        break;
+      case 'activate':
+        updateData = { 
+          status: 'active',
+          $unset: { suspendedAt: "", suspendedBy: "" }
+        };
+        break;
+      case 'delete':
+        updateData = { 
+          status: 'deleted',
+          deletedAt: new Date(),
+          deletedBy: 'admin'
+        };
+        break;
+      default:
+        return NextResponse.json(
+          { success: false, error: 'Invalid action' },
+          { status: 400 }
+        );
+    }
+
+    const result = await usersCollection.updateOne(
+      { _id: { $oid: userId } },
+      { $set: updateData }
+    );
+
+    if (result.matchedCount === 0) {
+      return NextResponse.json(
+        { success: false, error: 'User not found' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: `User ${action}d successfully`
+    });
+
+  } catch (error) {
+    console.error('Error updating user:', error);
+    return NextResponse.json(
+      { success: false, error: 'Error updating user' },
+      { status: 500 }
+    );
+  }
+}
 
 // Helper function to determine user status
 function determineUserStatus(user: any): 'active' | 'inactive' | 'suspended' {

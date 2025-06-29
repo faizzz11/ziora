@@ -122,7 +122,7 @@ export default async function PracticalsPage({ params }: PracticalsPageProps) {
               Home
             </Button>
                   </Link>
-      </div>
+        </div>
     </div>
   );
 } 

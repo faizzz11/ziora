@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -19,13 +20,55 @@ interface StateUser {
 }
 
 export default function StatePage() {
+  const router = useRouter();
   const [stateUsers, setStateUsers] = useState<StateUser[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isVerifyingAdmin, setIsVerifyingAdmin] = useState(true);
+
+  // Verify admin status on component mount
+  useEffect(() => {
+    const verifyAdminAccess = async () => {
+      try {
+        // Check for admin session in localStorage (client-side)
+        const adminData = localStorage.getItem('admin');
+        const userData = localStorage.getItem('user');
+        
+        if (!adminData && !userData) {
+          // No session data, redirect to admin login
+          router.push('/admin');
+          return;
+        }
+
+        // Verify with server by making an API call
+        const response = await fetch('/api/admin/state');
+        
+        if (!response.ok) {
+          if (response.status === 401) {
+            // Unauthorized, redirect to admin login
+            router.push('/admin');
+            return;
+          }
+        }
+
+        // If we get here, admin verification passed
+        setIsVerifyingAdmin(false);
+      } catch (error) {
+        console.error('Admin verification error:', error);
+        // On error, redirect to admin login
+        router.push('/admin');
+      }
+    };
+
+    verifyAdminAccess();
+  }, [router]);
 
   useEffect(() => {
+    // Only fetch state users if admin verification passed
+    if (isVerifyingAdmin) return;
+    
     fetchStateUsers();
-  }, []);
+  }, [isVerifyingAdmin]);
 
   const fetchStateUsers = async () => {
     try {
@@ -83,6 +126,24 @@ export default function StatePage() {
     });
   };
 
+  // Show loading state while verifying admin access
+  if (isVerifyingAdmin) {
+    return (
+      <div className="container mx-auto p-6">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <Card className="bg-card dark:bg-[oklch(0.205_0_0)] border border-border">
+            <CardContent className="p-8">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                <p className="text-muted-foreground">Verifying admin access...</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
   if (isLoading) {
     return (
       <div className="container mx-auto p-6">
@@ -94,20 +155,12 @@ export default function StatePage() {
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">User State Management</h1>
-          <p className="text-muted-foreground mt-2">
-            View and manage suspended and deleted users
-          </p>
-        </div>
-        <Link href="/admin/dashboard">
-          <Button variant="outline" className="flex items-center">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Dashboard
-          </Button>
-        </Link>
+    <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 py-8 space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold">User State Management</h1>
+        <p className="text-muted-foreground mt-2">
+          View and manage suspended and deleted users
+        </p>
       </div>
 
       {error && (

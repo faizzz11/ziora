@@ -517,7 +517,7 @@ export default function VideoLecturesClient({ subject, subjectVideos, subjectNam
 
         setModules(updatedModules);
         setCurrentTopic(prev => prev ? { ...prev, comments: [...prev.comments, newCommentObj] } : prev);
-        setNewComment('');
+      setNewComment('');
 
         // Also save to the existing video API for backward compatibility
         updateVideoInAPI(year, semester, branch, subjectName, { modules: updatedModules })
@@ -892,9 +892,9 @@ export default function VideoLecturesClient({ subject, subjectVideos, subjectNam
       try {
         // Update local state first
         const updatedModules = modules.map(module => 
-          module.id === moduleId 
-            ? { ...module, name: editModuleName.trim() }
-            : module
+        module.id === moduleId 
+          ? { ...module, name: editModuleName.trim() }
+          : module
         );
         setModules(updatedModules);
 
@@ -957,16 +957,16 @@ export default function VideoLecturesClient({ subject, subjectVideos, subjectNam
       // Update local state first
       const updatedModules = modules.filter(module => module.id !== moduleId);
       setModules(updatedModules);
-      
-      // If we're deleting the currently selected module, clear selection
-      if (selectedModule === moduleId) {
-        setSelectedModule('');
-        setCurrentTopic(null);
-      }
-      
-      // If the current topic belongs to the deleted module, clear it
-      if (currentTopic && modules.find(m => m.id === moduleId)?.topics.some(t => t.id === currentTopic.id)) {
-        setCurrentTopic(null);
+    
+    // If we're deleting the currently selected module, clear selection
+    if (selectedModule === moduleId) {
+      setSelectedModule('');
+      setCurrentTopic(null);
+    }
+    
+    // If the current topic belongs to the deleted module, clear it
+    if (currentTopic && modules.find(m => m.id === moduleId)?.topics.some(t => t.id === currentTopic.id)) {
+      setCurrentTopic(null);
       }
 
       // Save to API

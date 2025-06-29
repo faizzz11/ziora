@@ -463,7 +463,7 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
 
         setModules(updatedModules);
         setCurrentModule(updatedModules.find(m => m.id === currentModule.id) || currentModule);
-        setNewComment('');
+      setNewComment('');
 
         // Also save to the existing notes API for backward compatibility
         updateNotesInAPI(year, semester, branch, subjectName, { modules: updatedModules })
@@ -1009,8 +1009,8 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
                         <div className="w-full h-full flex items-center justify-center bg-secondary dark:bg-[oklch(0.205_0_0)]">
                           <div className="text-center p-8">
                                                           <svg className="w-16 h-16 text-muted-foreground mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                              </svg>
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
                               <h3 className="text-lg font-medium text-foreground mb-2">
                                 {!currentModule.pdfUrl || currentModule.pdfUrl.trim() === '' ? 'No PDF Set' : 'PDF Preview Unavailable'}
                               </h3>
@@ -1021,12 +1021,12 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
                               }
                             </p>
                             {currentModule.pdfUrl && currentModule.pdfUrl.trim() !== '' && (
-                              <Button 
-                                onClick={handleDownloadPdf}
+                            <Button 
+                              onClick={handleDownloadPdf}
                                 className="bg-gradient-to-r from-gray-900 to-gray-800 dark:from-gray-700 dark:to-gray-600 text-white hover:from-gray-800 hover:to-gray-700 dark:hover:from-gray-600 dark:hover:to-gray-500"
-                              >
-                                Open PDF in New Tab
-                              </Button>
+                            >
+                              Open PDF in New Tab
+                            </Button>
                             )}
                           </div>
                         </div>
@@ -1131,7 +1131,7 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
                       </div>
                       <h4 className="text-lg font-medium text-foreground mb-2">No comments yet</h4>
                                               <p className="text-muted-foreground">Be the first to start a discussion about this module!</p>
-                    </div>
+                        </div>
                   )}
                 </div>
               </CardContent>
@@ -1226,28 +1226,28 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
                                 <div className="flex items-center justify-between">
                                   <span className="text-sm font-medium text-muted-foreground">Module Actions</span>
                                   {isAdmin && (
-                                    <div className="flex space-x-1">
-                                      <Button
-                                        onClick={() => handleEditModule(module.id, module.name, module.pdfUrl, module.relatedVideoLink)}
-                                        size="sm"
-                                        variant="outline"
-                                        className="h-8 w-8 p-0"
-                                      >
-                                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                        </svg>
-                                      </Button>
-                                      <Button
-                                        onClick={() => handleDeleteModule(module.id)}
-                                        size="sm"
-                                        variant="outline"
-                                        className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
-                                      >
-                                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                        </svg>
-                                      </Button>
-                                    </div>
+                                  <div className="flex space-x-1">
+                                                                         <Button
+                                       onClick={() => handleEditModule(module.id, module.name, module.pdfUrl, module.relatedVideoLink)}
+                                       size="sm"
+                                       variant="outline"
+                                       className="h-8 w-8 p-0"
+                                     >
+                                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                      </svg>
+                                    </Button>
+                                    <Button
+                                      onClick={() => handleDeleteModule(module.id)}
+                                      size="sm"
+                                      variant="outline"
+                                      className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                                    >
+                                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                      </svg>
+                                    </Button>
+                                  </div>
                                   )}
                                 </div>
                                 
@@ -1329,16 +1329,16 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
                   
                   {/* Add Module Button - Only show for admins */}
                   {isAdmin && (
-                    <Button
-                      onClick={handleAddModule}
-                      variant="outline"
+                  <Button
+                    onClick={handleAddModule}
+                    variant="outline"
                       className="cursor-pointer w-full mt-4 border-dashed border-border text-muted-foreground hover:text-foreground hover:border-muted-foreground"
-                    >
-                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                      </svg>
-                      Add Module
-                    </Button>
+                  >
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                    Add Module
+                  </Button>
                   )}
                 </div>
               </CardContent>

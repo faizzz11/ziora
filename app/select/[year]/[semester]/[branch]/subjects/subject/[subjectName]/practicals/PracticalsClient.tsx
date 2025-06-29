@@ -250,15 +250,15 @@ const ExperimentsTab = ({
     <div className="space-y-6">
       {/* Add New Experiment Button - Only show for admins */}
       {isAdmin && (
-        <div className="flex justify-end mb-6">
-          <Button
-            onClick={onAddExperiment}
-            className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg flex items-center space-x-2"
-          >
-            <Plus className="h-4 w-4" />
-            <span>Add New Experiment</span>
-          </Button>
-        </div>
+      <div className="flex justify-end mb-6">
+        <Button
+          onClick={onAddExperiment}
+          className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg flex items-center space-x-2"
+        >
+          <Plus className="h-4 w-4" />
+          <span>Add New Experiment</span>
+        </Button>
+      </div>
       )}
 
       {/* Experiment Tabs */}
@@ -333,42 +333,42 @@ const ExperimentsTab = ({
                 </Badge>
                 {isAdmin && (
                   editingExperiment === currentExperiment.experimentNo ? (
-                    <div className="flex space-x-2">
-                      <Button
+                  <div className="flex space-x-2">
+                    <Button
                         onClick={() => onSaveExperiment(currentExperiment.experimentNo)}
-                        size="sm"
-                        className="bg-green-600 hover:bg-green-700 text-white"
-                      >
-                        <Save className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        onClick={onCancelEdit}
-                        size="sm"
-                        variant="outline"
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ) : (
+                      size="sm"
+                      className="bg-green-600 hover:bg-green-700 text-white"
+                    >
+                      <Save className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      onClick={onCancelEdit}
+                      size="sm"
+                      variant="outline"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ) : (
                     isAdmin && (
-                      <div className="flex space-x-2">
-                        <Button
+                  <div className="flex space-x-2">
+                    <Button
                           onClick={() => onEditExperiment(currentExperiment)}
-                          size="sm"
-                          variant="outline"
-                          className="hover:bg-blue-50"
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button
+                      size="sm"
+                      variant="outline"
+                      className="hover:bg-blue-50"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
                           onClick={() => onDeleteExperiment(currentExperiment.experimentNo)}
-                          size="sm"
-                          variant="outline"
-                          className="hover:bg-red-50 text-red-600"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
+                      size="sm"
+                      variant="outline"
+                      className="hover:bg-red-50 text-red-600"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
                     )
                   )
                 )}
@@ -704,15 +704,15 @@ const ExperimentVideosTab = ({
     <div className="space-y-6">
       {/* Add New Video Button - Only show for admins */}
       {isAdmin && (
-        <div className="flex justify-end mb-6">
-          <Button
-            onClick={onAddVideo}
-            className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg flex items-center space-x-2"
-          >
-            <Plus className="h-4 w-4" />
-            <span>Add New Video</span>
-          </Button>
-        </div>
+      <div className="flex justify-end mb-6">
+        <Button
+          onClick={onAddVideo}
+          className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg flex items-center space-x-2"
+        >
+          <Plus className="h-4 w-4" />
+          <span>Add New Video</span>
+        </Button>
+      </div>
       )}
 
       {/* Video Experiment Tabs */}
@@ -817,24 +817,24 @@ const ExperimentVideosTab = ({
                   </div>
                 ) : (
                   isAdmin && (
-                    <div className="flex space-x-2">
-                      <Button
+                  <div className="flex space-x-2">
+                    <Button
                         onClick={() => onEditVideo(currentVideoExperiment)}
-                        size="sm"
-                        variant="outline"
-                        className="hover:bg-blue-50"
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
+                      size="sm"
+                      variant="outline"
+                      className="hover:bg-blue-50"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
                         onClick={() => onDeleteVideo(currentVideoExperiment.experimentNo)}
-                        size="sm"
-                        variant="outline"
-                        className="hover:bg-red-50 text-red-600"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
+                      size="sm"
+                      variant="outline"
+                      className="hover:bg-red-50 text-red-600"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
                   )
                 )}
               </div>
@@ -1127,8 +1127,8 @@ export default function PracticalsClient({ experiments: initialExperiments, subj
           <div className="p-6 mt-10 rounded-3xl bg-secondary dark:bg-[oklch(0.205_0_0)]">
             <div className="w-12 h-12 flex items-center justify-center text-foreground text-2xl">
               <FlaskConical className="h-6 w-6" />
-            </div>
           </div>
+        </div>
         </div>
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground mb-6">
           Practicals Code & Lab Manual
@@ -1209,13 +1209,13 @@ export default function PracticalsClient({ experiments: initialExperiments, subj
               Experiments for this subject are not yet available.
             </p>
             {isAdmin && (
-              <Button
-                onClick={handleAddExperiment}
-                className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg flex items-center space-x-2 mx-auto"
-              >
-                <Plus className="h-4 w-4" />
-                <span>Add First Experiment</span>
-              </Button>
+            <Button
+              onClick={handleAddExperiment}
+              className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg flex items-center space-x-2 mx-auto"
+            >
+              <Plus className="h-4 w-4" />
+              <span>Add First Experiment</span>
+            </Button>
             )}
           </div>
         )}
