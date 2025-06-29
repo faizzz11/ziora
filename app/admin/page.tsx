@@ -113,7 +113,7 @@ const AdminLogin = () => {
       
       // Redirect to select page after successful admin login
       setTimeout(() => {
-        window.location.href = '/select';
+        window.location.href = '/admin/dashboard';
       }, 1500);
     } catch (error) {
       setError(error instanceof Error ? error.message : 'Invalid OTP. Please try again.');
