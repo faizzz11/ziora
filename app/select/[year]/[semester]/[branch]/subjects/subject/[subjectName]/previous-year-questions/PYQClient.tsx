@@ -2,11 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Pencil, Trash2, Plus } from "lucide-react";
+import { Pencil, Trash2, Plus, Save, X } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 
@@ -29,7 +30,6 @@ interface Subject {
   name: string;
   description: string;
   icon: string;
-  topics: string[];
   materials: string;
   color: string;
 }
@@ -131,6 +131,8 @@ const deletePaperFromAPI = async (year: string, semester: string, branch: string
   }
 };
 
+
+
 export default function PYQClient({ subject, subjectPYQ, subjectName, year, semester, branch }: PYQClientProps) {
   const [selectedPaper, setSelectedPaper] = useState<Paper | null>(null);
   const [papers, setPapers] = useState<Paper[]>(subjectPYQ?.papers || []);
@@ -157,6 +159,8 @@ export default function PYQClient({ subject, subjectPYQ, subjectName, year, seme
 
   // Check if user is admin
   const [isAdmin, setIsAdmin] = useState(false);
+  
+
   
   useEffect(() => {
     // Check for admin status from localStorage
@@ -327,6 +331,8 @@ export default function PYQClient({ subject, subjectPYQ, subjectName, year, seme
     }
   };
 
+
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header Section */}
@@ -409,6 +415,8 @@ export default function PYQClient({ subject, subjectPYQ, subjectName, year, seme
           </p>
         </div>
       </div>
+
+
 
       {/* Paper Display Section */}
       {selectedPaper ? (
@@ -533,16 +541,16 @@ export default function PYQClient({ subject, subjectPYQ, subjectName, year, seme
         setEditingPaper(null);
         setIsAddingPaper(false);
       }}>
-        <DialogContent>
+        <DialogContent className="bg-card dark:bg-[oklch(0.205_0_0)] border border-border">
           <DialogHeader>
-            <DialogTitle>{editingPaper ? 'Edit Paper' : 'Add New Paper'}</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-foreground">{editingPaper ? 'Edit Paper' : 'Add New Paper'}</DialogTitle>
+            <DialogDescription className="text-muted-foreground">
               {editingPaper ? 'Update the paper details below.' : 'Enter the details for the new paper.'}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="title">Title</Label>
+              <Label htmlFor="title" className="text-foreground">Title</Label>
               <Input
                 id="title"
                 value={editPaperData.title}
@@ -550,7 +558,7 @@ export default function PYQClient({ subject, subjectPYQ, subjectName, year, seme
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="year">Year</Label>
+              <Label htmlFor="year" className="text-foreground">Year</Label>
               <Input
                 id="year"
                 value={editPaperData.year}
@@ -558,7 +566,7 @@ export default function PYQClient({ subject, subjectPYQ, subjectName, year, seme
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="month">Month</Label>
+              <Label htmlFor="month" className="text-foreground">Month</Label>
               <Input
                 id="month"
                 value={editPaperData.month}
@@ -566,7 +574,7 @@ export default function PYQClient({ subject, subjectPYQ, subjectName, year, seme
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="fileName">File Name</Label>
+              <Label htmlFor="fileName" className="text-foreground">File Name</Label>
               <Input
                 id="fileName"
                 value={editPaperData.fileName}
@@ -575,7 +583,7 @@ export default function PYQClient({ subject, subjectPYQ, subjectName, year, seme
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="pdfUrl">PDF URL</Label>
+              <Label htmlFor="pdfUrl" className="text-foreground">PDF URL</Label>
               <Input
                 id="pdfUrl"
                 value={editPaperData.pdfUrl}
@@ -602,10 +610,10 @@ export default function PYQClient({ subject, subjectPYQ, subjectName, year, seme
       <Dialog open={deleteModal.isOpen} onOpenChange={(open) => {
         if (!open) setDeleteModal({ isOpen: false, id: '', title: '' });
       }}>
-        <DialogContent>
+        <DialogContent className="bg-card dark:bg-[oklch(0.205_0_0)] border border-border">
           <DialogHeader>
-            <DialogTitle>Delete Paper</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-foreground">Delete Paper</DialogTitle>
+            <DialogDescription className="text-muted-foreground">
               Are you sure you want to delete "{deleteModal.title}"? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>

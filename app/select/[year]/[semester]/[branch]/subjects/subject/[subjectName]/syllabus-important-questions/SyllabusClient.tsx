@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Edit, Trash2, Save, X } from "lucide-react";
+import { Plus, Edit, Trash2, Save, X, BookOpen, Lightbulb, Info, AlertTriangle, FileText, GraduationCap, HelpCircle } from "lucide-react";
 import { checkAdminStatus } from '@/lib/admin-utils';
 
 interface Module {
@@ -178,6 +178,17 @@ const saveContentToAPI = async (year: string, semester: string, branch: string, 
     console.error('Error saving content:', error);
     throw error;
   }
+};
+
+// Helper function to ensure topics are properly formatted as an array
+const formatTopicsAsArray = (topics: string[] | string): string[] => {
+  if (Array.isArray(topics)) {
+    return topics;
+  }
+  if (typeof topics === 'string') {
+    return topics.split(',').map(topic => topic.trim()).filter(topic => topic.length > 0);
+  }
+  return [];
 };
 
 export default function SyllabusClient({ subject, syllabus: initialSyllabus, impQuestions: initialImpQuestions, subjectName, backUrl, year, semester, branch }: SyllabusClientProps) {
@@ -433,6 +444,30 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
   };
 
   const updateTopic = (index: number, value: string) => {
+    // Check if the input contains commas (indicating multiple topics)
+    if (value.includes(',')) {
+      // Split by commas and clean up each topic
+      const splitTopics = value.split(',').map(topic => topic.trim()).filter(topic => topic.length > 0);
+      
+      if (splitTopics.length > 1) {
+        setModuleForm(prev => {
+          const newTopics = [...prev.topics];
+          
+          // Replace the current topic with the first one
+          newTopics[index] = splitTopics[0];
+          
+          // Add the remaining topics as new entries after the current index
+          for (let i = 1; i < splitTopics.length; i++) {
+            newTopics.splice(index + i, 0, splitTopics[i]);
+          }
+          
+          return { ...prev, topics: newTopics };
+        });
+        return;
+      }
+    }
+    
+    // Normal single topic update
     setModuleForm(prev => ({
       ...prev,
       topics: prev.topics.map((topic, i) => i === index ? value : topic)
@@ -731,10 +766,10 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 py-10">
       {/* Header Section */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-foreground mb-2">
+      <div className="mb-10">
+        <h1 className="text-3xl font-bold text-foreground mb-4">
           Syllabus & Important Questions
         </h1>
         <p className="text-lg text-muted-foreground">
@@ -745,17 +780,23 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
       {/* Tabs for Syllabus and Important Questions */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-2 mb-8">
-          <TabsTrigger value="syllabus" className="text-lg py-3">📚 Syllabus</TabsTrigger>
-          <TabsTrigger value="important-questions" className="text-lg py-3">❓ Important Questions</TabsTrigger>
+          <TabsTrigger value="syllabus" className="text-lg py-3 flex items-center justify-center space-x-2">
+            <BookOpen className="h-5 w-5" />
+            <span>Syllabus</span>
+          </TabsTrigger>
+          <TabsTrigger value="important-questions" className="text-lg py-3 flex items-center justify-center space-x-2">
+            <HelpCircle className="h-5 w-5" />
+            <span>Important Questions</span>
+          </TabsTrigger>
         </TabsList>
 
         {/* Syllabus Tab */}
-        <TabsContent value="syllabus" className="space-y-6">
+        <TabsContent value="syllabus" className="space-y-8">
           <Card className="bg-card dark:bg-[oklch(0.205_0_0)] border border-border">
-            <CardHeader className="border-b border-border">
+            <CardHeader className="border-b border-border p-8">
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle className="text-xl font-semibold text-foreground">
+                  <CardTitle className="text-xl font-semibold text-foreground mb-2">
                     {syllabus.subjectName} - Course Syllabus
                   </CardTitle>
                   <p className="text-sm text-muted-foreground">
@@ -765,7 +806,7 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
                 {isAdmin && (
                   <Button
                     onClick={handleAddModule}
-                    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2"
+                    className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg flex items-center space-x-2"
                   >
                     <Plus className="h-4 w-4" />
                     <span>Add Module</span>
@@ -779,17 +820,17 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
                 <table className="w-full">
                   <thead className="bg-secondary dark:bg-[oklch(0.205_0_0)] border-b border-border">
                     <tr>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-foreground w-20">Module No.</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-foreground w-64">Topics</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">Details</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-foreground w-20">Hours</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-foreground w-32">Actions</th>
+                      <th className="px-8 py-6 text-left text-sm font-semibold text-foreground w-20">Module No.</th>
+                      <th className="px-8 py-6 text-left text-sm font-semibold text-foreground w-64">Topics</th>
+                      <th className="px-8 py-6 text-left text-sm font-semibold text-foreground">Details</th>
+                      <th className="px-8 py-6 text-left text-sm font-semibold text-foreground w-20">Hours</th>
+                      <th className="px-8 py-6 text-left text-sm font-semibold text-foreground w-32">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border">
                     {(syllabus.modules || []).map((module, index) => (
                       <tr key={index} className="hover:bg-secondary dark:hover:bg-[oklch(0.205_0_0)] transition-colors">
-                        <td className="px-6 py-4 text-sm font-medium text-foreground align-top">
+                        <td className="px-8 py-6 text-sm font-medium text-foreground align-top">
                           {editingModule === module.moduleNo ? (
                             <Input
                               value={moduleForm.moduleNo}
@@ -801,7 +842,7 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
                             module.moduleNo
                           )}
                         </td>
-                        <td className="px-6 py-4 text-sm font-semibold text-foreground align-top">
+                        <td className="px-8 py-6 text-sm font-semibold text-foreground align-top">
                           {editingModule === module.moduleNo ? (
                             <Input
                               value={moduleForm.title}
@@ -812,7 +853,7 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
                             module.title
                           )}
                         </td>
-                        <td className="px-6 py-4 text-sm text-muted-foreground align-top">
+                        <td className="px-8 py-6 text-sm text-muted-foreground align-top">
                           {editingModule === module.moduleNo ? (
                             <div className="space-y-2">
                               {moduleForm.topics.map((topic, topicIndex) => (
@@ -845,7 +886,7 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
                             </div>
                           ) : (
                             <ul className="space-y-1">
-                              {module.topics.map((topic, topicIndex) => (
+                              {formatTopicsAsArray(module.topics).map((topic, topicIndex) => (
                                 <li key={topicIndex} className="flex items-start">
                                   <span className="text-muted-foreground mr-2">•</span>
                                   <span>{topic}</span>
@@ -854,7 +895,7 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
                             </ul>
                           )}
                         </td>
-                        <td className="px-6 py-4 text-sm font-medium text-foreground align-top text-center">
+                        <td className="px-8 py-6 text-sm font-medium text-foreground align-top text-center">
                           {editingModule === module.moduleNo ? (
                             <Input
                               type="number"
@@ -867,7 +908,7 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
                             String(module.hours).padStart(2, '0')
                           )}
                         </td>
-                        <td className="px-6 py-4 text-sm align-top">
+                        <td className="px-8 py-6 text-sm align-top">
                           {editingModule === module.moduleNo ? (
                             <div className="flex space-x-2">
                               <Button
@@ -913,10 +954,10 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
                   </tbody>
                   <tfoot className="bg-secondary dark:bg-[oklch(0.205_0_0)] border-t border-border">
                     <tr>
-                      <td colSpan={4} className="px-6 py-4 text-sm font-semibold text-foreground text-right">
+                      <td colSpan={4} className="px-8 py-6 text-sm font-semibold text-foreground text-right">
                         Total:
                       </td>
-                      <td className="px-6 py-4 text-sm font-bold text-foreground text-center">
+                      <td className="px-8 py-6 text-sm font-bold text-foreground text-center">
                         {syllabus.totalHours}
                       </td>
                       <td></td>
@@ -929,58 +970,71 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
 
           {/* Add New Module Form */}
           {isAddingModule && (
-            <Card className="bg-blue-50 border border-blue-200">
-              <CardHeader>
-                <CardTitle className="text-lg font-semibold text-blue-900">Add New Module</CardTitle>
+            <Card className="bg-card dark:bg-[oklch(0.205_0_0)] border border-border shadow-lg">
+              <CardHeader className="bg-secondary dark:bg-[oklch(0.205_0_0)] border-b border-border p-6">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-secondary dark:bg-[oklch(0.185_0_0)] rounded-full flex items-center justify-center">
+                    <BookOpen className="h-5 w-5 text-muted-foreground" />
+                  </div>
+                  <CardTitle className="text-lg font-semibold text-foreground">Add New Module</CardTitle>
+                </div>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <Label htmlFor="moduleNo">Module No.</Label>
+              <CardContent className="space-y-6 p-8">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="moduleNo" className="text-foreground font-medium">Module No.</Label>
                     <Input
                       id="moduleNo"
                       value={moduleForm.moduleNo}
                       onChange={(e) => setModuleForm(prev => ({ ...prev, moduleNo: e.target.value }))}
                       placeholder="e.g., 1, 2, 3"
+                      className="p-3"
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="title">Module Title</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="title" className="text-foreground font-medium">Module Title</Label>
                     <Input
                       id="title"
                       value={moduleForm.title}
                       onChange={(e) => setModuleForm(prev => ({ ...prev, title: e.target.value }))}
                       placeholder="e.g., Introduction to Programming"
+                      className="p-3"
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="hours">Hours</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="hours" className="text-foreground font-medium">Hours</Label>
                     <Input
                       id="hours"
                       type="number"
                       value={moduleForm.hours}
                       onChange={(e) => setModuleForm(prev => ({ ...prev, hours: parseInt(e.target.value) || 0 }))}
                       placeholder="0"
+                      className="p-3"
                     />
                   </div>
                 </div>
                 
-                <div>
-                  <Label>Topics</Label>
-                  <div className="space-y-2">
+                <div className="space-y-3">
+                  <Label className="text-foreground font-medium">Topics</Label>
+                  <div className="flex items-center space-x-2 text-xs text-muted-foreground mb-3 bg-secondary dark:bg-[oklch(0.185_0_0)] border border-border rounded-lg px-4 py-3">
+                    <Lightbulb className="h-4 w-4 text-muted-foreground" />
+                    <span><strong>Tip:</strong> You can paste multiple topics at once by separating them with commas (e.g., "Topic 1, Topic 2, Topic 3")</span>
+                  </div>
+                  <div className="space-y-3">
                     {moduleForm.topics.map((topic, index) => (
-                      <div key={index} className="flex items-center space-x-2">
+                      <div key={index} className="flex items-center space-x-3">
                         <Input
                           value={topic}
                           onChange={(e) => updateTopic(index, e.target.value)}
                           placeholder="Enter topic"
-                          className="flex-1"
+                          className="flex-1 p-3"
                         />
                         <Button
                           onClick={() => removeTopicField(index)}
                           size="sm"
                           variant="outline"
                           disabled={moduleForm.topics.length === 1}
+                          className="px-3 py-2"
                         >
                           <X className="h-3 w-3" />
                         </Button>
@@ -990,7 +1044,7 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
                       onClick={addTopicField}
                       size="sm"
                       variant="outline"
-                      className="w-full"
+                      className="w-full py-3"
                     >
                       <Plus className="h-3 w-3 mr-1" />
                       Add Topic
@@ -998,10 +1052,10 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
                   </div>
                 </div>
 
-                <div className="flex space-x-2">
+                <div className="flex space-x-4 pt-4">
                   <Button
                     onClick={handleSaveModule}
-                    className="bg-green-600 hover:bg-green-700 text-white"
+                    className="bg-green-600 hover:bg-green-700 text-white px-6 py-3"
                   >
                     <Save className="h-4 w-4 mr-2" />
                     Save Module
@@ -1009,6 +1063,7 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
                   <Button
                     onClick={handleCancelEdit}
                     variant="outline"
+                    className="px-6 py-3"
                   >
                     <X className="h-4 w-4 mr-2" />
                     Cancel
@@ -1020,17 +1075,17 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
         </TabsContent>
 
         {/* Important Questions Tab */}
-        <TabsContent value="important-questions" className="space-y-6">
+        <TabsContent value="important-questions" className="space-y-8">
           {/* Header with Add Module Button */}
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-8">
             <div>
-              <h2 className="text-2xl font-bold text-foreground">Important Questions by Module</h2>
-              <p className="text-muted-foreground mt-1">Manage modules and their important questions</p>
+              <h2 className="text-2xl font-bold text-foreground mb-2">Important Questions by Module</h2>
+              <p className="text-muted-foreground">Manage modules and their important questions</p>
             </div>
             {isAdmin && (
               <Button
                 onClick={handleAddImpModule}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2"
+                className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg flex items-center space-x-2"
               >
                 <Plus className="h-4 w-4" />
                 <span>Add Module</span>
@@ -1065,7 +1120,7 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
                 </div>
               </div>
               <div className="flex items-center space-x-2 text-xs text-muted-foreground bg-secondary dark:bg-[oklch(0.185_0_0)] rounded-lg px-3 py-2">
-                <span className="text-blue-500">ℹ️</span>
+                <Info className="h-4 w-4 text-blue-500" />
                 <span><strong>Auto-Sorted:</strong> Questions are automatically arranged by repetition frequency - Most Repeated questions appear first, followed by 2nd Most Repeated, and so on.</span>
               </div>
             </CardContent>
@@ -1237,10 +1292,10 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
 
                     {/* Add New Question Form */}
                     {isAddingQuestion === module.moduleNo && (
-                      <div className="border-l-4 border-green-200 pl-4 py-2 bg-green-50 rounded-r-lg">
+                      <div className="border-l-4 border-green-500 pl-4 py-2 bg-card dark:bg-[oklch(0.205_0_0)] border border-border rounded-r-lg">
                         <div className="space-y-3">
                           <div>
-                            <Label htmlFor="newQuestion">New Question</Label>
+                            <Label htmlFor="newQuestion" className="text-foreground">New Question</Label>
                             <Textarea
                               id="newQuestion"
                               value={questionForm.question}
@@ -1251,7 +1306,7 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
                             />
                           </div>
                           <div>
-                            <Label htmlFor="newRepetition">Repetition Type</Label>
+                            <Label htmlFor="newRepetition" className="text-foreground">Repetition Type</Label>
                             <Select value={questionForm.repetition} onValueChange={handleRepetitionChange}>
                               <SelectTrigger className="mt-1">
                                 <SelectValue placeholder="Select repetition type" />
@@ -1293,36 +1348,43 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
 
             {/* Add New Module Form for Important Questions */}
             {isAddingImpModule && (
-              <Card className="bg-blue-50 border border-blue-200">
-                <CardHeader>
-                  <CardTitle className="text-lg font-semibold text-blue-900">Add New Module for Important Questions</CardTitle>
+              <Card className="bg-card dark:bg-[oklch(0.205_0_0)] border border-border shadow-lg">
+                <CardHeader className="bg-secondary dark:bg-[oklch(0.205_0_0)] border-b border-border p-6">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-secondary dark:bg-[oklch(0.185_0_0)] rounded-full flex items-center justify-center">
+                      <GraduationCap className="h-5 w-5 text-muted-foreground" />
+                    </div>
+                    <CardTitle className="text-lg font-semibold text-foreground">Add New Module for Important Questions</CardTitle>
+                  </div>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="impModuleNo">Module No.</Label>
+                <CardContent className="space-y-6 p-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="impModuleNo" className="text-foreground font-medium">Module No.</Label>
                       <Input
                         id="impModuleNo"
                         value={impModuleForm.moduleNo}
                         onChange={(e) => setImpModuleForm(prev => ({ ...prev, moduleNo: e.target.value }))}
                         placeholder="e.g., 1, 2, 3"
+                        className="p-3"
                       />
                     </div>
-                    <div>
-                      <Label htmlFor="impModuleTitle">Module Title</Label>
+                    <div className="space-y-2">
+                      <Label htmlFor="impModuleTitle" className="text-foreground font-medium">Module Title</Label>
                       <Input
                         id="impModuleTitle"
                         value={impModuleForm.title}
                         onChange={(e) => setImpModuleForm(prev => ({ ...prev, title: e.target.value }))}
                         placeholder="e.g., Introduction to Programming"
+                        className="p-3"
                       />
                     </div>
                   </div>
 
-                  <div className="flex space-x-2">
+                  <div className="flex space-x-4 pt-4">
                     <Button
                       onClick={handleSaveImpModule}
-                      className="bg-green-600 hover:bg-green-700 text-white"
+                      className="bg-green-600 hover:bg-green-700 text-white px-6 py-3"
                     >
                       <Save className="h-4 w-4 mr-2" />
                       Save Module
@@ -1330,6 +1392,7 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
                     <Button
                       onClick={handleCancelImpModuleEdit}
                       variant="outline"
+                      className="px-6 py-3"
                     >
                       <X className="h-4 w-4 mr-2" />
                       Cancel
@@ -1344,18 +1407,32 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
 
       {/* Delete Module Confirmation Modal */}
       <Dialog open={deleteModal.isOpen} onOpenChange={(open) => setDeleteModal(prev => ({ ...prev, isOpen: open }))}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Delete Module</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to delete module "{deleteModal.title}"? This action cannot be undone.
+        <DialogContent className="bg-card dark:bg-[oklch(0.205_0_0)] border border-border max-w-md p-8">
+          <DialogHeader className="text-center space-y-4">
+            <div className="mx-auto w-14 h-14 bg-secondary dark:bg-[oklch(0.185_0_0)] rounded-full flex items-center justify-center">
+              <AlertTriangle className="h-7 w-7 text-muted-foreground" />
+            </div>
+            <DialogTitle className="text-foreground text-xl font-semibold">Delete Module</DialogTitle>
+            <DialogDescription className="text-muted-foreground text-sm space-y-2">
+              <div>Are you sure you want to delete module <span className="font-semibold text-foreground">"{deleteModal.title}"</span>?</div>
+              <div className="text-muted-foreground">This action cannot be undone.</div>
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteModal({ isOpen: false, moduleNo: '', title: '' })}>
+          <DialogFooter className="gap-4 sm:gap-4 pt-6">
+            <Button 
+              variant="outline" 
+              onClick={() => setDeleteModal({ isOpen: false, moduleNo: '', title: '' })}
+              className="flex-1 px-4 py-3"
+            >
+              <X className="h-4 w-4 mr-2" />
               Cancel
             </Button>
-            <Button variant="destructive" onClick={confirmDeleteModule}>
+            <Button 
+              variant="destructive" 
+              onClick={confirmDeleteModule}
+              className="flex-1 px-4 py-3"
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
               Delete
             </Button>
           </DialogFooter>
@@ -1364,20 +1441,35 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
 
       {/* Delete Question Confirmation Modal */}
       <Dialog open={deleteQuestionModal.isOpen} onOpenChange={(open) => setDeleteQuestionModal(prev => ({ ...prev, isOpen: open }))}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Delete Question</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to delete this question? This action cannot be undone.
-              <br />
-              <span className="italic text-sm mt-2 block">"{deleteQuestionModal.question.substring(0, 100)}..."</span>
+        <DialogContent className="bg-card dark:bg-[oklch(0.205_0_0)] border border-border max-w-lg p-8">
+          <DialogHeader className="text-center space-y-4">
+            <div className="mx-auto w-14 h-14 bg-secondary dark:bg-[oklch(0.185_0_0)] rounded-full flex items-center justify-center">
+              <FileText className="h-7 w-7 text-muted-foreground" />
+            </div>
+            <DialogTitle className="text-foreground text-xl font-semibold">Delete Question</DialogTitle>
+            <DialogDescription className="text-muted-foreground text-sm space-y-3">
+              <div>Are you sure you want to delete this question?</div>
+              <div className="bg-secondary dark:bg-[oklch(0.185_0_0)] p-4 rounded-lg border border-border">
+                <span className="italic text-xs text-foreground">"{deleteQuestionModal.question.substring(0, 150)}..."</span>
+              </div>
+              <div className="text-muted-foreground">This action cannot be undone.</div>
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteQuestionModal({ isOpen: false, moduleNo: '', questionIndex: -1, question: '', originalQuestion: { question: '', frequency: 1, repetition: 'Most Repeated' } })}>
+          <DialogFooter className="gap-4 sm:gap-4 pt-6">
+            <Button 
+              variant="outline" 
+              onClick={() => setDeleteQuestionModal({ isOpen: false, moduleNo: '', questionIndex: -1, question: '', originalQuestion: { question: '', frequency: 1, repetition: 'Most Repeated' } })}
+              className="flex-1 px-4 py-3"
+            >
+              <X className="h-4 w-4 mr-2" />
               Cancel
             </Button>
-            <Button variant="destructive" onClick={confirmDeleteQuestion}>
+            <Button 
+              variant="destructive" 
+              onClick={confirmDeleteQuestion}
+              className="flex-1 px-4 py-3"
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
               Delete
             </Button>
           </DialogFooter>
@@ -1386,19 +1478,39 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
 
       {/* Delete Important Questions Module Confirmation Modal */}
       <Dialog open={deleteImpModuleModal.isOpen} onOpenChange={(open) => setDeleteImpModuleModal(prev => ({ ...prev, isOpen: open }))}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Delete Module</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to delete module "{deleteImpModuleModal.title}"? This will also delete all questions in this module. This action cannot be undone.
+        <DialogContent className="bg-card dark:bg-[oklch(0.205_0_0)] border border-border max-w-md p-8">
+          <DialogHeader className="text-center space-y-4">
+            <div className="mx-auto w-14 h-14 bg-secondary dark:bg-[oklch(0.185_0_0)] rounded-full flex items-center justify-center">
+              <GraduationCap className="h-7 w-7 text-muted-foreground" />
+            </div>
+            <DialogTitle className="text-foreground text-xl font-semibold">Delete Module</DialogTitle>
+            <DialogDescription className="text-muted-foreground text-sm space-y-3">
+              <div>Are you sure you want to delete module <span className="font-semibold text-foreground">"{deleteImpModuleModal.title}"</span>?</div>
+              <div className="bg-secondary dark:bg-[oklch(0.185_0_0)] border border-border p-4 rounded-lg">
+                <div className="flex items-center space-x-3">
+                  <AlertTriangle className="h-5 w-5 text-muted-foreground" />
+                  <span className="text-muted-foreground text-sm">This will also delete all questions in this module.</span>
+                </div>
+              </div>
+              <div className="text-muted-foreground">This action cannot be undone.</div>
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteImpModuleModal({ isOpen: false, moduleNo: '', title: '' })}>
+          <DialogFooter className="gap-4 sm:gap-4 pt-6">
+            <Button 
+              variant="outline" 
+              onClick={() => setDeleteImpModuleModal({ isOpen: false, moduleNo: '', title: '' })}
+              className="flex-1 px-4 py-3"
+            >
+              <X className="h-4 w-4 mr-2" />
               Cancel
             </Button>
-            <Button variant="destructive" onClick={confirmDeleteImpModule}>
-              Delete
+            <Button 
+              variant="destructive" 
+              onClick={confirmDeleteImpModule}
+              className="flex-1 px-4 py-3"
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              Delete Module
             </Button>
           </DialogFooter>
         </DialogContent>
