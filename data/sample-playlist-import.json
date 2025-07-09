@@ -1,0 +1,108 @@
+{
+  "info": "Sample YouTube playlist import examples for video lectures",
+  "supportedUrls": {
+    "playlistUrl": "https://www.youtube.com/playlist?list=PLrAXtmRdnEQy6nuLMHzUbBx9QP09RwsmY",
+    "watchUrlWithPlaylist": "https://www.youtube.com/watch?v=dQw4w9WgXcQ&list=PLrAXtmRdnEQy6nuLMHzUbBx9QP09RwsmY",
+    "shortenedWithPlaylist": "https://youtu.be/dQw4w9WgXcQ?list=PLrAXtmRdnEQy6nuLMHzUbBx9QP09RwsmY",
+    "playlistIdOnly": "PLrAXtmRdnEQy6nuLMHzUbBx9QP09RwsmY"
+  },
+  "examplePlaylist": {
+    "playlistTitle": "Complete Python Programming Course",
+    "videos": [
+      {
+        "id": "topic-1704067200000-abc123",
+        "title": "Python Basics - Variables and Data Types",
+        "videoUrl": "https://www.youtube.com/embed/abc123",
+        "duration": "N/A"
+      },
+      {
+        "id": "topic-1704067200001-def456",
+        "title": "Python Control Flow - If Statements and Loops",
+        "videoUrl": "https://www.youtube.com/embed/def456",
+        "duration": "N/A"
+      },
+      {
+        "id": "topic-1704067200002-ghi789",
+        "title": "Python Functions and Modules",
+        "videoUrl": "https://www.youtube.com/embed/ghi789",
+        "duration": "N/A"
+      },
+      {
+        "id": "topic-1704067200003-jkl012",
+        "title": "Python Object-Oriented Programming",
+        "videoUrl": "https://www.youtube.com/embed/jkl012",
+        "duration": "N/A"
+      },
+      {
+        "id": "topic-1704067200004-mno345",
+        "title": "Python Error Handling and Debugging",
+        "videoUrl": "https://www.youtube.com/embed/mno345",
+        "duration": "N/A"
+      }
+    ]
+  },
+  "resultingModule": {
+    "id": "module-1704067200000",
+    "name": "Complete Python Programming Course",
+    "topics": [
+      {
+        "id": "topic-1704067200000-abc123",
+        "title": "Python Basics - Variables and Data Types",
+        "videoUrl": "https://www.youtube.com/embed/abc123",
+        "notes": "Imported from playlist: Complete Python Programming Course",
+        "comments": []
+      },
+      {
+        "id": "topic-1704067200001-def456",
+        "title": "Python Control Flow - If Statements and Loops",
+        "videoUrl": "https://www.youtube.com/embed/def456",
+        "notes": "Imported from playlist: Complete Python Programming Course",
+        "comments": []
+      },
+      {
+        "id": "topic-1704067200002-ghi789",
+        "title": "Python Functions and Modules",
+        "videoUrl": "https://www.youtube.com/embed/ghi789",
+        "notes": "Imported from playlist: Complete Python Programming Course",
+        "comments": []
+      },
+      {
+        "id": "topic-1704067200003-jkl012",
+        "title": "Python Object-Oriented Programming",
+        "videoUrl": "https://www.youtube.com/embed/jkl012",
+        "notes": "Imported from playlist: Complete Python Programming Course",
+        "comments": []
+      },
+      {
+        "id": "topic-1704067200004-mno345",
+        "title": "Python Error Handling and Debugging",
+        "videoUrl": "https://www.youtube.com/embed/mno345",
+        "notes": "Imported from playlist: Complete Python Programming Course",
+        "comments": []
+      }
+    ]
+  },
+  "usage": {
+    "adminAccess": "Only users with admin privileges can access the Import Playlist feature",
+    "steps": [
+      "1. Click the 'Import Playlist' button in the Course Content section",
+      "2. Enter a YouTube playlist URL in the dialog",
+      "3. Click 'Preview' to fetch and preview the playlist content",
+      "4. Review the playlist title and video list",
+      "5. Click 'Import X Videos' to create a new module with all videos"
+    ],
+    "limitations": [
+      "Limited to 50 videos per playlist to prevent performance issues",
+      "Private playlists cannot be imported",
+      "Playlist must contain at least one video",
+      "Video duration extraction requires additional API calls (currently set to 'N/A')"
+    ]
+  },
+  "errorHandling": {
+    "invalidUrl": "Shows error message for malformed URLs",
+    "privatePlaylist": "Shows error if playlist is private or inaccessible",
+    "emptyPlaylist": "Shows error if no videos are found in the playlist",
+    "networkError": "Shows error for network connectivity issues",
+    "loadingState": "Shows loading spinner during playlist fetch"
+  }
+} 

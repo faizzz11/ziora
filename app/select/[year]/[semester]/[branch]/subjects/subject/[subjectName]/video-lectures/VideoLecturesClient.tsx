@@ -4,6 +4,9 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 
 interface Comment {
   id: string;
@@ -53,6 +56,16 @@ interface VideoLecturesClientProps {
   year: string;
   semester: string;
   branch: string;
+}
+
+interface PlaylistImportData {
+  playlistTitle: string;
+  videos: {
+    id: string;
+    title: string;
+    videoUrl: string;
+    duration?: string;
+  }[];
 }
 
 // Recursive Comment Component for Video Lectures
@@ -375,6 +388,12 @@ export default function VideoLecturesClient({ subject, subjectVideos, subjectNam
     moduleId: '',
     title: ''
   });
+
+  // Playlist Import States
+  const [isImportingPlaylist, setIsImportingPlaylist] = useState(false);
+  const [playlistUrl, setPlaylistUrl] = useState('');
+  const [playlistPreview, setPlaylistPreview] = useState<PlaylistImportData | null>(null);
+  const [isLoadingPlaylist, setIsLoadingPlaylist] = useState(false);
 
   // Check if user is admin
   const [isAdmin, setIsAdmin] = useState(false);
@@ -1146,6 +1165,108 @@ export default function VideoLecturesClient({ subject, subjectVideos, subjectNam
     setDeleteModal({ isOpen: false, type: null, id: '', title: '' });
   };
 
+  // Playlist Import Functions
+  const handlePlaylistPreview = async () => {
+    if (!playlistUrl.trim()) {
+      showToast('Please enter a playlist URL', 'error');
+      return;
+    }
+
+    setIsLoadingPlaylist(true);
+    
+    try {
+      const response = await fetch('/api/youtube/playlist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ playlistUrl: playlistUrl.trim() }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setPlaylistPreview(result.data);
+        showToast(`Found ${result.data.videos.length} videos in playlist "${result.data.playlistTitle}"`, 'success');
+      } else {
+        throw new Error(result.error);
+      }
+    } catch (error: any) {
+      console.error('Error fetching playlist:', error);
+      showToast(error.message || 'Failed to fetch playlist', 'error');
+      setPlaylistPreview(null);
+    } finally {
+      setIsLoadingPlaylist(false);
+    }
+  };
+
+  const handleImportPlaylist = async () => {
+    if (!playlistPreview) {
+      showToast('No playlist data to import', 'error');
+      return;
+    }
+
+    try {
+      // Create new module with playlist data
+      const newModuleId = `module-${Date.now()}`;
+      const playlistVideos: Topic[] = playlistPreview.videos.map(video => ({
+        id: video.id,
+        title: video.title,
+        videoUrl: video.videoUrl,
+        notes: `Imported from playlist: ${playlistPreview.playlistTitle}`,
+        comments: []
+      }));
+
+      const newModule: Module = {
+        id: newModuleId,
+        name: playlistPreview.playlistTitle,
+        topics: playlistVideos
+      };
+
+      // Update local state
+      const updatedModules = [...modules, newModule];
+      setModules(updatedModules);
+
+      // Save to API
+      await updateVideoInAPI(year, semester, branch, subjectName, { modules: updatedModules });
+
+      showToast(`Successfully imported playlist "${playlistPreview.playlistTitle}" with ${playlistVideos.length} videos!`, 'success');
+      
+      // Reset import dialog
+      setIsImportingPlaylist(false);
+      setPlaylistUrl('');
+      setPlaylistPreview(null);
+
+    } catch (error) {
+      console.error('Failed to import playlist:', error);
+      showToast('Failed to import playlist', 'error');
+    }
+  };
+
+  const resetPlaylistImport = () => {
+    setPlaylistUrl('');
+    setPlaylistPreview(null);
+    setIsLoadingPlaylist(false);
+  };
+
+  // Helper function to show toast messages
+  const showToast = (message: string, type: 'success' | 'error' = 'success') => {
+    const toast = document.createElement('div');
+    const bgColor = type === 'success' ? 'bg-green-500' : 'bg-red-500';
+    toast.className = `fixed top-4 right-4 ${bgColor} text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300`;
+    toast.textContent = type === 'success' ? `✅ ${message}` : `❌ ${message}`;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      setTimeout(() => {
+        if (document.body.contains(toast)) {
+          document.body.removeChild(toast);
+        }
+      }, 300);
+    }, 3000);
+  };
+
   return (
     <>
       {/* Top Navigation Bar */}
@@ -1533,18 +1654,31 @@ export default function VideoLecturesClient({ subject, subjectVideos, subjectNam
                     </div>
                   ))}
                   
-                  {/* Add Module Button - Only show for admins */}
+                  {/* Admin Buttons Section - Add Module and Import Playlist */}
                   {isAdmin && (
-                  <Button
-                    onClick={handleAddModule}
-                    variant="outline"
-                    className="w-full mt-4 border-dashed border-border text-muted-foreground hover:text-foreground hover:border-foreground"
-                  >
-                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                    </svg>
-                    Add Module
-                  </Button>
+                    <div className="space-y-2">
+                      <Button
+                        onClick={handleAddModule}
+                        variant="outline"
+                        className="w-full border-dashed border-border text-muted-foreground hover:text-foreground hover:border-foreground"
+                      >
+                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                        </svg>
+                        Add Module
+                      </Button>
+                      
+                      <Button
+                        onClick={() => setIsImportingPlaylist(true)}
+                        variant="outline"
+                        className="w-full border-dashed border-border text-muted-foreground hover:text-foreground hover:border-foreground"
+                      >
+                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+                        </svg>
+                        Import Playlist
+                      </Button>
+                    </div>
                   )}
                 </div>
               </CardContent>
@@ -1594,6 +1728,113 @@ export default function VideoLecturesClient({ subject, subjectVideos, subjectNam
           </div>
         </div>
       )}
+
+      {/* Playlist Import Dialog */}
+      <Dialog open={isImportingPlaylist} onOpenChange={setIsImportingPlaylist}>
+        <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Import YouTube Playlist</DialogTitle>
+            <DialogDescription>
+              Import an entire YouTube playlist as a new module. Enter the playlist URL and preview the videos before importing.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            {/* Playlist URL Input */}
+            <div className="space-y-2">
+              <Label htmlFor="playlistUrl">YouTube Playlist URL</Label>
+              <div className="flex gap-2">
+                <Input
+                  id="playlistUrl"
+                  value={playlistUrl}
+                  onChange={(e) => setPlaylistUrl(e.target.value)}
+                  placeholder="https://www.youtube.com/playlist?list=..."
+                  className="flex-1"
+                />
+                <Button 
+                  onClick={handlePlaylistPreview}
+                  disabled={isLoadingPlaylist || !playlistUrl.trim()}
+                  className="whitespace-nowrap"
+                >
+                  {isLoadingPlaylist ? (
+                    <>
+                      <svg className="w-4 h-4 mr-2 animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Loading...
+                    </>
+                  ) : (
+                    'Preview'
+                  )}
+                </Button>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Supported formats: playlist URLs from YouTube
+              </p>
+            </div>
+
+            {/* Playlist Preview */}
+            {playlistPreview && (
+              <div className="space-y-3">
+                <div className="border rounded-lg p-4 bg-muted/50">
+                  <h4 className="font-medium text-foreground mb-2">
+                    📋 {playlistPreview.playlistTitle}
+                  </h4>
+                  <p className="text-sm text-muted-foreground">
+                    {playlistPreview.videos.length} videos will be imported as a new module
+                  </p>
+                </div>
+
+                {/* Video List Preview */}
+                <div className="max-h-60 overflow-y-auto border rounded-lg">
+                  <div className="p-3 border-b bg-secondary/50">
+                    <h5 className="font-medium text-sm">Videos to Import:</h5>
+                  </div>
+                  <div className="divide-y">
+                    {playlistPreview.videos.slice(0, 10).map((video, index) => (
+                      <div key={video.id} className="p-3 flex items-start gap-3">
+                        <div className="flex-shrink-0 w-6 h-6 rounded bg-primary text-primary-foreground text-xs flex items-center justify-center font-medium">
+                          {index + 1}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-foreground truncate">
+                            {video.title}
+                          </p>
+                          <p className="text-xs text-muted-foreground truncate">
+                            {video.videoUrl}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                    {playlistPreview.videos.length > 10 && (
+                      <div className="p-3 text-center text-sm text-muted-foreground">
+                        ... and {playlistPreview.videos.length - 10} more videos
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => {
+              setIsImportingPlaylist(false);
+              resetPlaylistImport();
+            }}>
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleImportPlaylist}
+              disabled={!playlistPreview}
+              className="bg-gray-900 hover:bg-gray-800"
+            >
+              Import {playlistPreview ? playlistPreview.videos.length : ''} Videos
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 } 
