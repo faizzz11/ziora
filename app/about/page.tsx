@@ -254,41 +254,6 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-background dark:bg-black">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-6">
-              What Makes Ziora Special
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              Discover the features that make Ziora the perfect study companion for engineering students.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {features.map((feature, index) => (
-              <Card key={index} className="border-2 hover:border-primary/50 transition-all duration-300 hover:shadow-lg">
-                <CardHeader>
-                  <div className="flex items-center space-x-4">
-                    <div className="p-3 bg-secondary rounded-full">
-                      <feature.icon className="w-6 h-6 text-foreground" />
-                    </div>
-                    <CardTitle className="text-xl font-bold text-foreground">
-                      {feature.title}
-                    </CardTitle>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground leading-relaxed">
-                    {feature.description}
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* Founders Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">

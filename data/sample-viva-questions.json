@@ -1,0 +1,62 @@
+{
+  "info": "Sample JSON formats for bulk importing viva questions",
+  "supportedFormats": {
+    "arrayOfQuestions": "Direct array of question objects",
+    "objectWithQuestionsArray": "Object containing a 'questions' array",
+    "singleQuestion": "Single question object"
+  },
+  "examples": {
+    "format1_array": [
+      {
+        "question": "What is Object-Oriented Programming?",
+        "answer": "Object-Oriented Programming (OOP) is a programming paradigm based on the concept of objects, which contain data (attributes) and code (methods). The main principles of OOP are encapsulation, inheritance, polymorphism, and abstraction.",
+        "category": "Fundamentals",
+        "difficulty": "Basic"
+      },
+      {
+        "question": "Explain the concept of inheritance in OOP.",
+        "answer": "Inheritance is a mechanism where a new class (child/derived class) inherits properties and methods from an existing class (parent/base class). This promotes code reusability and establishes a hierarchical relationship between classes.",
+        "category": "OOP Concepts",
+        "difficulty": "Intermediate"
+      },
+      {
+        "question": "What is polymorphism and how is it implemented?",
+        "answer": "Polymorphism allows objects of different types to be treated as objects of a common base type. It can be implemented through method overriding (runtime polymorphism) and method overloading (compile-time polymorphism).",
+        "category": "OOP Concepts",
+        "difficulty": "Advanced"
+      }
+    ],
+    "format2_object_with_questions": {
+      "questions": [
+        {
+          "question": "What is encapsulation?",
+          "answer": "Encapsulation is the bundling of data and methods that operate on that data within a single unit (class). It restricts direct access to some components, providing data hiding and security.",
+          "category": "OOP Concepts",
+          "difficulty": "Basic"
+        },
+        {
+          "question": "Explain the difference between abstract classes and interfaces.",
+          "answer": "Abstract classes can have both abstract and concrete methods, can contain instance variables, and support single inheritance. Interfaces define contracts with only abstract methods (in traditional OOP), support multiple inheritance, and cannot contain instance variables.",
+          "category": "Advanced Concepts",
+          "difficulty": "Advanced"
+        }
+      ]
+    },
+    "format3_single_question": {
+      "question": "What is a constructor?",
+      "answer": "A constructor is a special method that is automatically called when an object of a class is created. It is used to initialize the object's attributes and perform any setup required for the object.",
+      "category": "Fundamentals",
+      "difficulty": "Basic"
+    }
+  },
+  "notes": {
+    "requiredFields": ["question", "answer"],
+    "optionalFields": {
+      "category": "defaults to 'Fundamentals'",
+      "difficulty": "defaults to 'Basic'",
+      "id": "auto-generated if not provided"
+    },
+    "supportedDifficulties": ["Basic", "Intermediate", "Advanced"],
+    "customCategories": "New categories will be automatically added to the system"
+  }
+} 

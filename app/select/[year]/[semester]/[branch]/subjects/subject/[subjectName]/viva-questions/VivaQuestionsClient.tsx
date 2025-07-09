@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { MessageCircle, Search, ArrowLeft, Home, Plus, Edit, Trash2, Save, X } from 'lucide-react';
+import { MessageCircle, Search, ArrowLeft, Home, Plus, Edit, Trash2, Save, X, Upload, FileText } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -109,6 +109,13 @@ export default function VivaQuestionsClient({ subject, vivaData, subjectName, ye
     question: ''
   });
   
+  // Bulk Import States
+  const [isBulkImporting, setIsBulkImporting] = useState(false);
+  const [bulkImportText, setBulkImportText] = useState('');
+  const [importPreview, setImportPreview] = useState<VivaQuestion[]>([]);
+  const [importMode, setImportMode] = useState<'text' | 'file'>('text');
+  const [showValidationError, setShowValidationError] = useState(false);
+  
   const [questionForm, setQuestionForm] = useState({
     question: '',
     answer: '',
@@ -135,6 +142,174 @@ export default function VivaQuestionsClient({ subject, vivaData, subjectName, ye
   });
 
   const allDifficulties = ['All', ...difficulties];
+
+  // Bulk Import Functions
+  const validateAndParseJSON = (jsonText: string): VivaQuestion[] | null => {
+    // Return null for empty or clearly incomplete JSON
+    const trimmed = jsonText.trim();
+    if (!trimmed) return null;
+    
+    // Check for obviously incomplete JSON (common typing patterns)
+    const incompletePatterns = [
+      /^[\{\[]$/,           // Just opening brace/bracket
+      /^[\{\[][\s]*$/,      // Opening brace/bracket with whitespace
+      /^\{[\s]*"[\w]*$/,    // Incomplete property name
+      /^\[[\s]*\{[\s]*$/,   // Array with incomplete object
+    ];
+    
+    if (incompletePatterns.some(pattern => pattern.test(trimmed))) {
+      return null;
+    }
+
+    try {
+      const parsed = JSON.parse(trimmed);
+      
+      // Handle different JSON formats
+      let questions: any[] = [];
+      
+      if (Array.isArray(parsed)) {
+        questions = parsed;
+      } else if (parsed.questions && Array.isArray(parsed.questions)) {
+        questions = parsed.questions;
+      } else if (typeof parsed === 'object' && parsed.question && parsed.answer) {
+        questions = [parsed];
+      } else {
+        // Don't throw error for valid JSON that's just not in expected format
+        // This could be the user is still typing
+        return null;
+      }
+
+      // Validate each question
+      const validatedQuestions: VivaQuestion[] = questions.map((q, index) => {
+        if (!q.question || !q.answer) {
+          throw new Error(`Question ${index + 1} is missing required fields (question, answer)`);
+        }
+        
+        return {
+          id: q.id || Date.now().toString() + Math.random().toString(36).substr(2, 9),
+          question: q.question.toString().trim(),
+          answer: q.answer.toString().trim(),
+          category: q.category || 'Fundamentals',
+          difficulty: q.difficulty || 'Basic'
+        };
+      });
+
+      return validatedQuestions;
+    } catch (error) {
+      // Only log actual parsing errors, not expected incomplete JSON
+      if (error instanceof SyntaxError && (
+        error.message.includes('Unexpected end of JSON input') ||
+        error.message.includes('Unexpected non-whitespace character')
+      )) {
+        // These are expected while typing, don't log as errors
+        return null;
+      }
+      
+      console.error('JSON validation error:', error);
+      return null;
+    }
+  };
+
+  const handleBulkImportTextChange = (text: string) => {
+    setBulkImportText(text);
+    setShowValidationError(false); // Reset error state on new input
+    
+    if (text.trim()) {
+      const parsed = validateAndParseJSON(text);
+      if (parsed && parsed.length > 0) {
+        setImportPreview(parsed);
+        setShowValidationError(false);
+      } else {
+        setImportPreview([]);
+        
+        // Only show validation error after user has stopped typing for a bit
+        // and the text looks like it should be complete JSON
+        const trimmed = text.trim();
+        if (trimmed.length > 10 && 
+            (trimmed.endsWith('}') || trimmed.endsWith(']')) &&
+            (trimmed.startsWith('{') || trimmed.startsWith('['))) {
+          // Delay showing error to avoid interrupting typing
+          setTimeout(() => {
+            if (bulkImportText === text) { // Only show if text hasn't changed
+              setShowValidationError(true);
+            }
+          }, 1000);
+        }
+      }
+    } else {
+      setImportPreview([]);
+      setShowValidationError(false);
+    }
+  };
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (file.type !== 'application/json' && !file.name.endsWith('.json')) {
+      toast.error('Please upload a JSON file');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const content = e.target?.result as string;
+      setBulkImportText(content);
+      setShowValidationError(false);
+      handleBulkImportTextChange(content);
+    };
+    reader.readAsText(file);
+  };
+
+  const handleBulkImport = async () => {
+    if (importPreview.length === 0) {
+      toast.error('No valid questions to import');
+      return;
+    }
+
+    try {
+      // Add unique IDs and ensure no duplicates
+      const newQuestions = importPreview.map(q => ({
+        ...q,
+        id: Date.now().toString() + Math.random().toString(36).substr(2, 9)
+      }));
+
+      const updatedQuestions = [...vivaQuestions, ...newQuestions];
+      setVivaQuestions(updatedQuestions);
+
+      // Extract and add new categories
+      const newCategories = [...new Set(newQuestions.map(q => q.category))];
+      const uniqueNewCategories = newCategories.filter(cat => 
+        !categories.includes(cat) && !customCategories.includes(cat)
+      );
+      
+      if (uniqueNewCategories.length > 0) {
+        setCustomCategories(prev => [...prev, ...uniqueNewCategories]);
+      }
+
+      // Save to API
+      await saveVivaQuestionsToAPI(year, semester, branch, subjectName, {
+        questions: updatedQuestions,
+        categories: [...categories, ...customCategories, ...uniqueNewCategories]
+      });
+
+      toast.success(`Successfully imported ${newQuestions.length} questions`);
+      setIsBulkImporting(false);
+      setBulkImportText('');
+      setImportPreview([]);
+      setShowValidationError(false);
+    } catch (error) {
+      console.error('Error importing questions:', error);
+      toast.error('Failed to import questions');
+    }
+  };
+
+  const resetBulkImport = () => {
+    setBulkImportText('');
+    setImportPreview([]);
+    setImportMode('text');
+    setShowValidationError(false);
+  };
 
   // CRUD Functions
   const handleAddQuestion = () => {
@@ -310,15 +485,25 @@ export default function VivaQuestionsClient({ subject, vivaData, subjectName, ye
           </Badge>
         </div>
 
-        {/* Add Question Button - Only show for admins */}
+        {/* Add Question Buttons - Only show for admins */}
         {isAdmin && (
-          <Button
-            onClick={handleAddQuestion}
-            className="bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 px-6 py-3 rounded-full"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add New Question
-          </Button>
+          <div className="flex gap-3 justify-center">
+            <Button
+              onClick={handleAddQuestion}
+              className="bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 px-6 py-3 rounded-full"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add New Question
+            </Button>
+            <Button
+              onClick={() => setIsBulkImporting(true)}
+              variant="outline"
+              className="px-6 py-3 rounded-full"
+            >
+              <Upload className="w-4 h-4 mr-2" />
+              Bulk Import
+            </Button>
+          </div>
         )}
       </div>
 
@@ -677,6 +862,154 @@ export default function VivaQuestionsClient({ subject, vivaData, subjectName, ye
             </Button>
             <Button variant="destructive" onClick={confirmDelete}>
               Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Bulk Import Dialog */}
+      <Dialog open={isBulkImporting} onOpenChange={setIsBulkImporting}>
+        <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Bulk Import Questions</DialogTitle>
+            <DialogDescription>
+              Import multiple questions at once using JSON format. You can paste JSON text or upload a JSON file.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            {/* Import Mode Toggle */}
+            <div className="flex gap-2 p-1 bg-muted rounded-lg w-fit">
+              <Button
+                size="sm"
+                variant={importMode === 'text' ? 'default' : 'ghost'}
+                onClick={() => setImportMode('text')}
+              >
+                <FileText className="w-4 h-4 mr-1" />
+                Text Input
+              </Button>
+              <Button
+                size="sm"
+                variant={importMode === 'file' ? 'default' : 'ghost'}
+                onClick={() => setImportMode('file')}
+              >
+                <Upload className="w-4 h-4 mr-1" />
+                File Upload
+              </Button>
+            </div>
+
+            {/* File Upload Mode */}
+            {importMode === 'file' && (
+              <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 text-center">
+                <Upload className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                <p className="text-sm text-muted-foreground mb-4">
+                  Upload a JSON file containing questions
+                </p>
+                <Input
+                  type="file"
+                  accept=".json"
+                  onChange={handleFileUpload}
+                  className="max-w-xs mx-auto"
+                />
+              </div>
+            )}
+
+            {/* Text Input Mode */}
+            {importMode === 'text' && (
+              <div className="space-y-2">
+                <Label>JSON Input</Label>
+                <Textarea
+                  value={bulkImportText}
+                  onChange={(e) => handleBulkImportTextChange(e.target.value)}
+                  placeholder={`Paste your JSON here. Supported formats:
+
+1. Array of questions:
+[
+  {
+    "question": "What is OOP?",
+    "answer": "Object-Oriented Programming...",
+    "category": "Fundamentals",
+    "difficulty": "Basic"
+  }
+]
+
+2. Object with questions array:
+{
+  "questions": [
+    {
+      "question": "What is inheritance?",
+      "answer": "Inheritance is...",
+      "category": "OOP Concepts",
+      "difficulty": "Intermediate"
+    }
+  ]
+}
+
+3. Single question object:
+{
+  "question": "What is polymorphism?",
+  "answer": "Polymorphism is...",
+  "category": "OOP Concepts",
+  "difficulty": "Advanced"
+}`}
+                  rows={12}
+                  className="font-mono text-sm"
+                />
+              </div>
+            )}
+
+            {/* Preview Section */}
+            {importPreview.length > 0 && (
+              <div className="space-y-2">
+                <Label>Preview ({importPreview.length} questions)</Label>
+                <div className="max-h-60 overflow-y-auto border rounded-lg p-4 space-y-3">
+                  {importPreview.map((question, index) => (
+                    <div key={index} className="border rounded p-3 bg-muted/50">
+                      <div className="flex justify-between items-start mb-2">
+                        <h4 className="font-medium text-sm">Q{index + 1}: {question.question}</h4>
+                        <div className="flex gap-1">
+                          <Badge variant="secondary" className="text-xs">
+                            {question.category}
+                          </Badge>
+                          <Badge variant="outline" className="text-xs">
+                            {question.difficulty}
+                          </Badge>
+                        </div>
+                      </div>
+                      <p className="text-xs text-muted-foreground overflow-hidden" style={{
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical'
+                      }}>
+                        {question.answer}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Error State */}
+            {showValidationError && (
+              <div className="text-sm text-red-600 bg-red-50 dark:bg-red-950/20 p-3 rounded-lg">
+                Invalid JSON format. Please check your input and try again. Make sure your JSON is properly formatted with matching braces and quotes.
+              </div>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => {
+              setIsBulkImporting(false);
+              resetBulkImport();
+            }}>
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleBulkImport}
+              disabled={importPreview.length === 0}
+              className="bg-gray-900 hover:bg-gray-800"
+            >
+              Import {importPreview.length} Questions
             </Button>
           </DialogFooter>
         </DialogContent>
