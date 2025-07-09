@@ -4,6 +4,9 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { X } from "lucide-react";
+import PDFViewer from "@/components/PDFViewer";
+import GitHubUploader from "@/components/GitHubUploader";
 
 interface Comment {
   id: string;
@@ -26,13 +29,22 @@ interface Topic {
   notes: string;
 }
 
+interface GitHubFile {
+  name: string;
+  path: string;
+  downloadUrl: string;
+  size: number;
+  gitHubUrl: string;
+}
+
 interface Module {
   id: string;
   name: string;
-  pdfUrl: string;
   relatedVideoLink: string;
   topics: Topic[];
   comments: Comment[];
+  githubFiles?: GitHubFile[];
+  selectedGitHubFile?: string; // URL of selected GitHub file
 }
 
 interface Subject {
@@ -309,37 +321,34 @@ const CommentComponent: React.FC<{
 CommentComponent.displayName = 'CommentComponent';
 
 export default function NotesClient({ subject, subjectVideos, subjectName, year, semester, branch }: NotesClientProps) {
-  const [currentModule, setCurrentModule] = useState<Module | null>(null);
+  const [modules, setModules] = useState<Module[]>(subjectVideos.modules || []);
+  const [currentModule, setCurrentModule] = useState<Module | null>(modules.length > 0 ? modules[0] : null);
+  const [selectedModule, setSelectedModule] = useState<string>(modules.length > 0 ? modules[0].id : '');
   const [newComment, setNewComment] = useState('');
-  const [pdfError, setPdfError] = useState(false);
-  const [modules, setModules] = useState<Module[]>(subjectVideos.modules);
-  const [selectedModule, setSelectedModule] = useState<string>('');
+  const [replyContent, setReplyContent] = useState('');
+  const [replyingTo, setReplyingTo] = useState<string | null>(null);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  
+  // Module editing states
   const [editingModule, setEditingModule] = useState<string | null>(null);
   const [editModuleData, setEditModuleData] = useState({
     name: '',
-    pdfUrl: '',
     relatedVideoLink: ''
   });
-  const [deleteModal, setDeleteModal] = useState<{
-    isOpen: boolean;
-    type: 'module' | null;
-    id: string;
-    title: string;
-  }>({
+  
+  // Delete modal state
+  const [deleteModal, setDeleteModal] = useState({
     isOpen: false,
-    type: null,
+    type: null as 'module' | 'comment' | null,
     id: '',
     title: ''
   });
 
-  // Check if user is admin
-  const [isAdmin, setIsAdmin] = useState(false);
-  
-  // Comment state management
-  const [replyingTo, setReplyingTo] = useState<string | null>(null);
-  const [replyContent, setReplyContent] = useState('');
-  const [currentUser, setCurrentUser] = useState<{ name: string; id: string } | null>(null);
-  
+  // GitHub uploader states
+  const [showGitHubUploader, setShowGitHubUploader] = useState(false);
+  const [currentModuleForUpload, setCurrentModuleForUpload] = useState<string | null>(null);
+
   useEffect(() => {
     // Check for admin status from localStorage
     const adminData = localStorage.getItem('admin');
@@ -368,14 +377,12 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
           likes: comment.likes || 0,
           dislikes: comment.dislikes || 0,
           likedBy: comment.likedBy || [],
-          dislikedBy: comment.dislikedBy || [],
-          replies: (comment.replies || []).map(reply => ({
-            ...reply,
-            likes: reply.likes || 0,
-            dislikes: reply.dislikes || 0,
-            likedBy: reply.likedBy || [],
-            dislikedBy: reply.dislikedBy || []
-          }))
+          dislikedBy: comment.dislikedBy || []
+        })),
+        githubFiles: (module.githubFiles || []).map(file => ({
+          ...file,
+          size: file.size || 0,
+          gitHubUrl: file.gitHubUrl || ''
         }))
       }));
       setModules(modulesWithComments);
@@ -384,30 +391,33 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
     }
   }, []);
 
-  useEffect(() => {
-    // Reset PDF error when module changes
-    setPdfError(false);
-  }, [currentModule]);
-
-  const currentIndex = modules.findIndex(module => module.id === currentModule?.id);
-  const previousModule = currentIndex > 0 ? modules[currentIndex - 1] : null;
-  const nextModule = currentIndex < modules.length - 1 ? modules[currentIndex + 1] : null;
-
   const handleModuleChange = (module: Module) => {
     setCurrentModule(module);
+    setSelectedModule(module.id);
   };
 
   const handlePreviousModule = () => {
-    if (previousModule) {
+    if (!currentModule) return;
+    const currentIndex = modules.findIndex(m => m.id === currentModule.id);
+    if (currentIndex > 0) {
+      const previousModule = modules[currentIndex - 1];
       setCurrentModule(previousModule);
+      setSelectedModule(previousModule.id);
     }
   };
 
   const handleNextModule = () => {
-    if (nextModule) {
+    if (!currentModule) return;
+    const currentIndex = modules.findIndex(m => m.id === currentModule.id);
+    if (currentIndex < modules.length - 1) {
+      const nextModule = modules[currentIndex + 1];
       setCurrentModule(nextModule);
+      setSelectedModule(nextModule.id);
     }
   };
+
+  const previousModule = currentModule ? modules[modules.findIndex(m => m.id === currentModule.id) - 1] : null;
+  const nextModule = currentModule ? modules[modules.findIndex(m => m.id === currentModule.id) + 1] : null;
 
   // Memoized comment handlers to prevent re-renders
   const handleCommentSubmit = useCallback(async (e: React.FormEvent) => {
@@ -715,31 +725,11 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
     }
   }, [currentModule, isAdmin, modules, year, semester, branch, subjectName]);
 
-  const handlePdfError = () => {
-    setPdfError(true);
-  };
-
-  const getPdfUrl = (url: string) => {
-    // Ensure we're using the preview format
-    if (url.includes('/view')) {
-      return url.replace('/view', '/preview');
-    }
-    return url;
-  };
-
-  const handleDownloadPdf = () => {
-    if (currentModule?.pdfUrl) {
-      const downloadUrl = currentModule.pdfUrl.replace('/preview', '/view');
-      window.open(downloadUrl, '_blank');
-    }
-  };
-
   const handleAddModule = async () => {
     const newModuleId = `module-${Date.now()}`;
     const newModule: Module = {
       id: newModuleId,
       name: `New Module ${modules.length + 1}`,
-      pdfUrl: "",
       relatedVideoLink: "",
       topics: [],
       comments: []
@@ -754,7 +744,7 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
       await saveNotesToAPI(year, semester, branch, subjectName, { modules: updatedModules });
       
       // Automatically start editing the new module
-      handleEditModule(newModuleId, newModule.name, newModule.pdfUrl, newModule.relatedVideoLink);
+      handleEditModule(newModuleId, newModule.name, newModule.relatedVideoLink);
       
       // Show success toast
       const toast = document.createElement('div');
@@ -786,11 +776,10 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
     }
   };
 
-  const handleEditModule = (moduleId: string, currentName: string, currentPdfUrl: string, currentVideoLink: string) => {
+  const handleEditModule = (moduleId: string, currentName: string, currentVideoLink: string) => {
     setEditingModule(moduleId);
     setEditModuleData({
       name: currentName,
-      pdfUrl: currentPdfUrl,
       relatedVideoLink: currentVideoLink
     });
   };
@@ -804,7 +793,6 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
             ? { 
                 ...module, 
                 name: editModuleData.name.trim(),
-                pdfUrl: editModuleData.pdfUrl.trim(),
                 relatedVideoLink: editModuleData.relatedVideoLink.trim()
               }
             : module
@@ -844,12 +832,12 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
       }
     }
     setEditingModule(null);
-    setEditModuleData({ name: '', pdfUrl: '', relatedVideoLink: '' });
+    setEditModuleData({ name: '', relatedVideoLink: '' });
   };
 
   const handleCancelEdit = () => {
     setEditingModule(null);
-    setEditModuleData({ name: '', pdfUrl: '', relatedVideoLink: '' });
+    setEditModuleData({ name: '', relatedVideoLink: '' });
   };
 
   const handleDeleteModule = (moduleId: string) => {
@@ -918,6 +906,125 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
     setDeleteModal({ isOpen: false, type: null, id: '', title: '' });
   };
 
+  // GitHub file management functions
+  const handleGitHubFileUploaded = async (file: GitHubFile) => {
+    if (!currentModuleForUpload) return;
+    
+    const updatedModules = modules.map(module => 
+      module.id === currentModuleForUpload 
+        ? { 
+            ...module, 
+            githubFiles: [...(module.githubFiles || []), file],
+            selectedGitHubFile: file.downloadUrl
+          }
+        : module
+    );
+    
+    setModules(updatedModules);
+    
+    // Update current module if it's the one being updated
+    if (currentModule?.id === currentModuleForUpload) {
+      setCurrentModule(prev => prev ? {
+        ...prev,
+        githubFiles: [...(prev.githubFiles || []), file],
+        selectedGitHubFile: file.downloadUrl
+      } : null);
+    }
+
+    // Save to MongoDB
+    try {
+      await updateNotesInAPI(year, semester, branch, subjectName, { modules: updatedModules });
+    } catch (error) {
+      console.error('Error saving GitHub file to MongoDB:', error);
+    }
+
+    // Show success message
+    const toast = document.createElement('div');
+    toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300';
+    toast.textContent = `✅ ${file.name} uploaded and ready to view!`;
+    document.body.appendChild(toast);
+    
+    // Auto-close uploader after successful upload
+    setTimeout(() => {
+      setShowGitHubUploader(false);
+      toast.style.opacity = '0';
+      setTimeout(() => {
+        document.body.removeChild(toast);
+      }, 300);
+    }, 3000);
+  };
+
+  const handleGitHubFileSelected = async (file: GitHubFile) => {
+    if (!currentModuleForUpload) return;
+    
+    const updatedModules = modules.map(module => 
+      module.id === currentModuleForUpload 
+        ? { ...module, selectedGitHubFile: file.downloadUrl }
+        : module
+    );
+    
+    setModules(updatedModules);
+    
+    // Update current module if it's the one being updated
+    if (currentModule?.id === currentModuleForUpload) {
+      setCurrentModule(prev => prev ? {
+        ...prev,
+        selectedGitHubFile: file.downloadUrl
+      } : null);
+    }
+
+    // Save to MongoDB
+    try {
+      await updateNotesInAPI(year, semester, branch, subjectName, { modules: updatedModules });
+    } catch (error) {
+      console.error('Error saving GitHub file selection to MongoDB:', error);
+    }
+  };
+
+  const handleGitHubFileDeleted = async (fileName: string) => {
+    if (!currentModuleForUpload) return;
+    
+    const updatedModules = modules.map(module => 
+      module.id === currentModuleForUpload 
+        ? { 
+            ...module, 
+            githubFiles: (module.githubFiles || []).filter(f => f.name !== fileName),
+            selectedGitHubFile: module.selectedGitHubFile && 
+              (module.githubFiles || []).find(f => f.downloadUrl === module.selectedGitHubFile)?.name === fileName
+              ? undefined
+              : module.selectedGitHubFile
+          }
+        : module
+    );
+    
+    setModules(updatedModules);
+    
+    // Update current module if it's the one being updated
+    if (currentModule?.id === currentModuleForUpload) {
+      const updatedFiles = (currentModule.githubFiles || []).filter(f => f.name !== fileName);
+      const shouldClearSelected = currentModule.selectedGitHubFile && 
+        (currentModule.githubFiles || []).find(f => f.downloadUrl === currentModule.selectedGitHubFile)?.name === fileName;
+      
+      setCurrentModule(prev => prev ? {
+        ...prev,
+        githubFiles: updatedFiles,
+        selectedGitHubFile: shouldClearSelected ? undefined : prev.selectedGitHubFile
+      } : null);
+    }
+
+    // Save to MongoDB
+    try {
+      await updateNotesInAPI(year, semester, branch, subjectName, { modules: updatedModules });
+    } catch (error) {
+      console.error('Error saving GitHub file deletion to MongoDB:', error);
+    }
+  };
+
+  const openGitHubUploader = (moduleId: string) => {
+    setCurrentModuleForUpload(moduleId);
+    setShowGitHubUploader(true);
+  };
+
   return (
     <>
       {/* Top Navigation Bar */}
@@ -960,7 +1067,7 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
               <Button 
                 variant="outline" 
                 onClick={() => window.open(currentModule.relatedVideoLink, '_blank')}
-                className="flex items-center space-x- cursor-pointer"
+                className="flex items-center space-x-2 cursor-pointer"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.586a1 1 0 00.707-.293l2.414-2.414a1 1 0 01.707-.293H15" />
@@ -969,16 +1076,17 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
               </Button>
             )}
             
-            <Button 
-              onClick={handleDownloadPdf}
-              disabled={!currentModule?.pdfUrl}
-              className="cursor-pointer bg-gradient-to-r from-gray-900 to-gray-800 dark:from-gray-700 dark:to-gray-600 text-white hover:from-gray-800 hover:to-gray-700 dark:hover:from-gray-600 dark:hover:to-gray-500"
-            >
-              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a4 4 0 01-4-4V5a4 4 0 014-4h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a4 4 0 01-4 4z" />
-              </svg>
-              Download PDF
-            </Button>
+            {isAdmin && currentModule && (
+              <Button
+                onClick={() => openGitHubUploader(currentModule.id)}
+                className="cursor-pointer bg-gradient-to-r from-gray-900 to-gray-800 dark:from-gray-700 dark:to-gray-600 text-white hover:from-gray-800 hover:to-gray-700 dark:hover:from-gray-600 dark:hover:to-gray-500"
+              >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
+                Upload PDFs
+              </Button>
+            )}
           </div>
         </div>
       </section>
@@ -990,52 +1098,72 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
           {/* Notes and Discussion Section */}
           <div className="xl:col-span-2 space-y-6">
             
-            {/* Notes Tab - Larger than video tab */}
+            {/* Notes Tab - PDF Viewer */}
             <Card className="bg-card dark:bg-[oklch(0.205_0_0)] border border-border">
               <CardContent className="p-0">
                 {currentModule ? (
                   <div>
-                    <div className="bg-secondary dark:bg-[oklch(0.205_0_0)] rounded-t-lg overflow-hidden" style={{ height: '70vh' }}>
-                      {!pdfError && currentModule.pdfUrl && currentModule.pdfUrl.trim() !== '' ? (
-                        <iframe
-                          src={getPdfUrl(currentModule.pdfUrl)}
-                          className="w-full h-full"
-                          title={`${currentModule.name} Notes`}
-                          style={{ border: 'none' }}
-                          onError={handlePdfError}
-                          sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+                    {/* PDF Header */}
+                    <div className="bg-secondary dark:bg-[oklch(0.205_0_0)] border-b border-border p-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-4">
+                          <h2 className="text-lg font-semibold text-foreground">
+                            {currentModule.name} - Notes
+                          </h2>
+                          {currentModule.selectedGitHubFile && (
+                            <Badge variant="secondary" className="text-xs">
+                              {currentModule.githubFiles?.find(f => f.downloadUrl === currentModule.selectedGitHubFile)?.name}
+                            </Badge>
+                          )}
+                        </div>
+                        {isAdmin && (
+                          <Button
+                            onClick={() => openGitHubUploader(currentModule.id)}
+                            size="sm"
+                            variant="outline"
+                          >
+                            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                            </svg>
+                            Upload PDFs
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* PDF Display */}
+                    <div style={{ height: '70vh' }}>
+                      {currentModule.selectedGitHubFile ? (
+                        <PDFViewer 
+                          url={currentModule.selectedGitHubFile}
+                          title={`${currentModule.name} - PDF`}
+                          height="70vh"
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center bg-secondary dark:bg-[oklch(0.205_0_0)]">
                           <div className="text-center p-8">
-                                                          <svg className="w-16 h-16 text-muted-foreground mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-16 h-16 text-muted-foreground mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
-                              <h3 className="text-lg font-medium text-foreground mb-2">
-                                {!currentModule.pdfUrl || currentModule.pdfUrl.trim() === '' ? 'No PDF Set' : 'PDF Preview Unavailable'}
-                              </h3>
-                              <p className="text-muted-foreground mb-4">
-                              {!currentModule.pdfUrl || currentModule.pdfUrl.trim() === '' 
-                                ? 'Please add a PDF URL to this module to view notes.' 
-                                : 'The PDF cannot be displayed in preview mode.'
-                              }
+                            <h3 className="text-lg font-medium text-foreground mb-2">
+                              No PDF Selected
+                            </h3>
+                            <p className="text-muted-foreground mb-4">
+                              Please upload and select a PDF file to view notes.
                             </p>
-                            {currentModule.pdfUrl && currentModule.pdfUrl.trim() !== '' && (
-                            <Button 
-                              onClick={handleDownloadPdf}
+                            {isAdmin && (
+                              <Button 
+                                onClick={() => openGitHubUploader(currentModule.id)}
                                 className="bg-gradient-to-r from-gray-900 to-gray-800 dark:from-gray-700 dark:to-gray-600 text-white hover:from-gray-800 hover:to-gray-700 dark:hover:from-gray-600 dark:hover:to-gray-500"
-                            >
-                              Open PDF in New Tab
-                            </Button>
+                              >
+                                Upload PDF
+                              </Button>
                             )}
                           </div>
                         </div>
                       )}
                     </div>
                     <div className="p-6">
-                      <h2 className="text-xl font-semibold text-foreground mb-2">
-                        {currentModule.name} - Notes
-                      </h2>
                       <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                         <span className="flex items-center">
                           <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1138,9 +1266,9 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
             </Card>
           </div>
 
-          {/* Right Sidebar - Modules (Increased Size) */}
+          {/* Right Sidebar - Modules */}
           <div className="xl:col-span-1">
-                          <Card className="bg-card dark:bg-[oklch(0.205_0_0)] border border-border sticky top-6">
+            <Card className="bg-card dark:bg-[oklch(0.205_0_0)] border border-border sticky top-6">
               <CardContent className="p-4">
                 <h3 className="text-lg font-semibold text-foreground mb-4">Course Notes</h3>
                 
@@ -1166,158 +1294,168 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
                       
                       {selectedModule === module.id && (
                         <div className="mt-2 space-y-2">
-                          {/* Module Actions Section */}
-                                                        <div className="p-3 bg-secondary dark:bg-[oklch(0.205_0_0)] rounded-lg border">
-                                                         {editingModule === module.id ? (
-                               <div className="space-y-3">
-                                 <div>
-                                   <label className="block text-xs font-medium text-muted-foreground mb-1">Module Name</label>
-                                   <input
-                                     type="text"
-                                     value={editModuleData.name}
-                                     onChange={(e) => setEditModuleData(prev => ({ ...prev, name: e.target.value }))}
-                                     className="w-full p-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                     placeholder="Module name"
-                                     autoFocus
-                                   />
-                                 </div>
-                                 <div>
-                                   <label className="block text-xs font-medium text-muted-foreground mb-1">PDF URL</label>
-                                   <input
-                                     type="text"
-                                     value={editModuleData.pdfUrl}
-                                     onChange={(e) => setEditModuleData(prev => ({ ...prev, pdfUrl: e.target.value }))}
-                                     className="w-full p-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                     placeholder="https://drive.google.com/file/d/.../preview"
-                                   />
-                                 </div>
-                                 <div>
-                                   <label className="block text-xs font-medium text-muted-foreground mb-1">Related Video URL</label>
-                                   <input
-                                     type="text"
-                                     value={editModuleData.relatedVideoLink}
-                                     onChange={(e) => setEditModuleData(prev => ({ ...prev, relatedVideoLink: e.target.value }))}
-                                     className="w-full p-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                     placeholder="https://youtu.be/... (optional)"
-                                   />
-                                 </div>
-                                 <div className="flex space-x-2">
-                                   <Button
-                                     onClick={() => handleSaveModule(module.id)}
-                                     size="sm"
-                                     className="bg-green-600 text-white hover:bg-green-700"
-                                   >
-                                     <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                     </svg>
-                                     Save
-                                   </Button>
-                                   <Button
-                                     onClick={handleCancelEdit}
-                                     size="sm"
-                                     variant="outline"
-                                   >
-                                     Cancel
-                                   </Button>
-                                 </div>
-                               </div>
+                          <div className="p-3 bg-secondary dark:bg-[oklch(0.205_0_0)] rounded-lg border">
+                            {editingModule === module.id ? (
+                              <div className="space-y-3">
+                                <div>
+                                  <label className="block text-xs font-medium text-muted-foreground mb-1">Module Name</label>
+                                  <input
+                                    type="text"
+                                    value={editModuleData.name}
+                                    onChange={(e) => setEditModuleData(prev => ({ ...prev, name: e.target.value }))}
+                                    className="w-full p-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    placeholder="Module name"
+                                    autoFocus
+                                  />
+                                </div>
+                                <div>
+                                  <label className="block text-xs font-medium text-muted-foreground mb-1">Related Video URL</label>
+                                  <input
+                                    type="text"
+                                    value={editModuleData.relatedVideoLink}
+                                    onChange={(e) => setEditModuleData(prev => ({ ...prev, relatedVideoLink: e.target.value }))}
+                                    className="w-full p-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    placeholder="https://youtu.be/... (optional)"
+                                  />
+                                </div>
+                                {/* GitHub PDF Management in Edit Mode */}
+                                {isAdmin && (
+                                  <div>
+                                    <label className="block text-xs font-medium text-muted-foreground mb-1">PDF Files</label>
+                                    <Button
+                                      onClick={() => openGitHubUploader(module.id)}
+                                      size="sm"
+                                      variant="outline"
+                                      className="w-full"
+                                    >
+                                                                             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                       </svg>
+                                       Upload PDFs
+                                    </Button>
+                                  </div>
+                                )}
+                                <div className="flex space-x-2">
+                                  <Button
+                                    onClick={() => handleSaveModule(module.id)}
+                                    size="sm"
+                                    className="bg-green-600 text-white hover:bg-green-700"
+                                  >
+                                    <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    Save
+                                  </Button>
+                                  <Button
+                                    onClick={handleCancelEdit}
+                                    size="sm"
+                                    variant="outline"
+                                  >
+                                    Cancel
+                                  </Button>
+                                </div>
+                              </div>
                             ) : (
                               <div className="space-y-3">
                                 <div className="flex items-center justify-between">
                                   <span className="text-sm font-medium text-muted-foreground">Module Actions</span>
                                   {isAdmin && (
-                                  <div className="flex space-x-1">
-                                                                         <Button
-                                       onClick={() => handleEditModule(module.id, module.name, module.pdfUrl, module.relatedVideoLink)}
-                                       size="sm"
-                                       variant="outline"
-                                       className="h-8 w-8 p-0"
-                                     >
-                                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                      </svg>
-                                    </Button>
-                                    <Button
-                                      onClick={() => handleDeleteModule(module.id)}
-                                      size="sm"
-                                      variant="outline"
-                                      className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
-                                    >
-                                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                      </svg>
-                                    </Button>
-                                  </div>
+                                    <div className="flex space-x-1">
+                                      <Button
+                                        onClick={() => handleEditModule(module.id, module.name, module.relatedVideoLink)}
+                                        size="sm"
+                                        variant="outline"
+                                        className="h-8 w-8 p-0"
+                                      >
+                                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                        </svg>
+                                      </Button>
+                                      <Button
+                                        onClick={() => handleDeleteModule(module.id)}
+                                        size="sm"
+                                        variant="outline"
+                                        className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                                      >
+                                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                      </Button>
+                                    </div>
                                   )}
                                 </div>
                                 
                                 {/* Links Section */}
                                 <div className="space-y-2">
-                                  <label className="text-xs font-medium text-muted-foreground">Quick Links</label>
-                                                                     <div className="flex flex-col space-y-1">
-                                     {module.pdfUrl ? (
-                                       <Button
-                                         onClick={() => handleModuleChange(module)}
-                                         size="sm"
-                                         variant="outline"
-                                         className="justify-start h-8 text-xs cursor-pointer"
-                                       >
-                                         <svg className="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a4 4 0 01-4-4V5a4 4 0 014-4h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a4 4 0 01-4 4z" />
-                                         </svg>
-                                         Open PDF
-                                       </Button>
-                                     ) : (
-                                       <Button
-                                         size="sm"
-                                         variant="outline"
-                                         disabled
-                                         className="justify-start h-8 text-xs text-muted-foreground"
-                                       >
-                                         <svg className="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a4 4 0 01-4-4V5a4 4 0 014-4h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a4 4 0 01-4 4z" />
-                                         </svg>
-                                         No PDF Set
-                                       </Button>
-                                     )}
-                                     {module.relatedVideoLink ? (
-                                       <Button
-                                         onClick={() => window.open(module.relatedVideoLink, '_blank')}
-                                         size="sm"
-                                         variant="outline"
-                                         className="justify-start h-8 text-xs cursor-pointer"
-                                       >
-                                         <svg className="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.586a1 1 0 00.707-.293l2.414-2.414a1 1 0 01.707-.293H15" />
-                                         </svg>
-                                         Related Video
-                                       </Button>
-                                     ) : (
-                                       <Button
-                                         size="sm"
-                                         variant="outline"
-                                         disabled
-                                         className="justify-start h-8 text-xs text-muted-foreground"
-                                       >
-                                         <svg className="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.586a1 1 0 00.707-.293l2.414-2.414a1 1 0 01.707-.293H15" />
-                                         </svg>
-                                         No Video Set
-                                       </Button>
-                                     )}
-                                     <Button
-                                       onClick={() => handleModuleChange(module)}
-                                       size="sm"
-                                       variant="outline"
-                                       className="justify-start h-8 text-xs cursor-pointer"
-                                     >
-                                       <svg className="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                       </svg>
-                                       View Notes
-                                     </Button>
-                                   </div>
+                                  <label className="text-xs font-medium text-muted-foreground">Available PDFs</label>
+                                  <div className="flex flex-col space-y-1">
+                                    {(module.githubFiles || []).length > 0 ? (
+                                      (module.githubFiles || []).map((file) => (
+                                        <Button
+                                          key={file.name}
+                                          onClick={async () => {
+                                            // Update the module with selected file
+                                            const updatedModules = modules.map(m => 
+                                              m.id === module.id 
+                                                ? { ...m, selectedGitHubFile: file.downloadUrl }
+                                                : m
+                                            );
+                                            
+                                            setModules(updatedModules);
+                                            const updatedModule = updatedModules.find(m => m.id === module.id);
+                                            if (updatedModule) {
+                                              setCurrentModule(updatedModule);
+                                              setSelectedModule(updatedModule.id);
+                                            }
+
+                                            // Save to MongoDB
+                                            try {
+                                              await updateNotesInAPI(year, semester, branch, subjectName, { modules: updatedModules });
+                                            } catch (error) {
+                                              console.error('Error saving PDF selection:', error);
+                                            }
+                                          }}
+                                          size="sm"
+                                          variant={module.selectedGitHubFile === file.downloadUrl ? "default" : "outline"}
+                                          className="justify-start h-8 text-xs cursor-pointer"
+                                        >
+                                          <svg className="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a4 4 0 01-4-4V5a4 4 0 014-4h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a4 4 0 01-4 4z" />
+                                          </svg>
+                                          {file.name.length > 20 ? `${file.name.substring(0, 20)}...` : file.name}
+                                        </Button>
+                                      ))
+                                    ) : (
+                                      <div className="text-xs text-muted-foreground p-2 text-center border border-dashed border-gray-300 rounded">
+                                        No PDFs uploaded yet
+                                      </div>
+                                    )}
+                                    {module.relatedVideoLink ? (
+                                      <Button
+                                        onClick={() => window.open(module.relatedVideoLink, '_blank')}
+                                        size="sm"
+                                        variant="outline"
+                                        className="justify-start h-8 text-xs cursor-pointer"
+                                      >
+                                        <svg className="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.586a1 1 0 00.707-.293l2.414-2.414a1 1 0 01.707-.293H15" />
+                                        </svg>
+                                        Related Video
+                                      </Button>
+                                    ) : (
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        disabled
+                                        className="justify-start h-8 text-xs text-muted-foreground"
+                                      >
+                                        <svg className="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.586a1 1 0 00.707-.293l2.414-2.414a1 1 0 01.707-.293H15" />
+                                        </svg>
+                                        No Video Set
+                                      </Button>
+                                    )}
+                                  </div>
                                 </div>
                               </div>
                             )}
@@ -1329,16 +1467,16 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
                   
                   {/* Add Module Button - Only show for admins */}
                   {isAdmin && (
-                  <Button
-                    onClick={handleAddModule}
-                    variant="outline"
+                    <Button
+                      onClick={handleAddModule}
+                      variant="outline"
                       className="cursor-pointer w-full mt-4 border-dashed border-border text-muted-foreground hover:text-foreground hover:border-muted-foreground"
-                  >
-                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                    </svg>
-                    Add Module
-                  </Button>
+                    >
+                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                      </svg>
+                      Add Module
+                    </Button>
                   )}
                 </div>
               </CardContent>
@@ -1346,6 +1484,39 @@ export default function NotesClient({ subject, subjectVideos, subjectName, year,
           </div>
         </div>
       </div>
+
+      {/* GitHub Uploader Dialog */}
+      {showGitHubUploader && currentModuleForUpload && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-background rounded-lg shadow-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold text-foreground">
+                  Upload PDF Files - {modules.find(m => m.id === currentModuleForUpload)?.name}
+                </h2>
+                <Button
+                  onClick={() => setShowGitHubUploader(false)}
+                  variant="outline"
+                  size="sm"
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+              
+              <GitHubUploader
+                year={year}
+                semester={semester}
+                branch={branch}
+                subject={subjectName}
+                moduleId={currentModuleForUpload}
+                onFileUploaded={handleGitHubFileUploaded}
+                onFileDeleted={handleGitHubFileDeleted}
+                onFileSelected={handleGitHubFileSelected}
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Delete Confirmation Modal */}
       {deleteModal.isOpen && (
