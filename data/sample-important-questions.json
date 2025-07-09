@@ -1,0 +1,138 @@
+{
+  "description": "Sample JSON formats for bulk importing important questions",
+  "note": "This file demonstrates different JSON structures supported by the important questions bulk import feature",
+  
+  "format1_array_of_questions": [
+    {
+      "question": "What are the fundamental concepts of object-oriented programming?",
+      "frequency": 1,
+      "repetition": "Most Repeated",
+      "moduleNo": "1",
+      "moduleTitle": "Introduction to OOP"
+    },
+    {
+      "question": "Explain the difference between inheritance and composition",
+      "frequency": 2,
+      "repetition": "2nd Most Repeated",
+      "moduleNo": "1",
+      "moduleTitle": "Introduction to OOP"
+    },
+    {
+      "question": "What is encapsulation and why is it important?",
+      "frequency": 3,
+      "repetition": "3rd Most Repeated",
+      "moduleNo": "1",
+      "moduleTitle": "Introduction to OOP"
+    },
+    {
+      "question": "Define polymorphism with examples",
+      "frequency": 1,
+      "repetition": "Most Repeated",
+      "moduleNo": "2",
+      "moduleTitle": "Advanced OOP Concepts"
+    },
+    {
+      "question": "How does method overriding work in Java?",
+      "frequency": 2,
+      "repetition": "2nd Most Repeated",
+      "moduleNo": "2",
+      "moduleTitle": "Advanced OOP Concepts"
+    }
+  ],
+
+  "format2_object_with_questions_array": {
+    "questions": [
+      {
+        "question": "What are the SOLID principles in software design?",
+        "frequency": 1,
+        "repetition": "Most Repeated",
+        "moduleNo": "3",
+        "moduleTitle": "Design Patterns"
+      },
+      {
+        "question": "Explain the Singleton design pattern",
+        "frequency": 2,
+        "repetition": "2nd Most Repeated",
+        "moduleNo": "3",
+        "moduleTitle": "Design Patterns"
+      },
+      {
+        "question": "What is the Factory pattern and when to use it?",
+        "frequency": 3,
+        "repetition": "3rd Most Repeated",
+        "moduleNo": "3",
+        "moduleTitle": "Design Patterns"
+      }
+    ]
+  },
+
+  "format3_single_question_object": {
+    "question": "Describe the MVC architectural pattern",
+    "frequency": 1,
+    "repetition": "Most Repeated",
+    "moduleNo": "4",
+    "moduleTitle": "Software Architecture"
+  },
+
+  "format4_minimal_questions": [
+    {
+      "question": "What is the difference between abstract class and interface?",
+      "moduleNo": "2"
+    },
+    {
+      "question": "Explain garbage collection in Java",
+      "frequency": 4,
+      "moduleNo": "5",
+      "moduleTitle": "Memory Management"
+    },
+    {
+      "question": "What are lambda expressions?",
+      "repetition": "3rd Most Repeated",
+      "moduleNo": "6"
+    }
+  ],
+
+  "format5_questions_without_modules": [
+    {
+      "question": "Define data structure and its types",
+      "frequency": 1,
+      "repetition": "Most Repeated"
+    },
+    {
+      "question": "What is the time complexity of binary search?",
+      "frequency": 2,
+      "repetition": "2nd Most Repeated"
+    },
+    {
+      "question": "Explain the concept of recursion with examples",
+      "frequency": 3,
+      "repetition": "3rd Most Repeated"
+    }
+  ],
+
+  "frequency_mapping": {
+    "1": "Most Repeated",
+    "2": "2nd Most Repeated", 
+    "3": "3rd Most Repeated",
+    "4": "4th Most Repeated",
+    "5": "One Time Repeated"
+  },
+
+  "usage_instructions": {
+    "step1": "Copy any of the example formats above",
+    "step2": "Navigate to the syllabus-important-questions page as an admin",
+    "step3": "Click the 'Bulk Import' button next to 'Add Module'",
+    "step4": "Choose 'Text Input' or 'File Upload' mode",
+    "step5": "Paste the JSON or upload a .json file",
+    "step6": "Review the preview of parsed questions",
+    "step7": "Click 'Import X Questions' to add them to the database",
+    "notes": [
+      "Questions without moduleNo will be placed in a module called 'imported'",
+      "Questions without frequency default to 1 (Most Repeated)",
+      "Questions without repetition will be auto-mapped from frequency",
+      "Questions are automatically sorted by frequency within each module",
+      "Existing modules will have new questions added to them",
+      "New modules will be created if moduleNo doesn't exist"
+    ]
+  }
+} 

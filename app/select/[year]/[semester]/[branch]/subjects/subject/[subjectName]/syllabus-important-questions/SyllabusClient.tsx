@@ -9,8 +9,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Edit, Trash2, Save, X, BookOpen, Lightbulb, Info, AlertTriangle, FileText, GraduationCap, HelpCircle } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Plus, Edit, Trash2, Save, X, BookOpen, Lightbulb, Info, AlertTriangle, FileText, GraduationCap, HelpCircle, Upload } from "lucide-react";
 import { checkAdminStatus } from '@/lib/admin-utils';
+import { toast } from "sonner";
 
 interface Module {
   moduleNo: string;
@@ -61,6 +63,18 @@ interface SyllabusClientProps {
   year: string;
   semester: string;
   branch: string;
+}
+
+interface ImportQuestion {
+  question: string;
+  frequency?: number;
+  repetition?: string;
+  moduleNo?: string;
+  moduleTitle?: string;
+}
+
+interface ImportData {
+  questions: ImportQuestion[];
 }
 
 // API helper functions for syllabus
@@ -306,6 +320,13 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
       }))
     }));
   }, []);
+
+  // Bulk Import States for Important Questions
+  const [isBulkImporting, setIsBulkImporting] = useState(false);
+  const [bulkImportText, setBulkImportText] = useState('');
+  const [importPreview, setImportPreview] = useState<ImportQuestion[]>([]);
+  const [importMode, setImportMode] = useState<'text' | 'file'>('text');
+  const [showValidationError, setShowValidationError] = useState(false);
 
   // CRUD Functions for Syllabus
   const handleAddModule = () => {
@@ -765,6 +786,232 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
     );
   };
 
+  // Bulk Import Functions for Important Questions
+  const validateAndParseQuestionsJSON = (jsonText: string): ImportQuestion[] | null => {
+    // Return null for empty or clearly incomplete JSON
+    const trimmed = jsonText.trim();
+    if (!trimmed) return null;
+    
+    // Check for obviously incomplete JSON (common typing patterns)
+    const incompletePatterns = [
+      /^[\{\[]$/,           // Just opening brace/bracket
+      /^[\{\[][\s]*$/,      // Opening brace/bracket with whitespace
+      /^\{[\s]*"[\w]*$/,    // Incomplete property name
+      /^\[[\s]*\{[\s]*$/,   // Array with incomplete object
+    ];
+    
+    if (incompletePatterns.some(pattern => pattern.test(trimmed))) {
+      return null;
+    }
+
+    try {
+      const parsed = JSON.parse(trimmed);
+      
+      // Handle different JSON formats
+      let questions: any[] = [];
+      
+      if (Array.isArray(parsed)) {
+        questions = parsed;
+      } else if (parsed.questions && Array.isArray(parsed.questions)) {
+        questions = parsed.questions;
+      } else if (typeof parsed === 'object' && parsed.question) {
+        questions = [parsed];
+      } else {
+        // Don't throw error for valid JSON that's just not in expected format
+        return null;
+      }
+
+      // Validate each question
+      const validatedQuestions: ImportQuestion[] = questions.map((q, index) => {
+        if (!q.question) {
+          throw new Error(`Question ${index + 1} is missing the required 'question' field`);
+        }
+        
+        // Validate frequency if provided
+        let frequency = q.frequency || 1;
+        if (frequency < 1 || frequency > 5) {
+          frequency = 1; // Default to Most Repeated if invalid
+        }
+
+        // Map frequency to repetition if not provided
+        let repetition = q.repetition;
+        if (!repetition) {
+          const repetitionMap: { [key: number]: string } = {
+            1: 'Most Repeated',
+            2: '2nd Most Repeated',
+            3: '3rd Most Repeated',
+            4: '4th Most Repeated',
+            5: 'One Time Repeated'
+          };
+          repetition = repetitionMap[frequency] || 'Most Repeated';
+        }
+        
+        return {
+          question: q.question.toString().trim(),
+          frequency,
+          repetition,
+          moduleNo: q.moduleNo || '',
+          moduleTitle: q.moduleTitle || ''
+        };
+      });
+
+      return validatedQuestions;
+    } catch (error) {
+      // Only log actual parsing errors, not expected incomplete JSON
+      if (error instanceof SyntaxError && (
+        error.message.includes('Unexpected end of JSON input') ||
+        error.message.includes('Unexpected non-whitespace character')
+      )) {
+        // These are expected while typing, don't log as errors
+        return null;
+      }
+      
+      console.error('JSON validation error:', error);
+      return null;
+    }
+  };
+
+  const handleBulkImportTextChange = (text: string) => {
+    setBulkImportText(text);
+    setShowValidationError(false); // Reset error state on new input
+    
+    if (text.trim()) {
+      const parsed = validateAndParseQuestionsJSON(text);
+      if (parsed && parsed.length > 0) {
+        setImportPreview(parsed);
+        setShowValidationError(false);
+      } else {
+        setImportPreview([]);
+        
+        // Only show validation error after user has stopped typing for a bit
+        const trimmed = text.trim();
+        if (trimmed.length > 10 && 
+            (trimmed.endsWith('}') || trimmed.endsWith(']')) &&
+            (trimmed.startsWith('{') || trimmed.startsWith('['))) {
+          // Delay showing error to avoid interrupting typing
+          setTimeout(() => {
+            if (bulkImportText === text) { // Only show if text hasn't changed
+              setShowValidationError(true);
+            }
+          }, 1000);
+        }
+      }
+    } else {
+      setImportPreview([]);
+      setShowValidationError(false);
+    }
+  };
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (file.type !== 'application/json' && !file.name.endsWith('.json')) {
+      toast.error('Please upload a JSON file');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const content = e.target?.result as string;
+      setBulkImportText(content);
+      setShowValidationError(false);
+      handleBulkImportTextChange(content);
+    };
+    reader.readAsText(file);
+  };
+
+  const handleBulkImport = async () => {
+    if (importPreview.length === 0) {
+      toast.error('No valid questions to import');
+      return;
+    }
+
+    try {
+      // Group questions by module
+      const questionsByModule: { [key: string]: ImportQuestion[] } = {};
+      
+      for (const question of importPreview) {
+        let moduleKey = question.moduleNo || 'imported';
+        
+        if (!questionsByModule[moduleKey]) {
+          questionsByModule[moduleKey] = [];
+        }
+        questionsByModule[moduleKey].push(question);
+      }
+
+      // Create new modules or add to existing ones
+      const updatedModules = [...impQuestions.modules];
+      let questionsAdded = 0;
+
+      for (const [moduleKey, questions] of Object.entries(questionsByModule)) {
+        const existingModuleIndex = updatedModules.findIndex(m => m.moduleNo === moduleKey);
+        
+        if (existingModuleIndex >= 0) {
+          // Add to existing module
+          const newQuestions = questions.map(q => ({
+            question: q.question,
+            frequency: q.frequency || 1,
+            repetition: q.repetition || 'Most Repeated'
+          }));
+          
+          updatedModules[existingModuleIndex].questions.push(...newQuestions);
+          questionsAdded += newQuestions.length;
+        } else {
+          // Create new module
+          const moduleTitle = questions[0]?.moduleTitle || `Imported Module ${moduleKey}`;
+          const newQuestions = questions.map(q => ({
+            question: q.question,
+            frequency: q.frequency || 1,
+            repetition: q.repetition || 'Most Repeated'
+          }));
+          
+          updatedModules.push({
+            moduleNo: moduleKey,
+            title: moduleTitle,
+            questions: newQuestions
+          });
+          questionsAdded += newQuestions.length;
+        }
+      }
+
+      // Sort questions in each module by frequency
+      const finalModules = updatedModules.map(module => ({
+        ...module,
+        questions: sortQuestionsByFrequency(module.questions)
+      }));
+
+      const updatedImpQuestions = {
+        ...impQuestions,
+        modules: finalModules
+      };
+
+      setImpQuestions(updatedImpQuestions);
+
+      // Save to API
+      await saveContentToAPI(year, semester, branch, subjectName, syllabus, updatedImpQuestions);
+
+      toast.success(`Successfully imported ${questionsAdded} questions`);
+      
+      // Reset import dialog
+      setIsBulkImporting(false);
+      setBulkImportText('');
+      setImportPreview([]);
+      setShowValidationError(false);
+
+    } catch (error) {
+      console.error('Error importing questions:', error);
+      toast.error('Failed to import questions');
+    }
+  };
+
+  const resetBulkImport = () => {
+    setBulkImportText('');
+    setImportPreview([]);
+    setImportMode('text');
+    setShowValidationError(false);
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 py-10">
       {/* Header Section */}
@@ -1076,20 +1323,30 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
 
         {/* Important Questions Tab */}
         <TabsContent value="important-questions" className="space-y-8">
-          {/* Header with Add Module Button */}
+          {/* Header with Add Module and Bulk Import Buttons */}
           <div className="flex items-center justify-between mb-8">
             <div>
               <h2 className="text-2xl font-bold text-foreground mb-2">Important Questions by Module</h2>
               <p className="text-muted-foreground">Manage modules and their important questions</p>
             </div>
             {isAdmin && (
-              <Button
-                onClick={handleAddImpModule}
-                className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg flex items-center space-x-2"
-              >
-                <Plus className="h-4 w-4" />
-                <span>Add Module</span>
-              </Button>
+              <div className="flex gap-3">
+                <Button
+                  onClick={handleAddImpModule}
+                  className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg flex items-center space-x-2"
+                >
+                  <Plus className="h-4 w-4" />
+                  <span>Add Module</span>
+                </Button>
+                <Button
+                  onClick={() => setIsBulkImporting(true)}
+                  variant="outline"
+                  className="px-6 py-3 rounded-lg flex items-center space-x-2"
+                >
+                  <Upload className="h-4 w-4" />
+                  <span>Bulk Import</span>
+                </Button>
+              </div>
             )}
           </div>
 
@@ -1404,6 +1661,152 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* Bulk Import Dialog for Important Questions */}
+      <Dialog open={isBulkImporting} onOpenChange={setIsBulkImporting}>
+        <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Bulk Import Important Questions</DialogTitle>
+            <DialogDescription>
+              Import multiple important questions at once using JSON format. You can paste JSON text or upload a JSON file.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            {/* Import Mode Toggle */}
+            <div className="flex gap-2 p-1 bg-muted rounded-lg w-fit">
+              <Button
+                size="sm"
+                variant={importMode === 'text' ? 'default' : 'ghost'}
+                onClick={() => setImportMode('text')}
+              >
+                <FileText className="w-4 h-4 mr-1" />
+                Text Input
+              </Button>
+              <Button
+                size="sm"
+                variant={importMode === 'file' ? 'default' : 'ghost'}
+                onClick={() => setImportMode('file')}
+              >
+                <Upload className="w-4 h-4 mr-1" />
+                File Upload
+              </Button>
+            </div>
+
+            {/* File Upload Mode */}
+            {importMode === 'file' && (
+              <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 text-center">
+                <Upload className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                <p className="text-sm text-muted-foreground mb-4">
+                  Upload a JSON file containing important questions
+                </p>
+                <Input
+                  type="file"
+                  accept=".json"
+                  onChange={handleFileUpload}
+                  className="max-w-xs mx-auto"
+                />
+              </div>
+            )}
+
+            {/* Text Input Mode */}
+            {importMode === 'text' && (
+              <div className="space-y-2">
+                <Label>JSON Input</Label>
+                <Textarea
+                  value={bulkImportText}
+                  onChange={(e) => handleBulkImportTextChange(e.target.value)}
+                  placeholder={`Paste your JSON here. Supported formats:
+
+1. Array of questions:
+[
+  {
+    "question": "What are the fundamental concepts?",
+    "frequency": 1,
+    "repetition": "Most Repeated",
+    "moduleNo": "1",
+    "moduleTitle": "Introduction"
+  }
+]
+
+2. Object with questions array:
+{
+  "questions": [
+    {
+      "question": "Explain the core principles",
+      "frequency": 2,
+      "repetition": "2nd Most Repeated",
+      "moduleNo": "2"
+    }
+  ]
+}
+
+3. Single question object:
+{
+  "question": "What is the importance of this topic?",
+  "frequency": 3,
+  "moduleNo": "1"
+}`}
+                  rows={12}
+                  className="font-mono text-sm"
+                />
+              </div>
+            )}
+
+            {/* Preview Section */}
+            {importPreview.length > 0 && (
+              <div className="space-y-2">
+                <Label>Preview ({importPreview.length} questions)</Label>
+                <div className="max-h-60 overflow-y-auto border rounded-lg p-4 space-y-3">
+                  {importPreview.map((question, index) => (
+                    <div key={index} className="border rounded p-3 bg-muted/50">
+                      <div className="flex justify-between items-start mb-2">
+                        <h4 className="font-medium text-sm">Q{index + 1}: {question.question}</h4>
+                        <div className="flex gap-1">
+                          <Badge variant="secondary" className="text-xs">
+                            Module {question.moduleNo || 'imported'}
+                          </Badge>
+                          <Badge variant="outline" className="text-xs">
+                            {question.repetition}
+                          </Badge>
+                        </div>
+                      </div>
+                      {question.moduleTitle && (
+                        <p className="text-xs text-muted-foreground">
+                          Module: {question.moduleTitle}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Error State */}
+            {showValidationError && (
+              <div className="text-sm text-red-600 bg-red-50 dark:bg-red-950/20 p-3 rounded-lg">
+                Invalid JSON format. Please check your input and ensure it follows the supported format with required 'question' field.
+              </div>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => {
+              setIsBulkImporting(false);
+              resetBulkImport();
+            }}>
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleBulkImport}
+              disabled={importPreview.length === 0}
+              className="bg-gray-900 hover:bg-gray-800"
+            >
+              Import {importPreview.length} Questions
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Delete Module Confirmation Modal */}
       <Dialog open={deleteModal.isOpen} onOpenChange={(open) => setDeleteModal(prev => ({ ...prev, isOpen: open }))}>
