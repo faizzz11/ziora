@@ -14,7 +14,7 @@ const PDFViewer: React.FC<PDFViewerProps> = ({ url, title = 'PDF Document', heig
   const [pdf, setPdf] = useState<any>(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [numPages, setNumPages] = useState(0);
-  const [scale, setScale] = useState(1);
+  const [scale, setScale] = useState(1.2); // Start with better quality
   const [rotation, setRotation] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -53,10 +53,10 @@ const PDFViewer: React.FC<PDFViewerProps> = ({ url, title = 'PDF Document', heig
 
         // Dynamic import of pdfjs-dist - only on client side
         const pdfjsLib = await import('pdfjs-dist');
-        
+
         // Set up worker
         if (typeof window !== 'undefined') {
-          pdfjsLib.GlobalWorkerOptions.workerSrc = 
+          pdfjsLib.GlobalWorkerOptions.workerSrc =
             window.location.origin + '/pdf.worker.min.js';
         }
 
@@ -65,18 +65,18 @@ const PDFViewer: React.FC<PDFViewerProps> = ({ url, title = 'PDF Document', heig
           url: pdfUrl,
           withCredentials: false,
         });
-        
+
         const pdfDoc = await loadingTask.promise;
-        
+
         setPdf(pdfDoc);
         setNumPages(pdfDoc.numPages);
         setPageNumber(1);
         setLoading(false);
       } catch (error: any) {
         console.error('Error loading PDF:', error);
-        
+
         let errorMessage = 'Failed to load PDF. Please try again.';
-        
+
         if (isGitHubRawUrl(url)) {
           if (error.message?.includes('404') || error.message?.includes('Failed to fetch')) {
             errorMessage = `GitHub file not available yet. This could mean:
@@ -87,7 +87,7 @@ const PDFViewer: React.FC<PDFViewerProps> = ({ url, title = 'PDF Document', heig
 Try refreshing the page or re-uploading the file.`;
           }
         }
-        
+
         setError(errorMessage);
         setLoading(false);
       }
@@ -108,13 +108,34 @@ Try refreshing the page or re-uploading the file.`;
 
         if (!canvas || !context) return;
 
+        // Get viewport at user's desired scale
         const viewport = page.getViewport({ scale, rotation });
-        canvas.height = viewport.height;
-        canvas.width = viewport.width;
+
+        // Dynamic resolution based on device and user preference
+        const getOptimalResolution = () => {
+          const devicePixelRatio = window.devicePixelRatio || 1;
+          // Use 2x for standard displays, 1.5x for very high DPI to save memory
+          return devicePixelRatio > 2 ? 1.5 : 2;
+        };
+
+        const resolution = getOptimalResolution();
+
+        // Set canvas actual size (high resolution)
+        canvas.width = resolution * viewport.width;
+        canvas.height = resolution * viewport.height;
+
+        // Set canvas display size (user's desired scale)
+        canvas.style.width = `${viewport.width}px`;
+        canvas.style.height = `${viewport.height}px`;
+
+        // Enable high-quality rendering
+        context.imageSmoothingEnabled = true;
+        context.imageSmoothingQuality = 'high';
 
         const renderContext = {
           canvasContext: context,
           viewport: viewport,
+          transform: [resolution, 0, 0, resolution, 0, 0] // Force higher resolution rendering
         };
 
         await page.render(renderContext).promise;
@@ -153,7 +174,7 @@ Try refreshing the page or re-uploading the file.`;
   };
 
   const resetView = () => {
-    setScale(1);
+    setScale(1.2); // Reset to default quality scale
     setRotation(0);
   };
 
@@ -172,7 +193,7 @@ Try refreshing the page or re-uploading the file.`;
     const handleKeyDown = (event: KeyboardEvent) => {
       // Only handle if no input is focused
       if ((event.target as HTMLElement)?.tagName === 'INPUT') return;
-      
+
       switch (event.key) {
         case 'ArrowLeft':
           event.preventDefault();
@@ -237,7 +258,7 @@ Try refreshing the page or re-uploading the file.`;
 
   if (error) {
     const isGitHubUrl = isGitHubRawUrl(url);
-    
+
     return (
       <div className="flex items-center justify-center bg-gray-100 dark:bg-gray-800" style={{ height }}>
         <div className="text-center p-4 max-w-lg">
@@ -250,23 +271,23 @@ Try refreshing the page or re-uploading the file.`;
             {isGitHubUrl ? 'GitHub File Issue' : 'PDF Load Error'}
           </h3>
           <p className="text-red-600 dark:text-red-400 mb-4 text-sm whitespace-pre-line">{error}</p>
-          
+
           <div className="space-y-2">
             <div className="flex gap-2 justify-center">
               <Button onClick={retry} variant="outline" size="sm">
                 Try Again
               </Button>
               {isGitHubUrl && (
-                <Button 
-                  onClick={() => window.open(url, '_blank')} 
-                  variant="outline" 
+                <Button
+                  onClick={() => window.open(url, '_blank')}
+                  variant="outline"
                   size="sm"
                 >
                   Open Direct Link
                 </Button>
               )}
             </div>
-            
+
             {isGitHubUrl && (
               <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg mt-4">
                 <p className="text-xs text-blue-700 dark:text-blue-300 font-medium mb-1">
@@ -325,10 +346,10 @@ Try refreshing the page or re-uploading the file.`;
         </div>
 
         <div className="flex items-center space-x-2">
-          <Button 
-            onClick={zoomOut} 
-            size="sm" 
-            variant="outline" 
+          <Button
+            onClick={zoomOut}
+            size="sm"
+            variant="outline"
             disabled={scale <= 0.5}
             title="Zoom out (-)"
           >
@@ -337,26 +358,26 @@ Try refreshing the page or re-uploading the file.`;
           <span className="text-sm text-gray-600 dark:text-gray-400 min-w-[50px] text-center">
             {Math.round(scale * 100)}%
           </span>
-          <Button 
-            onClick={zoomIn} 
-            size="sm" 
-            variant="outline" 
+          <Button
+            onClick={zoomIn}
+            size="sm"
+            variant="outline"
             disabled={scale >= 3}
             title="Zoom in (+)"
           >
             +
           </Button>
-          <Button 
-            onClick={rotate} 
-            size="sm" 
+          <Button
+            onClick={rotate}
+            size="sm"
             variant="outline"
             title="Rotate (R)"
           >
             ↻
           </Button>
-          <Button 
-            onClick={resetView} 
-            size="sm" 
+          <Button
+            onClick={resetView}
+            size="sm"
             variant="outline"
             title="Reset view (0)"
           >
@@ -390,7 +411,7 @@ Try refreshing the page or re-uploading the file.`;
         </p>
         {isGitHubRawUrl(url) && (
           <span className="text-xs text-blue-600 dark:text-blue-400">
-           
+
           </span>
         )}
       </div>
