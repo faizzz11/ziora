@@ -19,6 +19,7 @@ const PDFViewer: React.FC<PDFViewerProps> = ({ url, title = 'PDF Document', heig
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const renderTaskRef = useRef<any>(null); // Track current render task for cancellation
 
   // Ensure we're on the client side
   useEffect(() => {
@@ -94,6 +95,14 @@ Try refreshing the page or re-uploading the file.`;
     };
 
     loadPDF();
+
+    // Cleanup function to cancel any pending render tasks
+    return () => {
+      if (renderTaskRef.current) {
+        renderTaskRef.current.cancel();
+        renderTaskRef.current = null;
+      }
+    };
   }, [url, isClient]);
 
   // Render page when pdf, pageNumber, scale, or rotation changes
@@ -102,6 +111,12 @@ Try refreshing the page or re-uploading the file.`;
 
     const renderPage = async () => {
       try {
+        // Cancel any existing render task
+        if (renderTaskRef.current) {
+          renderTaskRef.current.cancel();
+          renderTaskRef.current = null;
+        }
+
         const page = await pdf.getPage(pageNumber);
         const canvas = canvasRef.current;
         const context = canvas?.getContext('2d');
@@ -138,14 +153,39 @@ Try refreshing the page or re-uploading the file.`;
           transform: [resolution, 0, 0, resolution, 0, 0] // Force higher resolution rendering
         };
 
-        await page.render(renderContext).promise;
+        // Start new render task and store reference
+        renderTaskRef.current = page.render(renderContext);
+
+        try {
+          await renderTaskRef.current.promise;
+          // Clear the ref when render completes successfully
+          renderTaskRef.current = null;
+        } catch (renderError: any) {
+          // Handle render cancellation gracefully
+          if (renderError.name === 'RenderingCancelledException') {
+            // This is expected when we cancel renders, don't show error
+            return;
+          }
+          throw renderError; // Re-throw other errors
+        }
       } catch (error: any) {
         console.error('Error rendering page:', error);
-        setError('Failed to render PDF page.');
+        // Only show error if it's not a cancellation
+        if (error.name !== 'RenderingCancelledException') {
+          setError('Failed to render PDF page.');
+        }
       }
     };
 
     renderPage();
+
+    // Cleanup function to cancel render task if dependencies change
+    return () => {
+      if (renderTaskRef.current) {
+        renderTaskRef.current.cancel();
+        renderTaskRef.current = null;
+      }
+    };
   }, [pdf, pageNumber, scale, rotation, isClient]);
 
   // Navigation handlers
