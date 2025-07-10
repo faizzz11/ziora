@@ -81,14 +81,14 @@ const SecurityProtection: React.FC<SecurityProtectionProps> = ({ children, stric
   const showToast = (message: string, type: ToastNotification['type'] = 'warning', duration: number = 4000) => {
     const id = Math.random().toString(36).substr(2, 9);
     const newToast: ToastNotification = { id, message, type };
-    
+
     setToasts(prev => [...prev, newToast]);
-    
+
     // Auto remove toast after duration
     const timeout = setTimeout(() => {
       removeToast(id);
     }, duration);
-    
+
     toastTimeoutRefs.current.set(id, timeout);
   };
 
@@ -105,11 +105,11 @@ const SecurityProtection: React.FC<SecurityProtectionProps> = ({ children, stric
   // Show temporary protection blur effect for developer tools
   const showProtectionEffect = (duration: number = 3000) => {
     setProtectionBlur(true);
-    
+
     if (blurTimeoutRef.current) {
       clearTimeout(blurTimeoutRef.current);
     }
-    
+
     blurTimeoutRef.current = setTimeout(() => {
       setProtectionBlur(false);
     }, duration);
@@ -128,20 +128,20 @@ const SecurityProtection: React.FC<SecurityProtectionProps> = ({ children, stric
         if (e.shiftKey && ['Digit3', 'Digit4', 'Digit5', 'Digit6'].includes(e.code)) {
           e.preventDefault();
           e.stopPropagation();
-          
+
           const screenshotTypes: { [key: string]: string } = {
             'Digit3': 'fullscreen',
-            'Digit4': 'selection', 
+            'Digit4': 'selection',
             'Digit5': 'options_menu',
             'Digit6': 'touchbar'
           };
-          
-          logSecurityEvent('screenshot_attempt', { 
+
+          logSecurityEvent('screenshot_attempt', {
             keysCombination: `cmd+shift+${e.code.slice(-1)}`,
             screenshotType: screenshotTypes[e.code],
             platform: 'macOS'
           });
-          
+
           showToast('🚫 Screenshot blocked! This content is protected.', 'error', 5000);
           return false;
         }
@@ -150,7 +150,7 @@ const SecurityProtection: React.FC<SecurityProtectionProps> = ({ children, stric
         if (e.shiftKey) {
           e.preventDefault();
           e.stopPropagation();
-          logSecurityEvent('screenshot_attempt', { 
+          logSecurityEvent('screenshot_attempt', {
             keysCombination: `cmd+shift+${e.code}`,
             screenshotType: 'potential_screenshot',
             platform: 'macOS'
@@ -164,22 +164,22 @@ const SecurityProtection: React.FC<SecurityProtectionProps> = ({ children, stric
         if (blockedCommands.includes(e.code)) {
           e.preventDefault();
           e.stopPropagation();
-          
+
           const actionNames: { [key: string]: string } = {
             'KeyS': 'save/screenshot',
-            'KeyP': 'print', 
+            'KeyP': 'print',
             'KeyC': 'copy',
             'KeyA': 'select all',
             'KeyX': 'cut',
             'KeyV': 'paste'
           };
-          
-          logSecurityEvent('copy_attempt', { 
+
+          logSecurityEvent('copy_attempt', {
             keysCombination: `cmd+${e.code.slice(3).toLowerCase()}`,
             action: actionNames[e.code],
             platform: 'macOS'
           });
-          
+
           showToast(`⚠️ ${actionNames[e.code]} disabled for content protection`, 'warning', 3000);
           return false;
         }
@@ -191,7 +191,7 @@ const SecurityProtection: React.FC<SecurityProtectionProps> = ({ children, stric
         if (e.code === 'PrintScreen') {
           e.preventDefault();
           e.stopPropagation();
-          logSecurityEvent('screenshot_attempt', { 
+          logSecurityEvent('screenshot_attempt', {
             keysCombination: 'PrintScreen',
             screenshotType: 'printscreen',
             platform: isWindows ? 'Windows' : 'Linux'
@@ -204,7 +204,7 @@ const SecurityProtection: React.FC<SecurityProtectionProps> = ({ children, stric
         if (e.altKey && e.code === 'PrintScreen') {
           e.preventDefault();
           e.stopPropagation();
-          logSecurityEvent('screenshot_attempt', { 
+          logSecurityEvent('screenshot_attempt', {
             keysCombination: 'alt+printscreen',
             screenshotType: 'active_window',
             platform: isWindows ? 'Windows' : 'Linux'
@@ -217,7 +217,7 @@ const SecurityProtection: React.FC<SecurityProtectionProps> = ({ children, stric
         if (isWindows && e.metaKey && e.shiftKey && e.code === 'KeyS') {
           e.preventDefault();
           e.stopPropagation();
-          logSecurityEvent('screenshot_attempt', { 
+          logSecurityEvent('screenshot_attempt', {
             keysCombination: 'win+shift+s',
             screenshotType: 'snipping_tool',
             platform: 'Windows'
@@ -230,7 +230,7 @@ const SecurityProtection: React.FC<SecurityProtectionProps> = ({ children, stric
         if (e.ctrlKey && e.shiftKey && e.code === 'KeyS') {
           e.preventDefault();
           e.stopPropagation();
-          logSecurityEvent('screenshot_attempt', { 
+          logSecurityEvent('screenshot_attempt', {
             keysCombination: 'ctrl+shift+s',
             screenshotType: 'browser_screenshot',
             platform: isWindows ? 'Windows' : 'Linux'
@@ -257,7 +257,7 @@ const SecurityProtection: React.FC<SecurityProtectionProps> = ({ children, stric
         if (combo.condition) {
           e.preventDefault();
           e.stopPropagation();
-          logSecurityEvent('dev_tools_open', { 
+          logSecurityEvent('dev_tools_open', {
             keysCombination: combo.key,
             platform: isMac ? 'macOS' : (isWindows ? 'Windows' : 'Linux')
           });
@@ -281,9 +281,9 @@ const SecurityProtection: React.FC<SecurityProtectionProps> = ({ children, stric
           if (combo.condition) {
             e.preventDefault();
             e.stopPropagation();
-            const eventType = combo.key.includes('c') ? 'copy_attempt' : 
-                             combo.key.includes('p') ? 'print_attempt' : 'copy_attempt';
-            logSecurityEvent(eventType, { 
+            const eventType = combo.key.includes('c') ? 'copy_attempt' :
+              combo.key.includes('p') ? 'print_attempt' : 'copy_attempt';
+            logSecurityEvent(eventType, {
               keysCombination: combo.key,
               platform: isWindows ? 'Windows' : 'Linux'
             });
@@ -295,7 +295,7 @@ const SecurityProtection: React.FC<SecurityProtectionProps> = ({ children, stric
     };
 
     document.addEventListener('keydown', handleKeyDown, true);
-    
+
     return () => {
       document.removeEventListener('keydown', handleKeyDown, true);
     };
@@ -312,7 +312,7 @@ const SecurityProtection: React.FC<SecurityProtectionProps> = ({ children, stric
     };
 
     document.addEventListener('contextmenu', handleContextMenu, true);
-    
+
     return () => {
       document.removeEventListener('contextmenu', handleContextMenu, true);
     };
@@ -324,18 +324,18 @@ const SecurityProtection: React.FC<SecurityProtectionProps> = ({ children, stric
 
     const detectDevTools = () => {
       const threshold = 160;
-      
+
       // Multiple detection methods
       const heightDiff = window.outerHeight - window.innerHeight > threshold;
       const widthDiff = window.outerWidth - window.innerWidth > threshold;
-      
+
       // Simplified detection method
       const isOpen = heightDiff || widthDiff;
-      
+
       if (isOpen && !devtools.open) {
         devtools.open = true;
         setIsDevToolsOpen(true);
-        logSecurityEvent('dev_tools_open', { 
+        logSecurityEvent('dev_tools_open', {
           detectionMethod: 'window_size_monitor',
           heightDiff,
           widthDiff,
@@ -374,7 +374,7 @@ const SecurityProtection: React.FC<SecurityProtectionProps> = ({ children, stric
 
     document.addEventListener('selectstart', preventSelection);
     document.addEventListener('dragstart', preventSelection);
-    
+
     return () => {
       document.removeEventListener('selectstart', preventSelection);
       document.removeEventListener('dragstart', preventSelection);
@@ -418,11 +418,11 @@ const SecurityProtection: React.FC<SecurityProtectionProps> = ({ children, stric
               flex items-center justify-between max-w-sm p-4 rounded-lg shadow-lg border
               pointer-events-auto transform transition-all duration-300 ease-in-out
               animate-in slide-in-from-left-4 fade-in
-              ${toast.type === 'error' 
-                ? 'bg-red-50 dark:bg-red-900/90 border-red-200 dark:border-red-800 text-red-800 dark:text-red-200' 
+              ${toast.type === 'error'
+                ? 'bg-red-50 dark:bg-red-900/90 border-red-200 dark:border-red-800 text-red-800 dark:text-red-200'
                 : toast.type === 'warning'
-                ? 'bg-yellow-50 dark:bg-yellow-900/90 border-yellow-200 dark:border-yellow-800 text-yellow-800 dark:text-yellow-200'
-                : 'bg-blue-50 dark:bg-blue-900/90 border-blue-200 dark:border-blue-800 text-blue-800 dark:text-blue-200'
+                  ? 'bg-yellow-50 dark:bg-yellow-900/90 border-yellow-200 dark:border-yellow-800 text-yellow-800 dark:text-yellow-200'
+                  : 'bg-blue-50 dark:bg-blue-900/90 border-blue-200 dark:border-blue-800 text-blue-800 dark:text-blue-200'
               }
             `}
           >
@@ -471,23 +471,11 @@ const SecurityProtection: React.FC<SecurityProtectionProps> = ({ children, stric
         </div>
       </div>
 
-      {/* Protection Status Indicator */}
-      <div className="fixed top-4 right-4 z-40 pointer-events-none">
-        <div className={`flex items-center space-x-2 px-3 py-2 rounded-full text-xs font-medium transition-all duration-300 ${
-          isDevToolsOpen 
-            ? 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200' 
-            : 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200'
-        }`}>
-          <div className={`w-2 h-2 rounded-full ${isDevToolsOpen ? 'bg-red-500' : 'bg-green-500'}`} />
-          <Eye size={12} />
-          <span>{isDevToolsOpen ? 'Security Alert' : 'Protected'}</span>
-        </div>
-      </div>
+
 
       {/* Enhanced Content Wrapper with Blur Effect */}
-      <div className={`transition-all duration-300 ${
-        protectionBlur ? 'filter blur-sm' : ''
-      } ${isDevToolsOpen ? 'filter blur-lg' : ''}`}>
+      <div className={`transition-all duration-300 ${protectionBlur ? 'filter blur-sm' : ''
+        } ${isDevToolsOpen ? 'filter blur-lg' : ''}`}>
         {children}
       </div>
     </div>
