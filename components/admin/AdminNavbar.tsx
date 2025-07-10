@@ -81,6 +81,12 @@ const AdminNavbar = () => {
       icon: MessageSquare,
       isActive: pathname.startsWith('/admin/dashboard/comments')
     },
+    { 
+      name: 'Security', 
+      href: '/admin/dashboard/security', 
+      icon: Shield,
+      isActive: pathname.startsWith('/admin/dashboard/security')
+    },
    
   ];
 
