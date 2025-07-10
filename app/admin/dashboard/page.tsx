@@ -14,7 +14,11 @@ import {
   Flag,
   UserCheck,
   UserPlus,
-  UserX
+  UserX,
+  Shield,
+  Eye,
+  MousePointer,
+  Code
 } from "lucide-react";
 
 interface DashboardStats {
@@ -29,6 +33,13 @@ interface DashboardStats {
     pending: number;
     flagged: number;
     today: number;
+  };
+  security: {
+    totalEvents: number;
+    screenshotAttempts: number;
+    rightClicks: number;
+    devToolsAttempts: number;
+    todayEvents: number;
   };
 }
 
@@ -163,6 +174,36 @@ export default function AdminDashboard() {
           icon: UserX
         }
       ]
+    },
+    {
+      title: "Security Monitoring",
+      description: "Track and monitor security events, screenshot attempts, and unauthorized access",
+      icon: Shield,
+      iconColor: "text-red-600 dark:text-red-400",
+      iconBg: "bg-red-100 dark:bg-red-900",
+      route: "/admin/dashboard/security",
+      stats: [
+        { 
+          label: "Total Events", 
+          value: loading ? "..." : (stats?.security.totalEvents || 0).toLocaleString(),
+          icon: Shield
+        },
+        { 
+          label: "Screenshots", 
+          value: loading ? "..." : (stats?.security.screenshotAttempts || 0).toLocaleString(),
+          icon: Eye
+        },
+        { 
+          label: "Right Clicks", 
+          value: loading ? "..." : (stats?.security.rightClicks || 0).toLocaleString(),
+          icon: MousePointer
+        },
+        { 
+          label: "Dev Tools", 
+          value: loading ? "..." : (stats?.security.devToolsAttempts || 0).toLocaleString(),
+          icon: Code
+        }
+      ]
     }
   ];
 
@@ -282,7 +323,7 @@ export default function AdminDashboard() {
       {/* Quick Actions */}
       <div className="mt-12">
         <h2 className="text-xl font-semibold text-foreground mb-6">Quick Actions</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Button 
             variant="outline" 
             className="p-4 h-auto flex-col space-y-2"
@@ -298,6 +339,14 @@ export default function AdminDashboard() {
           >
             <MessageSquare className="h-5 w-5" />
             <span className="text-sm">Review Comments</span>
+          </Button>
+          <Button 
+            variant="outline" 
+            className="p-4 h-auto flex-col space-y-2"
+            onClick={() => router.push('/admin/dashboard/security')}
+          >
+            <Shield className="h-5 w-5" />
+            <span className="text-sm">Security Events</span>
           </Button>
         </div>
       </div>

@@ -146,6 +146,22 @@ export async function GET() {
       return commentDate >= today;
     }).length;
 
+    // Get security statistics
+    const securityCollection = db.collection("security_events");
+    const securityEvents = await securityCollection.find({}).toArray();
+
+    const totalSecurityEvents = securityEvents.length;
+    const screenshotAttempts = securityEvents.filter(event => event.eventType === 'screenshot_attempt').length;
+    const rightClicks = securityEvents.filter(event => event.eventType === 'right_click').length;
+    const devToolsAttempts = securityEvents.filter(event => event.eventType === 'dev_tools_open').length;
+    
+    // Calculate security events today
+    const todaySecurityEvents = securityEvents.filter(event => {
+      if (!event.timestamp) return false;
+      const eventDate = new Date(event.timestamp);
+      return eventDate >= today;
+    }).length;
+
     return NextResponse.json({
       success: true,
       statistics: {
@@ -160,6 +176,13 @@ export async function GET() {
           pending: pendingComments,
           flagged: flaggedComments,
           today: commentsToday
+        },
+        security: {
+          totalEvents: totalSecurityEvents,
+          screenshotAttempts: screenshotAttempts,
+          rightClicks: rightClicks,
+          devToolsAttempts: devToolsAttempts,
+          todayEvents: todaySecurityEvents
         }
       }
     });

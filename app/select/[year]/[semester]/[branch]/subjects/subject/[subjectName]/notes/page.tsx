@@ -4,6 +4,7 @@ import { ChevronRight } from 'lucide-react';
 import NotesClient from './NotesClient';
 import branchSubjectsData from '@/data/branch-subjects.json';
 import PageTracker from '@/components/PageTracker';
+import SecurityProtection from '@/components/SecurityProtection';
 
 interface NotesPageProps {
   params: Promise<{
@@ -109,33 +110,39 @@ export default async function NotesPage({ params }: NotesPageProps) {
   const backUrl = `/select/${year}/${semester}/${branch}/subjects/subject/${subjectName}`;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-secondary/10 dark:from-black dark:to-gray-950">
-      <PageTracker pageName={`Notes - ${subject.name}`} />
-      {/* Breadcrumb */}
-      <div className="px-4 sm:px-6 lg:px-8 py-6 bg-card dark:bg-[oklch(0.205_0_0)] border-b border-border">
-        <div className="max-w-6xl mx-auto">
-          <nav className="flex items-center space-x-2 text-sm text-muted-foreground">
-            <Link href="/select" className="hover:text-foreground transition-colors font-medium">Academic Years</Link>
-            <ChevronRight className="w-4 h-4 text-muted-foreground" />
-            <Link href={`/select/${year}/${semester}/${branch}/subjects`} className="hover:text-foreground transition-colors font-medium">Subjects</Link>
-            <ChevronRight className="w-4 h-4 text-muted-foreground" />
-            <Link href={backUrl} className="hover:text-foreground transition-colors font-medium">
-              {subject.name}
-            </Link>
-            <ChevronRight className="w-4 h-4 text-muted-foreground" />
-            <span className="text-foreground font-semibold">Notes</span>
-          </nav>
+    <SecurityProtection 
+      pageName={`Notes - ${subject.name}`}
+      pagePath={`/select/${year}/${semester}/${branch}/subjects/subject/${subjectName}/notes`}
+      strictMode={true}
+    >
+      <div className="min-h-screen bg-gradient-to-br from-background to-secondary/10 dark:from-black dark:to-gray-950">
+        <PageTracker pageName={`Notes - ${subject.name}`} />
+        {/* Breadcrumb */}
+        <div className="px-4 sm:px-6 lg:px-8 py-6 bg-card dark:bg-[oklch(0.205_0_0)] border-b border-border">
+          <div className="max-w-6xl mx-auto">
+            <nav className="flex items-center space-x-2 text-sm text-muted-foreground">
+              <Link href="/select" className="hover:text-foreground transition-colors font-medium">Academic Years</Link>
+              <ChevronRight className="w-4 h-4 text-muted-foreground" />
+              <Link href={`/select/${year}/${semester}/${branch}/subjects`} className="hover:text-foreground transition-colors font-medium">Subjects</Link>
+              <ChevronRight className="w-4 h-4 text-muted-foreground" />
+              <Link href={backUrl} className="hover:text-foreground transition-colors font-medium">
+                {subject.name}
+              </Link>
+              <ChevronRight className="w-4 h-4 text-muted-foreground" />
+              <span className="text-foreground font-semibold">Notes</span>
+            </nav>
+          </div>
         </div>
-      </div>
 
-      <NotesClient 
-        subject={subject}
-        subjectVideos={subjectVideos}
-        subjectName={subjectName}
-        year={year}
-        semester={semester}
-        branch={branch}
-      />
-    </div>
+        <NotesClient 
+          subject={subject}
+          subjectVideos={subjectVideos}
+          subjectName={subjectName}
+          year={year}
+          semester={semester}
+          branch={branch}
+        />
+      </div>
+    </SecurityProtection>
   );
 } 
