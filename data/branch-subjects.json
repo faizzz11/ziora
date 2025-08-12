@@ -253,18 +253,18 @@
             "description": "Text processing, language models, and NLP applications"
           },
           {
-            "id": "quantum-computing",
-            "name": "Quantum Computing",
+            "id": "blockchain-technology",
+            "name": "Blockchain Technology",
             "code": "QC",
             "credits": 4,
-            "description": "Quantum algorithms, qubits, and quantum programming"
+            "description": "Blockchain concepts, cryptocurrencies, and applications"
           },
           {
-            "id": "cyber-security",
-            "name": "Cyber Security and Laws",
+            "id": "MIS",
+            "name": "Management Information Systems",
             "code": "CSL",
             "credits": 4,
-            "description": "Cybersecurity frameworks, ethical hacking, and cyber laws"
+            "description": "Process management, memory management, and file systems"
           }
         ],
         "8": [
