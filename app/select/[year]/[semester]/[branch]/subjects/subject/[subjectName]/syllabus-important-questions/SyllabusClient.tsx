@@ -300,12 +300,25 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
 
   // Helper function to sort questions by frequency
   const sortQuestionsByFrequency = (questions: Question[]) => {
+    // Map repetition strings to priority numbers for consistent sorting
+    const repetitionPriority: { [key: string]: number } = {
+      'Most Repeated': 1,
+      '2nd Most Repeated': 2,
+      '3rd Most Repeated': 3,
+      '4th Most Repeated': 4,
+      'One Time Repeated': 5
+    };
+    
     return [...questions].sort((a, b) => {
-      // Sort by frequency (1 = Most Repeated should come first)
-      if (a.frequency !== b.frequency) {
-        return a.frequency - b.frequency;
+      // Get priority from repetition string, fallback to frequency if repetition is unknown
+      const priorityA = repetitionPriority[a.repetition] || a.frequency;
+      const priorityB = repetitionPriority[b.repetition] || b.frequency;
+      
+      // Sort by priority (1 = Most Repeated should come first)
+      if (priorityA !== priorityB) {
+        return priorityA - priorityB;
       }
-      // If frequencies are equal, maintain original order (stable sort)
+      // If priorities are equal, maintain original order (stable sort)
       return 0;
     });
   };
@@ -755,7 +768,33 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
     }
   };
 
-  const getQuestionColor = (frequency: number) => {
+  const getQuestionColor = (frequency: number, repetition?: string) => {
+    // If repetition is provided, use it to determine color for consistency
+    if (repetition) {
+      const repetitionToFrequencyMap: { [key: string]: number } = {
+        'Most Repeated': 1,
+        '2nd Most Repeated': 2,
+        '3rd Most Repeated': 3,
+        '4th Most Repeated': 4,
+        'One Time Repeated': 5
+      };
+      const colorKey = repetitionToFrequencyMap[repetition] || frequency;
+      
+      switch (colorKey) {
+        case 1:
+          return 'text-red-600 font-semibold'; // Most repeated - Red
+        case 2:
+          return 'text-blue-600 font-semibold'; // 2nd most repeated - Blue  
+        case 3:
+          return 'text-yellow-600 font-semibold'; // 3rd most repeated - Yellow
+        case 4:
+          return 'text-purple-600 font-semibold'; // 4th most repeated - Purple
+        default:
+          return 'text-foreground'; // One time repeated - Theme aware
+      }
+    }
+    
+    // Fallback to frequency-based coloring
     switch (frequency) {
       case 1:
         return 'text-red-600 font-semibold'; // Most repeated - Red
@@ -765,12 +804,24 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
         return 'text-yellow-600 font-semibold'; // 3rd most repeated - Yellow
       case 4:
         return 'text-purple-600 font-semibold'; // 4th most repeated - Purple
-      default:
+        default:
         return 'text-foreground'; // One time repeated - Theme aware
     }
   };
 
   const getFrequencyBadge = (frequency: number, repetition: string) => {
+    // Map repetition string to frequency number for consistent color assignment
+    const repetitionToFrequency: { [key: string]: number } = {
+      'Most Repeated': 1,
+      '2nd Most Repeated': 2,
+      '3rd Most Repeated': 3,
+      '4th Most Repeated': 4,
+      'One Time Repeated': 5
+    };
+    
+    // Use repetition string to determine color, fallback to frequency if repetition is unknown
+    const colorKey = repetitionToFrequency[repetition] || frequency;
+    
     const colorClasses = {
       1: 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-100 border-red-200 dark:border-red-800',
       2: 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100 border-blue-200 dark:border-blue-800', 
@@ -780,7 +831,7 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
     };
 
     return (
-      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${colorClasses[frequency as keyof typeof colorClasses] || colorClasses[5]}`}>
+      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${colorClasses[colorKey as keyof typeof colorClasses] || colorClasses[5]}`}>
         {repetition}
       </span>
     );
@@ -827,23 +878,44 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
           throw new Error(`Question ${index + 1} is missing the required 'question' field`);
         }
         
-        // Validate frequency if provided
-        let frequency = q.frequency || 1;
-        if (frequency < 1 || frequency > 5) {
-          frequency = 1; // Default to Most Repeated if invalid
-        }
-
-        // Map frequency to repetition if not provided
+        // Handle frequency and repetition logic
+        let frequency = q.frequency;
         let repetition = q.repetition;
-        if (!repetition) {
-          const repetitionMap: { [key: number]: string } = {
+        
+        // If repetition is provided but frequency is not, derive frequency from repetition
+        if (repetition && !frequency) {
+          const repetitionToFrequencyMap: { [key: string]: number } = {
+            'Most Repeated': 1,
+            '2nd Most Repeated': 2,
+            '3rd Most Repeated': 3,
+            '4th Most Repeated': 4,
+            'One Time Repeated': 5
+          };
+          frequency = repetitionToFrequencyMap[repetition] || 1;
+        }
+        
+        // If frequency is provided but repetition is not, derive repetition from frequency
+        if (frequency && !repetition) {
+          const frequencyToRepetitionMap: { [key: number]: string } = {
             1: 'Most Repeated',
             2: '2nd Most Repeated',
             3: '3rd Most Repeated',
             4: '4th Most Repeated',
             5: 'One Time Repeated'
           };
-          repetition = repetitionMap[frequency] || 'Most Repeated';
+          repetition = frequencyToRepetitionMap[frequency] || 'Most Repeated';
+        }
+        
+        // If neither is provided, default to Most Repeated
+        if (!frequency && !repetition) {
+          frequency = 1;
+          repetition = 'Most Repeated';
+        }
+        
+        // Validate frequency range
+        if (frequency < 1 || frequency > 5) {
+          frequency = 1;
+          repetition = 'Most Repeated';
         }
         
         return {
@@ -1515,7 +1587,7 @@ export default function SyllabusClient({ subject, syllabus: initialSyllabus, imp
                         ) : (
                           <div className="flex items-start justify-between mb-2">
                             <div className="flex-1">
-                              <p className={`text-sm leading-relaxed ${getQuestionColor(question.frequency)}`}>
+                              <p className={`text-sm leading-relaxed ${getQuestionColor(question.frequency, question.repetition)}`}>
                                 <span className="font-medium">Q{questionIndex + 1}.</span> {question.question}
                               </p>
                             </div>

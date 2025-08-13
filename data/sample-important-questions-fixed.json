@@ -1,0 +1,69 @@
+{
+  "questions": [
+    {
+      "question": "What is the difference between stack and queue?",
+      "frequency": 1,
+      "repetition": "Most Repeated",
+      "moduleNo": "1",
+      "moduleTitle": "Data Structures"
+    },
+    {
+      "question": "Explain the concept of linked lists.",
+      "frequency": 2,
+      "repetition": "2nd Most Repeated",
+      "moduleNo": "1",
+      "moduleTitle": "Data Structures"
+    },
+    {
+      "question": "What are the advantages of binary trees?",
+      "frequency": 3,
+      "repetition": "3rd Most Repeated",
+      "moduleNo": "1",
+      "moduleTitle": "Data Structures"
+    },
+    {
+      "question": "Define time complexity of algorithms.",
+      "frequency": 4,
+      "repetition": "4th Most Repeated",
+      "moduleNo": "2",
+      "moduleTitle": "Algorithm Analysis"
+    },
+    {
+      "question": "What is Big O notation?",
+      "frequency": 5,
+      "repetition": "One Time Repeated",
+      "moduleNo": "2",
+      "moduleTitle": "Algorithm Analysis"
+    }
+  ]
+}
+
+// Alternative formats also supported:
+
+// Format 1: Array of questions
+[
+  {
+    "question": "What is recursion?",
+    "repetition": "Most Repeated",
+    "moduleNo": "3"
+  },
+  {
+    "question": "Explain dynamic programming.",
+    "repetition": "2nd Most Repeated",
+    "moduleNo": "3"
+  }
+]
+
+// Format 2: Single question
+{
+  "question": "What is object-oriented programming?",
+  "frequency": 1,
+  "moduleNo": "4",
+  "moduleTitle": "Programming Paradigms"
+}
+
+// Note: 
+// - If you provide 'repetition', the system will automatically set the correct 'frequency'
+// - If you provide 'frequency', the system will automatically set the correct 'repetition'
+// - If you provide neither, both will default to "Most Repeated" with frequency 1
+// - Colors are now correctly assigned based on the repetition type, not frequency number
