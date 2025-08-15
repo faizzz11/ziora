@@ -86,6 +86,28 @@ const getLanguageFromFileName = (fileName: string): string => {
   }
 };
 
+const convertToEmbedUrl = (url: string): string => {
+  if (!url) return '';
+  
+  if (url.includes('youtube.com/embed/')) return url;
+  
+  const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+  const match = url.match(youtubeRegex);
+  
+  if (match) {
+    return `https://www.youtube.com/embed/${match[1]}`;
+  }
+  
+  return url;
+};
+
+const isValidYouTubeUrl = (url: string): boolean => {
+  if (!url) return true;
+  
+  const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+  return youtubeRegex.test(url);
+};
+
 // API helper functions
 const saveExperimentsToAPI = async (year: string, semester: string, branch: string, subjectName: string, experiments: Experiment[]) => {
   try {
@@ -769,18 +791,62 @@ const ExperimentVideosTab = ({
                         placeholder="Experiment Title"
                       />
                     </div>
-                    <div>
-                      <label className="text-sm font-medium text-muted-foreground">Video URL:</label>
-                      <Input
-                        value={editVideoData.videoUrl || ''}
-                        onChange={(e) => setEditVideoData({
-                          ...editVideoData,
-                          videoUrl: e.target.value
-                        })}
-                        className="mt-1"
-                        placeholder="YouTube Video URL"
-                      />
-                    </div>
+                                          <div>
+                        <label className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                          Video URL:
+                          <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+                            YouTube links supported
+                          </span>
+                        </label>
+                        <div className="flex gap-2">
+                          <Input
+                            value={editVideoData.videoUrl || ''}
+                            onChange={(e) => setEditVideoData({
+                              ...editVideoData,
+                              videoUrl: e.target.value
+                            })}
+                            className={`flex-1 ${editVideoData.videoUrl && !isValidYouTubeUrl(editVideoData.videoUrl) ? 'border-red-500' : ''}`}
+                            placeholder="https://youtu.be/weJI6Lp9Vw0 or https://www.youtube.com/watch?v=weJI6Lp9Vw0"
+                          />
+                          {editVideoData.videoUrl && (
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setEditVideoData({
+                                ...editVideoData,
+                                videoUrl: ''
+                              })}
+                              className="px-3"
+                            >
+                              Clear
+                            </Button>
+                          )}
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Supports YouTube links in any format (youtu.be, youtube.com/watch, etc.)
+                        </p>
+                        {editVideoData.videoUrl && !isValidYouTubeUrl(editVideoData.videoUrl) && (
+                          <p className="text-xs text-red-500 mt-1">
+                            Please enter a valid YouTube URL
+                          </p>
+                        )}
+                        {editVideoData.videoUrl && isValidYouTubeUrl(editVideoData.videoUrl) && (
+                          <div className="mt-3">
+                            <p className="text-xs text-green-600 mb-2">Video Preview:</p>
+                            <div className="aspect-video w-full max-w-md">
+                              <iframe
+                                src={convertToEmbedUrl(editVideoData.videoUrl)}
+                                title="Video Preview"
+                                frameBorder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                                className="w-full h-full rounded-lg shadow-md"
+                              ></iframe>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                   </div>
                 ) : (
                   <div>
@@ -844,7 +910,7 @@ const ExperimentVideosTab = ({
           <CardContent className="p-6">
             <div className="aspect-video w-4/5 mx-auto">
               <iframe
-                src={currentVideoExperiment.videoUrl}
+                src={convertToEmbedUrl(currentVideoExperiment.videoUrl)}
                 title={`${currentVideoExperiment.title} - Video Tutorial`}
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -905,7 +971,7 @@ export default function PracticalsClient({ experiments: initialExperiments, subj
       codeFiles: [{ name: "main.py", code: "# New experiment code" }],
       output: "New experiment output",
       conclusion: "New experiment conclusion",
-      videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+      videoUrl: ""
     };
     setExperiments(prev => [...prev, newExperiment]);
     handleEditExperiment(newExperiment);
@@ -1034,6 +1100,21 @@ export default function PracticalsClient({ experiments: initialExperiments, subj
 
   const handleSaveVideo = async (experimentNo: number) => {
     if (editVideoData.title?.trim()) {
+      if (editVideoData.videoUrl && !isValidYouTubeUrl(editVideoData.videoUrl)) {
+        const toast = document.createElement('div');
+        toast.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300';
+        toast.textContent = '❌ Please enter a valid YouTube URL!';
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+          toast.style.opacity = '0';
+          setTimeout(() => {
+            document.body.removeChild(toast);
+          }, 300);
+        }, 3000);
+        return;
+      }
+      
       try {
         // Update local state first
         const updatedExperiments = experiments.map(exp => 
@@ -1109,7 +1190,7 @@ export default function PracticalsClient({ experiments: initialExperiments, subj
       codeFiles: [{ name: "main.py", code: "# New video experiment code" }],
       output: "New video experiment output",
       conclusion: "New video experiment conclusion",
-      videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+      videoUrl: ""
     };
     setExperiments(prev => [...prev, newExperiment]);
     handleEditVideo(newExperiment);
