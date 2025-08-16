@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const GITHUB_REPO = process.env.GITHUB_REPO || 'kstubhieeee/pdfs';
+const MAX_FILE_SIZE = 100 * 1024 * 1024;
 
 interface UploadRequest {
   fileName: string;
@@ -96,6 +97,16 @@ export async function POST(request: NextRequest) {
     if (!fileName || !content || !year || !semester || !branch || !subject || !moduleId) {
       return NextResponse.json(
         { error: 'Missing required fields' },
+        { status: 400 }
+      );
+    }
+
+    // Validate file size (100 MB limit)
+    const fileSize = Buffer.from(content, 'base64').length;
+    
+    if (fileSize > MAX_FILE_SIZE) {
+      return NextResponse.json(
+        { error: `File size ${(fileSize / (1024 * 1024)).toFixed(2)} MB exceeds the 100 MB limit` },
         { status: 400 }
       );
     }

@@ -27,6 +27,11 @@ const nextConfig: NextConfig = {
   
   // Disable strict mode for faster builds
   reactStrictMode: false,
+  
+  // Configure API routes for larger file uploads
+  experimental: {
+    serverComponentsExternalPackages: [],
+  },
 };
 
 export default nextConfig;

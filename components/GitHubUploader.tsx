@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState, useRef, useCallback } from 'react';
+
+const MAX_FILE_SIZE = 100 * 1024 * 1024;
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -123,6 +125,14 @@ const GitHubUploader: React.FC<GitHubUploaderProps> = ({
       toast.warning('Only PDF files will be uploaded');
     }
 
+    const oversizedFiles = pdfFiles.filter(file => file.size > MAX_FILE_SIZE);
+
+    if (oversizedFiles.length > 0) {
+      const fileNames = oversizedFiles.map(f => f.name).join(', ');
+      toast.error(`Files exceed 100 MB limit: ${fileNames}`);
+      return;
+    }
+
     setIsUploading(true);
     const newUploadStates: UploadState[] = pdfFiles.map(file => ({
       uploading: true,
@@ -196,7 +206,15 @@ const GitHubUploader: React.FC<GitHubUploaderProps> = ({
 
       } catch (error) {
         console.error('Upload error:', error);
-        const errorMessage = error instanceof Error ? error.message : 'Upload failed';
+        let errorMessage = 'Upload failed';
+
+        if (error instanceof Error) {
+          if (error.message.includes('100 MB limit')) {
+            errorMessage = 'File size exceeds 100 MB limit. Please use smaller files.';
+          } else {
+            errorMessage = error.message;
+          }
+        }
 
         setUploadStates(prev => prev.map((state, index) =>
           index === i ? {
@@ -289,7 +307,7 @@ const GitHubUploader: React.FC<GitHubUploaderProps> = ({
               Upload PDF Files
             </h3>
             <p className="text-muted-foreground mb-4">
-              Select single or multiple PDF files to upload to GitHub
+              Select single or multiple PDF files to upload to GitHub (max 100 MB per file)
             </p>
             <Button
               onClick={handleFileSelect}
