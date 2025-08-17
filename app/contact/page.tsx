@@ -115,7 +115,7 @@ const ContactPage = () => {
     {
       icon: FaPhone,
       title: 'Phone Number',
-      value: '+91 9136261589',
+      value: '+91 82918 06658',
       description: 'Call us for immediate assistance',
       href: 'tel:+919136261589'
     },
