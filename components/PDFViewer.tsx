@@ -18,8 +18,10 @@ const PDFViewer: React.FC<PDFViewerProps> = ({ url, title = 'PDF Document', heig
   const [rotation, setRotation] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const renderTaskRef = useRef<any>(null); // Track current render task for cancellation
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Ensure we're on the client side
   useEffect(() => {
@@ -218,6 +220,32 @@ Try refreshing the page or re-uploading the file.`;
     setRotation(0);
   };
 
+  const toggleFullscreen = async () => {
+    if (!containerRef.current) return;
+    
+    try {
+      if (!isFullscreen) {
+        if (containerRef.current.requestFullscreen) {
+          await containerRef.current.requestFullscreen();
+        } else if ((containerRef.current as any).webkitRequestFullscreen) {
+          await (containerRef.current as any).webkitRequestFullscreen();
+        } else if ((containerRef.current as any).msRequestFullscreen) {
+          await (containerRef.current as any).msRequestFullscreen();
+        }
+      } else {
+        if (document.exitFullscreen) {
+          await document.exitFullscreen();
+        } else if ((document as any).webkitExitFullscreen) {
+          await (document as any).webkitExitFullscreen();
+        } else if ((document as any).msExitFullscreen) {
+          await (document as any).msExitFullscreen();
+        }
+      }
+    } catch (error) {
+      console.error('Fullscreen toggle failed:', error);
+    }
+  };
+
   const retry = () => {
     setError(null);
     setPdf(null);
@@ -225,6 +253,30 @@ Try refreshing the page or re-uploading the file.`;
     setNumPages(0);
     // This will trigger the useEffect to reload
   };
+
+  // Fullscreen change event listener
+  useEffect(() => {
+    if (!isClient) return;
+
+    const handleFullscreenChange = () => {
+      const isCurrentlyFullscreen = !!(
+        document.fullscreenElement ||
+        (document as any).webkitFullscreenElement ||
+        (document as any).msFullscreenElement
+      );
+      setIsFullscreen(isCurrentlyFullscreen);
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    document.addEventListener('msfullscreenchange', handleFullscreenChange);
+
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('msfullscreenchange', handleFullscreenChange);
+    };
+  }, [isClient]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -260,6 +312,11 @@ Try refreshing the page or re-uploading the file.`;
         case '0':
           event.preventDefault();
           resetView();
+          break;
+        case 'f':
+        case 'F':
+          event.preventDefault();
+          toggleFullscreen();
           break;
       }
     };
@@ -358,7 +415,11 @@ Try refreshing the page or re-uploading the file.`;
   }
 
   return (
-    <div className="flex flex-col h-full bg-white dark:bg-gray-900" style={{ height }}>
+    <div 
+      ref={containerRef}
+      className={`flex flex-col h-full bg-white dark:bg-gray-900 ${isFullscreen ? 'fixed inset-0 z-50' : ''}`} 
+      style={isFullscreen ? { height: '100vh' } : { height }}
+    >
       {/* PDF Controls */}
       <div className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex-wrap gap-2">
         <div className="flex items-center space-x-2">
@@ -423,6 +484,22 @@ Try refreshing the page or re-uploading the file.`;
           >
             Reset
           </Button>
+          <Button
+            onClick={toggleFullscreen}
+            size="sm"
+            variant="outline"
+            title={isFullscreen ? "Exit fullscreen (F)" : "Enter fullscreen (F)"}
+          >
+            {isFullscreen ? (
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            ) : (
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+              </svg>
+            )}
+          </Button>
         </div>
       </div>
 
@@ -447,7 +524,7 @@ Try refreshing the page or re-uploading the file.`;
       {/* Status bar */}
       <div className="px-2 py-1 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
         <p className="text-xs text-gray-500">
-          Use ←/→ arrows to navigate, +/- to zoom, R to rotate, 0 to reset
+          Use ←/→ arrows to navigate, +/- to zoom, R to rotate, 0 to reset, F for fullscreen
         </p>
         {isGitHubRawUrl(url) && (
           <span className="text-xs text-blue-600 dark:text-blue-400">
