@@ -111,8 +111,6 @@ export default async function NotesPage({ params }: NotesPageProps) {
 
   return (
     <SecurityProtection 
-      pageName={`Notes - ${subject.name}`}
-      pagePath={`/select/${year}/${semester}/${branch}/subjects/subject/${subjectName}/notes`}
       strictMode={true}
     >
       <div className="min-h-screen bg-gradient-to-br from-background to-secondary/10 dark:from-black dark:to-gray-950">

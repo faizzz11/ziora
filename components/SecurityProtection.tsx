@@ -121,6 +121,26 @@ const SecurityProtection: React.FC<SecurityProtectionProps> = ({ children, stric
       const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
       const isWindows = navigator.platform.toUpperCase().indexOf('WIN') >= 0;
       const isLinux = navigator.platform.toUpperCase().indexOf('LINUX') >= 0;
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                   (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+                       window.innerWidth <= 768;
+
+      // Skip most protections on mobile devices to avoid false positives
+      if (isIOS || isMobile) {
+        // Only block obvious developer tools shortcuts on mobile
+        if (e.code === 'F12') {
+          e.preventDefault();
+          e.stopPropagation();
+          logSecurityEvent('dev_tools_open', {
+            keysCombination: 'F12',
+            platform: isIOS ? 'iOS' : 'Mobile'
+          });
+          showToast('🔒 Developer tools access blocked!', 'error', 3000);
+          return false;
+        }
+        return; // Skip other protections on mobile
+      }
 
       // Enhanced macOS detection - Block ANY command key usage for screenshot prevention
       if (isMac && e.metaKey) {
@@ -240,7 +260,7 @@ const SecurityProtection: React.FC<SecurityProtectionProps> = ({ children, stric
         }
       }
 
-      // Cross-platform developer tools detection
+      // Cross-platform developer tools detection (Desktop only)
       const devToolsCombinations = [
         { key: 'F12', condition: e.code === 'F12' },
         { key: 'ctrl+shift+i', condition: e.ctrlKey && e.shiftKey && e.code === 'KeyI' && !isMac },
@@ -259,7 +279,8 @@ const SecurityProtection: React.FC<SecurityProtectionProps> = ({ children, stric
           e.stopPropagation();
           logSecurityEvent('dev_tools_open', {
             keysCombination: combo.key,
-            platform: isMac ? 'macOS' : (isWindows ? 'Windows' : 'Linux')
+            platform: isMac ? 'macOS' : (isWindows ? 'Windows' : 'Linux'),
+            triggeredBy: 'keyboard_shortcut'
           });
           showToast('🔒 Developer tools access blocked!', 'error', 3000);
           return false;
@@ -321,16 +342,43 @@ const SecurityProtection: React.FC<SecurityProtectionProps> = ({ children, stric
   // Enhanced developer tools detection
   useEffect(() => {
     let devtools = { open: false };
+    let initialLoad = true;
+    let baselineMeasurements = { height: 0, width: 0 };
+
+    const isIOS = () => {
+      return /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+             (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    };
+
+    const isMobile = () => {
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+             window.innerWidth <= 768;
+    };
 
     const detectDevTools = () => {
-      const threshold = 160;
+      // Skip detection on mobile devices and iOS to prevent false positives
+      if (isIOS() || isMobile()) {
+        return;
+      }
 
-      // Multiple detection methods
-      const heightDiff = window.outerHeight - window.innerHeight > threshold;
-      const widthDiff = window.outerWidth - window.innerWidth > threshold;
+      // Set baseline measurements after initial load
+      if (initialLoad) {
+        baselineMeasurements.height = window.outerHeight - window.innerHeight;
+        baselineMeasurements.width = window.outerWidth - window.innerWidth;
+        initialLoad = false;
+        return;
+      }
 
-      // Simplified detection method
-      const isOpen = heightDiff || widthDiff;
+      // Use higher threshold for desktop and compare against baseline
+      const threshold = 200;
+      const heightDiff = window.outerHeight - window.innerHeight;
+      const widthDiff = window.outerWidth - window.innerWidth;
+
+      // Check if the difference has significantly increased from baseline
+      const heightIncrease = heightDiff - baselineMeasurements.height > threshold;
+      const widthIncrease = widthDiff - baselineMeasurements.width > threshold;
+
+      const isOpen = heightIncrease || widthIncrease;
 
       if (isOpen && !devtools.open) {
         devtools.open = true;
@@ -339,10 +387,13 @@ const SecurityProtection: React.FC<SecurityProtectionProps> = ({ children, stric
           detectionMethod: 'window_size_monitor',
           heightDiff,
           widthDiff,
+          baselineHeight: baselineMeasurements.height,
+          baselineWidth: baselineMeasurements.width,
           outerHeight: window.outerHeight,
           innerHeight: window.innerHeight,
           outerWidth: window.outerWidth,
-          innerWidth: window.innerWidth
+          innerWidth: window.innerWidth,
+          userAgent: navigator.userAgent
         });
         showProtectionEffect(5000);
         showToast('🔒 Developer tools detected! Content protected.', 'error', 8000);
@@ -352,11 +403,17 @@ const SecurityProtection: React.FC<SecurityProtectionProps> = ({ children, stric
       }
     };
 
-    // Check immediately and then every 1 second
-    detectDevTools();
-    devToolsCheckRef.current = setInterval(detectDevTools, 1000);
+    // Only start detection after a delay to allow page to settle
+    const startDetection = () => {
+      detectDevTools();
+      devToolsCheckRef.current = setInterval(detectDevTools, 2000); // Reduced frequency
+    };
+
+    // Wait 3 seconds before starting detection to avoid false positives
+    const initTimeout = setTimeout(startDetection, 3000);
 
     return () => {
+      clearTimeout(initTimeout);
       if (devToolsCheckRef.current) {
         clearInterval(devToolsCheckRef.current);
       }
