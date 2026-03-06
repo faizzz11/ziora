@@ -270,10 +270,10 @@
         "8": [
           {
             "id": "hmi",
-            "name": "Human Machine Interaction",
-            "code": "HMI",
+            "name": "Project Management",
+            "code": "PM",
             "credits": 4,
-            "description": "UI/UX design, usability testing, and interaction design"
+            "description": "Project management principles, planning, and execution"
           },
           {
             "id": "distributed-computing",
