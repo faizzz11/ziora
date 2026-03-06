@@ -269,7 +269,7 @@
         ],
         "8": [
           {
-            "id": "hmi",
+            "id": "PM",
             "name": "Project Management",
             "code": "PM",
             "credits": 4,
@@ -283,7 +283,7 @@
             "description": "Distributed systems, cloud computing, and parallel processing"
           },
           {
-            "id": "advanced-algorithm",
+            "id": "SMA",
             "name": "Social Media Analytics",
             "code": "SMA",
             "credits": 4,
